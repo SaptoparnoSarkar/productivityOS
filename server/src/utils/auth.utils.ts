@@ -17,3 +17,19 @@ export function generateRefreshToken() {
 export function hashToken(token: string): string {
     return crypto.createHash('sha256').update(token).digest('hex')
 }
+
+export const ACCESS_TOKEN_OPTIONS = {
+    https: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax' as const,
+    path: '/',
+    maxAge: 900
+}
+
+export const REFRESH_TOKEN_OPTIONS = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax' as const,
+    path: '/auth/refresh-token',
+    maxAge: 60 * 60 * 24 * 30
+}

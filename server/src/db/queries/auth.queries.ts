@@ -58,7 +58,6 @@ export async function completeVerification(email: string, codeId: string) {
 }
 
 //Insert Refresh Token
-
 export async function insertRefreshToken(userId: string, hashedToken: string, expiresAt: Date) {
     const result = await pool.query(`INSERT INTO refresh_tokens (user_id, refresh_token_hash, expires_at) VALUES ($1, $2, $3) RETURNING *`, [userId, hashedToken, expiresAt])
     return result.rows[0]
@@ -67,5 +66,11 @@ export async function insertRefreshToken(userId: string, hashedToken: string, ex
 //Find Refresh Token
 export async function findRefreshToken(hashedToken: string) {
     const result = await pool.query(`SELECT * FROM refresh_tokens WHERE refresh_token_hash = $1 AND revoked = false AND expires_at > NOW()`, [hashedToken])
+    return result.rows[0] || null;
+}
+
+//Revoke old Refresh Token
+export async function revokeRefreshToken(hashToken: string) {
+    const result = await pool.query(`UPDATE refresh_tokens SET revoked = true WHERE refresh_token_hash = $1`, [hashToken])
     return result.rows[0] || null;
 }

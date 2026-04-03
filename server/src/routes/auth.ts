@@ -1,6 +1,9 @@
 import type { FastifyInstance } from "fastify";
 import { signupSchema, verifyEmailSchema, signinSchema, resendCodeSchema } from "../schemas/auth.schema.js"
-import { signupUser, verifyEmail, loginUser, resendVerificationCode } from '../services/auth.service.js'
+import { signupUser, verifyEmail, loginUser, resendVerificationCode, refreshToken, signOut } from '../services/auth.service.js'
+import { ACCESS_TOKEN_OPTIONS, REFRESH_TOKEN_OPTIONS } from '../utils/auth.utils.js'
+
+
 
 
 export async function authRoutes(fastify: FastifyInstance) {
@@ -35,21 +38,9 @@ export async function authRoutes(fastify: FastifyInstance) {
         try {
             const response = await verifyEmail(result.data.email, result.data.code)
 
-            reply.setCookie('access_token', response.token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
-                path: '/',
-                maxAge: 900
-            })
+            reply.setCookie('access_token', response.token, ACCESS_TOKEN_OPTIONS)
 
-            reply.setCookie('refresh_token', response.refreshToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
-                path: '/auth/refresh-token',
-                maxAge: 60 * 60 * 24 * 30
-            })
+            reply.setCookie('refresh_token', response.refreshToken, REFRESH_TOKEN_OPTIONS)
 
             return reply.status(200).send({ message: 'Email Verified Successfully' })
 
@@ -105,21 +96,9 @@ export async function authRoutes(fastify: FastifyInstance) {
         try {
             const response = await loginUser(result.data.email, result.data.password)
 
-            reply.setCookie('access_token', response.token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
-                path: '/',
-                maxAge: 900
-            })
+            reply.setCookie('access_token', response.token, ACCESS_TOKEN_OPTIONS)
 
-            reply.setCookie('refresh_token', response.refreshToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
-                path: '/auth/refresh-token',
-                maxAge: 60 * 60 * 24 * 30
-            })
+            reply.setCookie('refresh_token', response.refreshToken, REFRESH_TOKEN_OPTIONS)
 
             return reply.status(200).send({ message: 'User Logged In Successfully' })
         }
@@ -133,6 +112,55 @@ export async function authRoutes(fastify: FastifyInstance) {
                 return reply.status(statusCode).send({ message: error.message })
             }
             console.error(error)
+            return reply.status(500).send({ message: 'Internal Server Error' })
+        }
+    })
+
+    //Refresh-Token /auth/refresh-token
+    fastify.post('/auth/refresh-token', async (request, reply) => {
+        //Read refresh_token from the cookie
+        const refresh_token = request.cookies.refresh_token
+        if (!refresh_token) {
+            return reply.status(401).send({ message: 'Refresh Token Not Found' })
+        }
+
+        try {
+            const response = await refreshToken(refresh_token)
+            reply.setCookie('access_token', response.token, ACCESS_TOKEN_OPTIONS)
+            reply.setCookie('refresh_token', response.refreshToken, REFRESH_TOKEN_OPTIONS)
+            return reply.status(200).send({ message: 'Token Refreshed Successfully' })
+        }
+        catch (error: any) {
+            const errorMap: Record<string, number> = {
+                'Refresh Token Not Found': 401,
+            }
+            const statusCode = errorMap[error.message]
+            if (statusCode) {
+                return reply.status(statusCode).send({ message: error.message })
+            }
+            console.error(error)
+            return reply.status(500).send({ message: 'Internal Server Error' })
+        }
+    })
+
+    //Sign-out /auth/sign-out
+    fastify.post('/auth/sign-out', async (request, reply) => {
+        //Read refresh_token from cookie
+        const refresh_token = request.cookies.refresh_token
+        if (!refresh_token) {
+            //Clear Both Cookies with matching options
+            reply.clearCookie('access_token', ACCESS_TOKEN_OPTIONS)
+            reply.clearCookie('refresh_token', REFRESH_TOKEN_OPTIONS)
+            return reply.status(200).send({ message: 'Signed Out Successfully' })
+        }
+        try {
+            const response = await signOut(refresh_token)
+            //Clear Both Cookies with matching options
+            reply.clearCookie('access_token', ACCESS_TOKEN_OPTIONS)
+            reply.clearCookie('refresh_token', REFRESH_TOKEN_OPTIONS)
+            return reply.status(200).send({ message: 'Signed Out Successfully' })
+        }
+        catch (error: any) {
             return reply.status(500).send({ message: 'Internal Server Error' })
         }
     })

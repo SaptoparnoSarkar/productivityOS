@@ -1,12 +1,12 @@
 import bcrypt from 'bcrypt'
-import { findUserByEmail, findVerificationCode, insertUser, insertVerificationCode, completeVerification, findLatestVerificationCode, insertRefreshToken } from '../db/queries/auth.queries.js'
+import { findUserByEmail, findVerificationCode, insertUser, insertVerificationCode, completeVerification, findLatestVerificationCode, insertRefreshToken, findRefreshToken, revokeRefreshToken } from '../db/queries/auth.queries.js'
 import { generateVerificationCode, generateRefreshToken, hashToken } from '../utils/auth.utils.js'
 import { resend } from '../config/resend.js'
 import { SignJWT } from 'jose'
 import { verifyPassword } from '../utils/auth.utils.js'
 
 
-//Signup User
+
 export async function signupUser(email: string, password: string) {
 
     //Check if email exists
@@ -60,6 +60,7 @@ export async function verifyEmail(email: string, code: string) {
     //Run Both UPDATESs in a transaction
     await completeVerification(email, verification_code.id)
     //Generate JWT access token
+    //Guard Check
     if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET is not defined')
     const secret = new TextEncoder().encode(process.env.JWT_SECRET)
 
@@ -105,7 +106,7 @@ export async function loginUser(email: string, password: string) {
     }
 
     //Generate JWT (same pattern as verifyEmail)
-    if (process.env.JWT_SECRET) throw new Error('JWT_SECRET is not defined')
+    if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET is not defined')
     const secret = new TextEncoder().encode(process.env.JWT_SECRET)
 
     const jwt = await new SignJWT({})
@@ -165,3 +166,47 @@ export async function resendVerificationCode(email: string) {
     //Return response
     return { message: "Verification Code Resent Successfully" }
 }
+
+export async function refreshToken(refreshToken: string) {
+    //Hash Token & Look it up in DB
+    const hashedToken = hashToken(refreshToken)
+    const tokenRecord = await findRefreshToken(hashedToken)
+
+    //If not found? Reject
+    if (!tokenRecord) {
+        throw new Error('Refresh Token Not Found')
+    }
+    //Revoke the old Token
+    await revokeRefreshToken(hashedToken)
+
+
+    //Generate new refresh token
+    const rawToken = generateRefreshToken()
+    const newRefreshToken = hashToken(rawToken)
+    const THIRTY_DAYS = 1000 * 60 * 60 * 24 * 30
+    const expired_at = new Date(Date.now() + THIRTY_DAYS)
+
+    await insertRefreshToken(tokenRecord.user_id, newRefreshToken, expired_at)
+
+    //Generate new access token
+    //Guard Check
+    if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET is not defined')
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET)
+
+    const jwt = await new SignJWT({})
+        .setProtectedHeader({ alg: 'HS256' })
+        .setSubject(String(tokenRecord.user_id))
+        .setExpirationTime('15m')
+        .sign(secret)
+
+    //return both tokens
+    return { token: jwt, refreshToken: rawToken }
+}
+
+export async function signOut(refreshToken: string) {
+    //Hash it -> Remove it in DB
+    const hashedToken = hashToken(refreshToken)
+    await revokeRefreshToken(hashedToken)
+
+    return { message: 'User Logged Out Successfully' }
+}   
