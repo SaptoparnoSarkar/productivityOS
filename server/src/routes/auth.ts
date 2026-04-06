@@ -39,7 +39,6 @@ export async function authRoutes(fastify: FastifyInstance) {
             const response = await verifyEmail(result.data.email, result.data.code)
 
             reply.setCookie('access_token', response.token, ACCESS_TOKEN_OPTIONS)
-
             reply.setCookie('refresh_token', response.refreshToken, REFRESH_TOKEN_OPTIONS)
 
             return reply.status(200).send({ message: 'Email Verified Successfully' })
@@ -164,4 +163,10 @@ export async function authRoutes(fastify: FastifyInstance) {
             return reply.status(500).send({ message: 'Internal Server Error' })
         }
     })
+
+    //TestCase /auth/me
+    fastify.get('/auth/me', async (request, reply) => {
+        return { userId: request.userId }
+    })
 }
+

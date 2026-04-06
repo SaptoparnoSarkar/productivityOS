@@ -1,3 +1,4 @@
+import fp from 'fastify-plugin'
 import { jwtVerify } from 'jose'
 import type { FastifyInstance } from 'fastify'
 
@@ -7,10 +8,10 @@ const PUBLIC_ROUTES = [
     'POST:/auth/signin',
     'POST:/auth/verify-email',
     'POST:/auth/resend-code',
-    'POST:/auth/refresh-token'
 ]
 
-export async function authMiddleware(fastify: FastifyInstance) {
+async function authMiddleware(fastify: FastifyInstance) {
+
     //Decorate request with userId
     fastify.decorateRequest('userId', null)
 
@@ -40,3 +41,5 @@ export async function authMiddleware(fastify: FastifyInstance) {
         }
     })
 }
+
+export default fp(authMiddleware)
