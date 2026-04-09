@@ -1,5 +1,5 @@
 import * as z from 'zod';
-
+// Schema for Sign Up
 export const signupSchema = z.object({
     email: z.string().email(),
 
@@ -21,7 +21,7 @@ export const signupSchema = z.object({
 
 export type SignupFormData = z.infer<typeof signupSchema>
 
-
+// Schema for Sign in
 export const signinSchema = z.object({
     email: z.string().email(),
     password: z.string().min(8, { message: "Password must be at least 8 characters long" })
@@ -31,3 +31,11 @@ export const signinSchema = z.object({
 })
 
 export type SigninFormData = z.infer<typeof signinSchema>
+
+// Schema for Verify Email
+export const verifyEmailSchema = z.object({
+    email: z.string().email(),
+    code: z.string().min(6, { message: "Code must be 6 digits" }).max(6, { message: "Code must be 6 digits" }).regex(/^[0-9]{6}$/, { message: "Code must be 6 digits" })
+})
+
+export type VerifyEmailFormData = z.infer<typeof verifyEmailSchema>

@@ -1,4 +1,5 @@
 'use client'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { signupSchema, type SignupFormData } from '@/schemas/auth.schema'
@@ -15,23 +16,28 @@ export function SignupForm() {
         },
     })
 
+    const router = useRouter()
+
     async function onSubmit(data: SignupFormData) {
         await new Promise((resolve) => setTimeout(resolve, 2000))
         console.log(data)
+
+        //Redirect with email in URL
+        router.push(`/verify-email?email=${encodeURIComponent(data.email)}`)
     }
 
     return (
-        <div className='signup-card'>
-            <div className='signup-header'>
-                <h1 className='signup-title'>Create Account</h1>
-                <p className='signup-subtitle'>
+        <div className='auth-card'>
+            <div className='auth-header'>
+                <h1 className='auth-title'>Create Account</h1>
+                <p className='auth-subtitle'>
                     Join the community and start tracking your progress today.
                 </p>
             </div>
 
-            <form onSubmit={form.handleSubmit(onSubmit)} className='signup-form'>
+            <form onSubmit={form.handleSubmit(onSubmit)} className='auth-form'>
                 <FieldGroup>
-                    <div className='signup-fields'>
+                    <div className='auth-fields'>
                         <CustomInputs
                             control={form.control}
                             name='email'
@@ -59,15 +65,15 @@ export function SignupForm() {
                     </div>
                 </FieldGroup>
 
-                <div className='signup-actions'>
+                <div className='auth-actions'>
                     <button
                         type='submit'
                         disabled={form.formState.isSubmitting}
-                        className='signup-btn'
+                        className='auth-btn'
                     >
                         {form.formState.isSubmitting ? (
-                            <span className='signup-btn-loading'>
-                                <svg className='signup-spinner' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <span className='auth-btn-loading'>
+                                <svg className='auth-spinner' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeDasharray="31.4 31.4" />
                                 </svg>
                                 Creating account…
@@ -77,9 +83,9 @@ export function SignupForm() {
                         )}
                     </button>
 
-                    <p className='signup-footer'>
+                    <p className='auth-footer'>
                         Already have an account?{' '}
-                        <a href='/signin' className='signup-link'>Sign in</a>
+                        <a href='/signin' className='auth-link'>Sign in</a>
                     </p>
                 </div>
             </form>

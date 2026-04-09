@@ -5,7 +5,7 @@ import { Input } from '../ui/input'
 import { CustomInputProps } from '@/types/index'
 
 
-export function CustomInputs({ control, name, label, placeholder, autocomplete, type = 'text' }: CustomInputProps) {
+export function CustomInputs({ control, name, label, placeholder, autocomplete, type = 'text', inputMode = 'none', disabled = false }: CustomInputProps) {
     return (
         <Controller
             name={name}
@@ -20,7 +20,9 @@ export function CustomInputs({ control, name, label, placeholder, autocomplete, 
                         aria-invalid={fieldState.invalid}
                         placeholder={placeholder}
                         autoComplete={autocomplete}
-                        style={{ paddingLeft: '15px' }}
+                        disabled={disabled}
+                        style={{ padding: '15px' }}
+                        inputMode={inputMode}
                     />
                     {fieldState.invalid && (<FieldError errors={[fieldState.error]} style={{ color: 'red' }} />
                     )}

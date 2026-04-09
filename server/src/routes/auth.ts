@@ -143,7 +143,7 @@ export async function authRoutes(fastify: FastifyInstance) {
     })
 
     //Sign-out /auth/sign-out
-    fastify.post('/auth/sign-out', async (request, reply) => {
+    fastify.post('/auth/signout', async (request, reply) => {
         //Read refresh_token from cookie
         const refresh_token = request.cookies.refresh_token
         if (!refresh_token) {

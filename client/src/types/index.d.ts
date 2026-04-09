@@ -3,12 +3,14 @@ import { signupSchema } from '@/schemas/auth.schema'
 import { z } from 'zod'
 
 export interface CustomInputProps {
-    control: Control<z.infer<typeof signupSchema>>
-    name: FieldPath<z.infer<typeof signupSchema>>
+    control: Control<T>
+    name: Path<T>
     label: string
     placeholder?: string
     autocomplete?: string
     type?: string
+    inputMode?: "text" | "numeric" | "tel" | "url" | "email" | "search" | "none"
+    disabled?: boolean
 }
-}
+
 
