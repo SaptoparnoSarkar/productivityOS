@@ -114,7 +114,7 @@ export async function authRoutes(fastify: FastifyInstance) {
             return reply.status(500).send({ message: 'Internal Server Error' })
         }
     })
-
+ 
     //Refresh-Token /auth/refresh-token
     fastify.post('/auth/refresh-token', async (request, reply) => {
         //Read refresh_token from the cookie
@@ -170,3 +170,5 @@ export async function authRoutes(fastify: FastifyInstance) {
     })
 }
 
+
+//Todo : Make an error toolkit to avoid repeating error handling code

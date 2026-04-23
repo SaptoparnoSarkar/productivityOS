@@ -5,6 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { signupSchema, type SignupFormData } from '@/schemas/auth.schema'
 import { FieldGroup } from '../ui/field'
 import { CustomInputs } from './CustomInputs'
+import { signup } from '@/lib/api'
+import { useState } from 'react'
 
 export function SignupForm() {
     const form = useForm<SignupFormData>({
@@ -18,12 +20,23 @@ export function SignupForm() {
 
     const router = useRouter()
 
-    async function onSubmit(data: SignupFormData) {
-        await new Promise((resolve) => setTimeout(resolve, 2000))
-        console.log(data)
+    const [formError, setFormError] = useState<string>('')
 
-        //Redirect with email in URL
-        router.push(`/verify-email?email=${encodeURIComponent(data.email)}`)
+    async function onSubmit(data: SignupFormData) {
+        try {
+            await signup(data.email, data.password)
+            //Redirect with email in URL
+            router.push(`/verify-email?email=${encodeURIComponent(data.email)}`)
+        } catch (error) {
+            if (error instanceof Error) {
+                setFormError(error.message)
+            } else {
+                setFormError('An unexpected error occurred. Please try again.')
+            }
+            setTimeout(() => {
+                setFormError('')
+            }, 3000)
+        }
     }
 
     return (
@@ -66,6 +79,7 @@ export function SignupForm() {
                 </FieldGroup>
 
                 <div className='auth-actions'>
+                    {formError && <p className="auth-error">{formError}</p>}
                     <button
                         type='submit'
                         disabled={form.formState.isSubmitting}

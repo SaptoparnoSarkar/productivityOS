@@ -6,10 +6,13 @@ import { CustomInputs } from "./CustomInputs"
 import { FieldGroup } from "../ui/field"
 import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { resendCode, verifyEmail } from "@/lib/api"
 
 
 export function VerifyEmailForm() {
     const searchParams = useSearchParams()
+    const router = useRouter()
 
     const form = useForm<VerifyEmailFormData>({
         resolver: zodResolver(verifyEmailSchema),
@@ -22,9 +25,23 @@ export function VerifyEmailForm() {
     const [resendCoolDown, setResendCoolDown] = useState(0)
     const [resendMessage, setResendMessage] = useState('')
 
+    const [formError, setFormError] = useState<string>('')
+
     async function onSubmit(data: VerifyEmailFormData) {
-        await new Promise((resolve) => setTimeout(resolve, 2000))
-        console.log(data)
+        try {
+            await verifyEmail(data.email, data.code)
+            router.push('/dashboard')
+        } catch (error) {
+            if (error instanceof Error) {
+                setFormError(error.message)
+            }
+            else {
+                setFormError('An unexpected error occured. Please try again.')
+            }
+            setTimeout(() => {
+                setFormError('')
+            }, 3000)
+        }
     }
 
     useEffect(() => {
@@ -46,8 +63,7 @@ export function VerifyEmailForm() {
         const email = form.getValues('email')
         try {
 
-            //call console.log for now (API later)
-            console.log('Resending code to:', email)
+            await resendCode(email)
 
             //set cooldown to 60
             setResendCoolDown(60)
@@ -98,6 +114,7 @@ export function VerifyEmailForm() {
                 </FieldGroup>
 
                 <div className="auth-actions">
+                    {formError && <p className="auth-error">{formError}</p>}
                     <button
                         type="submit"
                         disabled={form.formState.isSubmitting}

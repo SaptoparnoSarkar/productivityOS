@@ -34,7 +34,7 @@ async function authMiddleware(fastify: FastifyInstance) {
             if (!payload.sub) {
                 return reply.status(401).send({ message: 'Invalid Token' })
             }
-            request.userId = payload.sub
+            request.userId = Number(payload.sub)
         }
         catch (error) {
             return reply.status(401).send({ message: 'Invalid Token' })

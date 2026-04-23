@@ -4,6 +4,7 @@ import { generateVerificationCode, generateRefreshToken, hashToken } from '../ut
 import { resend } from '../config/resend.js'
 import { SignJWT } from 'jose'
 import { verifyPassword } from '../utils/auth.utils.js'
+import { ConflictError, ValidationError, UnauthorizedError, ForbiddenError, NotFoundError } from "../utils/errors.js";
 
 
 
@@ -12,7 +13,7 @@ export async function signupUser(email: string, password: string) {
     //Check if email exists
     const existingUser = await findUserByEmail(email)
     if (existingUser) {
-        throw new Error('Email Already Taken')
+        throw new ConflictError('Email Already Taken')
     }
 
     //Hash Passowrd
@@ -49,13 +50,13 @@ export async function verifyEmail(email: string, code: string) {
 
     //Throw if null/expired/already used
     if (!verification_code) {
-        throw new Error('Invalid Verification Code')
+        throw new ValidationError('Invalid Verification Code')
     }
     if (new Date(verification_code.expired_at) < new Date()) {
-        throw new Error('Verification Code Has Expired')
+        throw new ValidationError('Verification Code Has Expired')
     }
     if (verification_code.is_used) {
-        throw new Error('Verification Code Already Used')
+        throw new ValidationError('Verification Code Already Used')
     }
     //Run Both UPDATESs in a transaction
     await completeVerification(email, verification_code.id)
@@ -85,24 +86,25 @@ export async function verifyEmail(email: string, code: string) {
 }
 
 export async function loginUser(email: string, password: string) {
+
     //Find user by email 
     const user = await findUserByEmail(email)
     if (!user) {
-        throw new Error('Invalid Credentials')
+        throw new UnauthorizedError('Invalid Credentials')
     }
 
     //Check if verified
     const verification_status = user.is_verified
 
     if (!verification_status) {
-        throw new Error('Please Verify Your Email')
+        throw new ForbiddenError('Please Verify Your Email')
     }
 
     //Verify The Passoword - by the bcrypt method
     const isPasswordValid = await verifyPassword(password, user.password_hash)
 
     if (!isPasswordValid) {
-        throw new Error('Invalid Credentials')
+        throw new UnauthorizedError('Invalid Credentials')
     }
 
     //Generate JWT (same pattern as verifyEmail)
@@ -132,19 +134,19 @@ export async function resendVerificationCode(email: string) {
     //Find user & What if they don't exist?
     let user = await findUserByEmail(email)
     if (!user) {
-        throw new Error('User Not Found')
+        throw new NotFoundError('User Not Found')
     }
     //What if already verified?
     let verificationStatus = user.is_verified
     if (verificationStatus) {
-        throw new Error('User Already Verified')
+        throw new ConflictError('User Already Verified')
     }
     //Check if code was sent in last 60 seconds
     const latestCode = await findLatestVerificationCode(user.id)
     if (latestCode) {
         const timeSinceLastCode = Date.now() - new Date(latestCode.created_at).getTime()
         if (timeSinceLastCode < 60000) {
-            throw new Error('Please Wait 60 Seconds Before Resending Code')
+            throw new ConflictError('Please Wait 60 Seconds Before Resending Code')
         }
     }
 
@@ -174,7 +176,7 @@ export async function refreshToken(refreshToken: string) {
 
     //If not found? Reject
     if (!tokenRecord) {
-        throw new Error('Refresh Token Not Found')
+        throw new UnauthorizedError('Refresh Token Not Found')
     }
     //Revoke the old Token
     await revokeRefreshToken(hashedToken)
@@ -209,4 +211,4 @@ export async function signOut(refreshToken: string) {
     await revokeRefreshToken(hashedToken)
 
     return { message: 'User Logged Out Successfully' }
-}   
+}    

@@ -4,6 +4,9 @@ import { SigninFormData, signinSchema } from '@/schemas/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FieldGroup } from '../ui/field'
 import { CustomInputs } from './CustomInputs'
+import { useState } from 'react'
+import { signin } from '@/lib/api'
+import { useRouter } from 'next/navigation'
 
 
 export function SigninForm() {
@@ -15,9 +18,32 @@ export function SigninForm() {
         }
     })
 
+    const router = useRouter()
+
+    const [formError, setFormError] = useState<string>(' ')
+
     async function onSubmit(data: SigninFormData) {
-        await new Promise((resolve) => setTimeout(resolve, 2000))
-        console.log(data)
+        try {
+            await signin(data.email, data.password)
+            router.push('/dashboard')
+
+        } catch (error) {
+            if (error instanceof Error) {
+                //Handle Verify Your Email Case
+                if (error.message === 'Please Verify Your Email') {
+                    router.push(`/verify-email?email=${encodeURIComponent(data.email)}`)
+                    return
+                }
+                setFormError(error.message)
+            }
+            else {
+                setFormError('An unexpected error occurred. Please try again.')
+            }
+            setTimeout(() => {
+                setFormError('')
+            }, 3000)
+        }
+
     }
 
     return (
@@ -52,6 +78,7 @@ export function SigninForm() {
                 </FieldGroup>
 
                 <div className='auth-actions'>
+                    {formError && <p className="auth-error">{formError}</p>}
                     <button
                         type='submit'
                         disabled={form.formState.isSubmitting}

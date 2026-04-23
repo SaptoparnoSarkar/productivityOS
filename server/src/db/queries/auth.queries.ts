@@ -73,4 +73,4 @@ export async function findRefreshToken(hashedToken: string) {
 export async function revokeRefreshToken(hashToken: string) {
     const result = await pool.query(`UPDATE refresh_tokens SET revoked = true WHERE refresh_token_hash = $1`, [hashToken])
     return result.rows[0] || null;
-}
+} 
