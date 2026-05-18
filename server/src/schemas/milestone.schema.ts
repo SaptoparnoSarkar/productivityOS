@@ -1,23 +1,27 @@
-import * as z from 'zod';
+import * as z from "zod";
 
 export const createMilestoneSchema = z.object({
-    type: z.string().min(1, {message: 'Type is required'}),
-    title: z.string().min(1, {message: 'Title is required'}),
-    description: z.string().max(2000).nullish(),
-    due_date: z.string().date().nullish()
+  type: z.enum(["counter", "checklist"], {
+    message: "Type must be either 'counter' or 'checklist'",
+  }),
+  title: z.string().trim().min(1, { message: "Title is required" }).max(100),
+  description: z.string().max(2000).nullish(),
+  due_date: z.string().date().nullish(),
 });
 
-export type CreateMilestoneInput = z.infer<typeof createMilestoneSchema>
+export type CreateMilestoneInput = z.infer<typeof createMilestoneSchema>;
 
-export const updateMilestoneSchema = createMilestoneSchema
-    .omit({type: true})
-    .partial()
-    .refine((data) => {
-        return data.title !== undefined || data.description !== undefined || data.due_date !== undefined;
-    }, {
-        message: "Provide at least one field to update"
-    })
+export const updateMilestoneBase = createMilestoneSchema
+  .omit({ type: true })
+  .partial();
 
-export type UpdateMilestoneInput = z.infer<typeof updateMilestoneSchema>
+export type UpdateMilestoneInput = z.infer<typeof updateMilestoneBase>;
 
-//TODO Tighten z.enum for type
+export const updateMilestoneSchema = updateMilestoneBase.refine(
+  (data) => Object.keys(data).length > 0,
+  {
+    message: "Provide at least one field to update",
+  },
+);
+
+//Seperated plain object schema and refined schema

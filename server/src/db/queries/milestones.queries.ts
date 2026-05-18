@@ -1,20 +1,28 @@
 import { pool } from "../../config/db.js";
+import type {
+  CreateMilestoneInput,
+  UpdateMilestoneInput,
+} from "../../schemas/milestone.schema.js";
 
 //Create Milestone
 export async function dbCreateMilestone(
   subjectId: number,
   userId: number,
-  type: string,
-  title: string,
-  description?: string,
-  due_date?: string,
+  input: CreateMilestoneInput,
 ) {
   const result = await pool.query(
     `INSERT INTO milestones (subject_id, type, title, description, due_date) 
         SELECT $1, $2, $3, $4, $5
         FROM subjects s WHERE s.id = $1 AND s.user_id = $6
         RETURNING *`,
-    [subjectId, type, title, description, due_date, userId],
+    [
+      subjectId,
+      input.type,
+      input.title,
+      input.description,
+      input.due_date,
+      userId,
+    ],
   );
   return result.rows[0] || null;
 }
@@ -34,7 +42,7 @@ export async function dbGetMilestonesBySubjectId(
   return result.rows;
 }
 
-//Fetch Milestone by milestoneId
+//Fetch a single Milestone by milestoneId
 export async function dbGetMilestoneById(
   milestoneId: number,
   subjectId: number,
@@ -49,12 +57,7 @@ export async function dbGetMilestoneById(
   return result.rows[0] || null;
 }
 
-//Update Milestone
-interface UpdateMilestoneInput {
-  title?: string;
-  description?: string | null;
-  due_date?: string | null;
-}
+//Update Milestones
 export async function dbUpdateMilestone(
   milestoneId: number,
   subjectId: number,

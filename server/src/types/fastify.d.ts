@@ -1,8 +1,7 @@
-import 'fastify'
+import "fastify";
 
-declare module 'fastify' {
-    interface FastifyRequest {
-        userId: number | null
-    }
+declare module "fastify" {
+  interface FastifyRequest {
+    userId: number;
+  }
 }
-

@@ -9,4 +9,4 @@ CREATE TABLE milestone_checklist_items (
         ON DELETE CASCADE
 );
 
-CREATE INDEX idx_checklist_items_milestone_id ON milestone_checklist_items(milestone_id);
+CREATE INDEX idx_checklist_items_milestone_id ON milestone_checklist_items(milestone_id); 

@@ -4,8 +4,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { signupSchema, type SignupFormData } from '@/schemas/auth.schema'
 import { FieldGroup } from '../ui/field'
-import { CustomInputs } from './CustomInputs'
-import { signup } from '@/lib/api'
+import { CustomInputs } from '../ui/CustomInputs'
+import { signup } from '@/lib/api/auth'
 import { useState } from 'react'
 
 export function SignupForm() {
@@ -23,6 +23,7 @@ export function SignupForm() {
     const [formError, setFormError] = useState<string>('')
 
     async function onSubmit(data: SignupFormData) {
+        setFormError('');
         try {
             await signup(data.email, data.password)
             //Redirect with email in URL

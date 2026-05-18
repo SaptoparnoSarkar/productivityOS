@@ -1,9 +1,11 @@
 'use client'
 import { Controller } from 'react-hook-form'
-import { Field, FieldLabel, FieldError } from '../ui/field'
-import { Input } from '../ui/input'
+import { Field, FieldLabel, FieldError } from './field'
+import { Input } from './input'
 import { CustomInputProps } from '@/types/index'
 
+
+//Gonna reuse this everywhere
 
 export function CustomInputs({ control, name, label, placeholder, autocomplete, type = 'text', inputMode = 'none', disabled = false }: CustomInputProps) {
     return (

@@ -8,7 +8,7 @@ CREATE TABLE subjects (
     description TEXT,
     has_pomodoro BOOLEAN NOT NULL DEFAULT true,
     daily_minimum INT,
-    daily_minimum_unit VARCHAR(50), -- 'problems', 'pages', 'topics
+    daily_minimum_unit VARCHAR(50), -- 'problems'/ 'pages'/ 'topics
     weekly_minimum INT, -- always days
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),

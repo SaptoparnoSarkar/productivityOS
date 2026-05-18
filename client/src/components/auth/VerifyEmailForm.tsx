@@ -2,12 +2,12 @@
 import { verifyEmailSchema, VerifyEmailFormData } from "@/schemas/auth.schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { CustomInputs } from "./CustomInputs"
+import { CustomInputs } from "../ui/CustomInputs"
 import { FieldGroup } from "../ui/field"
 import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { resendCode, verifyEmail } from "@/lib/api"
+import { resendCode, verifyEmail } from '@/lib/api/auth'
 
 
 export function VerifyEmailForm() {
@@ -24,7 +24,6 @@ export function VerifyEmailForm() {
 
     const [resendCoolDown, setResendCoolDown] = useState(0)
     const [resendMessage, setResendMessage] = useState('')
-
     const [formError, setFormError] = useState<string>('')
 
     async function onSubmit(data: VerifyEmailFormData) {
