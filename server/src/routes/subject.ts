@@ -10,6 +10,7 @@ import {
   getSubjects,
   updateSubject,
 } from "../services/subject.service.js";
+import { ValidationError } from "../utils/errors.js";
 
 export async function subjectRoutes(fastify: FastifyInstance) {
   //Create Subject    POST /api/subjects
@@ -89,7 +90,7 @@ export async function subjectRoutes(fastify: FastifyInstance) {
       //parse and guard url param
       const subjectId = Number(request.params.id);
       if (isNaN(subjectId)) {
-        return reply.status(400).send({ message: "Invalid Subject ID" });
+        throw new ValidationError('Invalid Subject ID');
       }
 
       //call services

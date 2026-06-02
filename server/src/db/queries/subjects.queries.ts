@@ -97,7 +97,7 @@ export async function dbUpdateSubject(
 //deleteSubject
 export async function dbDeleteSubject(subjectId: number, userId: number) {
   const result = await pool.query(
-    "DELETE FROM subjects WHERE id = $1 AND user_id = $2",
+    "DELETE FROM subjects WHERE id = $1 AND user_id = $2 RETURNING *",
     [subjectId, userId],
   );
   return result.rows[0] || null;

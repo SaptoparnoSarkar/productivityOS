@@ -8,6 +8,7 @@ CREATE TABLE milestones (
     description TEXT,
     due_date DATE,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
     CONSTRAINT fk_subject FOREIGN KEY (subject_id)
         REFERENCES subjects(id)

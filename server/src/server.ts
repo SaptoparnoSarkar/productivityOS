@@ -24,6 +24,7 @@ const start = async () => {
     await fastify.register(fastifyCors, {
       origin: "http://localhost:3000",
       credentials: true,
+      methods: ["GET", "POST", "PATCH", "DELETE"],
     });
     fastify.log.info("cors plugin check");
 

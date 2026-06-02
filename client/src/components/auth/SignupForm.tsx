@@ -7,6 +7,7 @@ import { FieldGroup } from '../ui/field'
 import { CustomInputs } from '../ui/CustomInputs'
 import { signup } from '@/lib/api/auth'
 import { useState } from 'react'
+import Spinner from '../ui/spinner'
 
 export function SignupForm() {
     const form = useForm<SignupFormData>({
@@ -88,9 +89,7 @@ export function SignupForm() {
                     >
                         {form.formState.isSubmitting ? (
                             <span className='auth-btn-loading'>
-                                <svg className='auth-spinner' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeDasharray="31.4 31.4" />
-                                </svg>
+                                <Spinner />
                                 Creating account…
                             </span>
                         ) : (

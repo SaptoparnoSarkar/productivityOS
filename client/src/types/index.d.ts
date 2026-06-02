@@ -11,4 +11,5 @@ export interface CustomInputProps {
   type?: string;
   inputMode?: "text" | "numeric" | "tel" | "url" | "email" | "search" | "none";
   disabled?: boolean;
+  isTextArea?: boolean;
 }

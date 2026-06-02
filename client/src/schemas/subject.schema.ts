@@ -8,3 +8,11 @@ export const createSubjectSchema = z.object({
 });
 
 //Minimal Schema for test flow.
+
+export const updateSubjectSchema = createSubjectSchema
+  .omit({ type: true, has_pomodoro: true })
+  .partial();
+
+export type CreateSubjectInput = z.infer<typeof createSubjectSchema>;
+export type UpdateSubjectInput = z.infer<typeof updateSubjectSchema>;
+

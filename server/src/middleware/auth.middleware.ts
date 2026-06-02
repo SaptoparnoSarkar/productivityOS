@@ -9,6 +9,7 @@ const PUBLIC_ROUTES = [
   "POST:/auth/signin",
   "POST:/auth/verify-email",
   "POST:/auth/resend-code",
+  "POST:/auth/refresh-token",
 ];
 
 async function authMiddleware(fastify: FastifyInstance) {

@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 export const createCounterSchema = z.object({
-  target_value: z.number().int().positive().max(1_000_000),
+  target_value: z.number().int().positive().max(1_000_000, { message: "Target must be a positive number" }),
   unit: z.string().trim().min(1, { message: "Unit is required" }).max(50),
 });
 

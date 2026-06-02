@@ -5,7 +5,7 @@ import {
   UpdateSubjectInput,
 } from "@/types/subject";
 
-//I call this file the unwrapper of envelop sent by the server which is fetched by the apiClient.
+//I call this file the unwrapper of envelope sent by the server which is fetched by the apiClient.
 
 // GET /api/subjects -> { subjects: Subject[] }
 export async function listSubjects(): Promise<Subject[]> {

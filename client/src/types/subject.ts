@@ -25,5 +25,4 @@ export type CreateSubjectInput = {
 };
 
 export type UpdateSubjectInput = Partial<
-  Omit<CreateSubjectInput, "type" | "has_pomdoro">
->;
+  Omit<CreateSubjectInput, "type" | "has_pomodoro">>;

@@ -7,7 +7,7 @@ import { CustomInputProps } from '@/types/index'
 
 //Gonna reuse this everywhere
 
-export function CustomInputs({ control, name, label, placeholder, autocomplete, type = 'text', inputMode = 'none', disabled = false }: CustomInputProps) {
+export function CustomInputs({ control, name, label, placeholder, autocomplete, type = 'text', inputMode = 'none', disabled = false, }: CustomInputProps) {
     return (
         <Controller
             name={name}
