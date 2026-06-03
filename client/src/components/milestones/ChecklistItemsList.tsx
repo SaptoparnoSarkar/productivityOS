@@ -1,8 +1,10 @@
 'use client'
 
-import { listChecklistItems } from "@/lib/api/checklistItems";
+import { createChecklistItem, deleteChecklistItem, listChecklistItems, updateChecklistItem } from "@/lib/api/checklistItems";
 import { ChecklistItem } from "@/types/checklistItem";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { CustomInputs } from "../ui/CustomInputs";
+
 
 interface Props {
     milestoneId: number;
@@ -14,35 +16,130 @@ export default function ChecklistItemsList({ milestoneId }: Props) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>('');
 
-    useEffect(() => {
-        setError('');
-        setLoading(true);
-        async function loadItems() {
-            try {
-                const data = await listChecklistItems(milestoneId);
-                setItems(data);
-            } catch (error) {
-                setError(error instanceof Error ? error.message : 'Failed to Load');
-            } finally {
-                setLoading(false);
-            }
+    //Input for the inline "add item"
+    const [newLabel, setNewLabel] = useState('');
+    const [adding, setAdding] = useState(false);
+
+    //For editing Label
+    const [editingId, setEditingId] = useState<number | null>(null);
+    const [editLabel, setEditLabel] = useState('');
+
+    const loadItems = useCallback(async () => {
+        try {
+            const data = await listChecklistItems(milestoneId);
+            setItems(data);
+        } catch (error) {
+            setError(error instanceof Error ? error.message : 'Failed to Load');
+        } finally {
+            setLoading(false);
         }
+    }, [milestoneId])
+
+    useEffect(() => {
         loadItems();
-    }, [milestoneId]);
+    }, [loadItems])
 
-    if (loading) return <p>Loading...</p>
-    if (error) return <p className="text-red-500">{error}</p>
-    if (items.length === 0) return <p>No items yet.</p>
+    //For toggling the checkbox
+    async function handleToggle(item: ChecklistItem) {
+        try {
+            await updateChecklistItem(item.id, { is_done: !item.is_done });
+            await loadItems();
+        } catch (error) {
+            setError(error instanceof Error ? error.message : 'Failed to update');
+        }
+    }
+
+    //Add Handler - create, clear input, refetch
+    async function handleAdd(e: React.FormEvent) {
+        e.preventDefault();
+        const label = newLabel.trim();
+        if (!label) return;
+        setAdding(true);
+        try {
+            await createChecklistItem({ milestone_id: milestoneId, label })
+            setNewLabel('');
+            await loadItems();
+        } catch (error) {
+            setError(error instanceof Error ? error.message : 'Failed to add item');
+        } finally {
+            setAdding(false);
+        }
+    }
+
+    //Save Handler for Edit
+    async function handleSaveLabel(itemId: number) {
+        const label = editLabel.trim();
+        if (!label) return;
+        try {
+            await updateChecklistItem(itemId, { label });
+            setEditingId(null);
+            await loadItems();
+        }
+        catch (error) {
+            setError(error instanceof Error ? error.message : 'Failed to update label')
+        }
+    }
+
+    //Delete Handler 
+    async function handleDelete(itemId: number) {
+        if (!confirm('Delete this item?')) return;
+        try {
+            await deleteChecklistItem(itemId)
+            await loadItems();
+        } catch (error) {
+            setError(error instanceof Error ? error.message : 'Failed to delete');
+        }
+    }
+
+
+    if (loading) return <div>Loading...</div>
+    if (error) return <div className="text-red-500">{error}</div>
+
     return (
-        <ul>
-            {items.map((item) => (
+        <div>
+            {/* tiny inline add form */}
+            <form onSubmit={handleAdd}>
+                <input
+                    type="text"
+                    value={newLabel}
+                    onChange={(e) => setNewLabel(e.target.value)}
+                    placeholder="Add an item..."
+                    disabled={adding}
+                />
+                <button type="submit" disabled={adding || newLabel.trim() === ''}>
+                    {adding ? 'Adding...' : 'Add'}
+                </button>
+            </form>
 
-                <li key={item.id}>
-                    <input type="checkbox" checked={item.is_done} readOnly />
-                    {item.label}
-                </li>
+            {items.length === 0 ? (
+                <p>No items yet.</p>
+            ) : (
+                <ul>
+                    {items.map((item) => (
+                        <li key={item.id}>
+                            {editingId === item.id ? (
+                                //EDIT MODE
+                                <>
+                                    <input value={editLabel} onChange={(e) => setEditLabel(e.target.value)} />
+                                    <button type="button" onClick={() => handleSaveLabel(item.id)}>Save</button>
+                                    <button type="button" onClick={() => setEditingId(null)}>Cancel</button>
+                                </>
+                            ) : (
+                                //NORMAL MODE
+                                <>
+                                    <input type="checkbox" checked={item.is_done} onChange={() => handleToggle(item)} />
+                                    {item.label}
+                                    <button type="button" onClick={() => { setEditingId(item.id); setEditLabel(item.label); }}>Edit</button>
+                                    <button type='button' onClick={() => handleDelete(item.id)}>
+                                        X
+                                    </button>
+                                </>
+                            )}
 
-            ))}
-        </ul>
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
     )
 }

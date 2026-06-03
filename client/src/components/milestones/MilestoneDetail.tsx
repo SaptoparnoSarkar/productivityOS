@@ -5,6 +5,8 @@ import { Milestone } from "@/types/milestone";
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react";
 import ChecklistItemsList from "./ChecklistItemsList";
+import CounterDisplay from "./CounterDisplay";
+
 
 export default function MilestoneDetail() {
     const params = useParams();
@@ -47,7 +49,7 @@ export default function MilestoneDetail() {
 
     //Delete Handler
     async function handleDelete() {
-        if (!window.confirm('Are you sure?')) return;
+        if (!window.confirm(`Delete this milestone?`)) return;
         setDeleting(true);
         setDeleteError('');
         try {
@@ -67,7 +69,7 @@ export default function MilestoneDetail() {
         <div>
             <h1>{milestone.title}</h1>
             <p>Type: {milestone.type}</p>
-            <p>{milestone.type === 'checklist' ? <ChecklistItemsList milestoneId={milestoneId} /> : 'Counter'}</p>
+            <p>{milestone.type === 'checklist' ? <ChecklistItemsList milestoneId={milestoneId} /> : <CounterDisplay milestoneId={milestoneId} />}</p>
 
             <button onClick={handleDelete} disabled={deleting}>{deleting ? 'Deleting...' : 'Delete'}</button>
             {deleteError && <p className="form-error">{deleteError}</p>}

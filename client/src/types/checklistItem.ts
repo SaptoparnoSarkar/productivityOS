@@ -4,3 +4,13 @@ export type ChecklistItem = {
     label: string,
     is_done: boolean
 }
+
+export type CreateChecklistItemInput = {
+    milestone_id: number,
+    label: string
+}
+
+export type UpdateChecklistItemInput = {
+    label?: string,
+    is_done?: boolean
+}

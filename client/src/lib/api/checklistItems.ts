@@ -1,14 +1,13 @@
-import { ChecklistItem } from "@/types/checklistItem";
+import { ChecklistItem, CreateChecklistItemInput, UpdateChecklistItemInput } from "@/types/checklistItem";
 import { apiClient } from "../apiClient";
 
 
 export async function createChecklistItem(
-    milestoneId: number,
-    label: string,
+    input: CreateChecklistItemInput
 ): Promise<ChecklistItem> {
-    const response = await apiClient<{ message: string; checklistItem: ChecklistItem }>(`/api/milestones/${milestoneId}/checklist-items`, {
+    const response = await apiClient<{ message: string; checklistItem: ChecklistItem }>(`/api/milestones/${input.milestone_id}/checklist-items`, {
         method: "POST",
-        body: JSON.stringify({ label }),
+        body: JSON.stringify({ label: input.label }),
     })
     return response.checklistItem
 }
@@ -20,19 +19,9 @@ export async function listChecklistItems(
     return response.checklistItems;
 }
 
-export async function getChecklistItem(
-    checklistItemId: number
-): Promise<ChecklistItem> {
-    const response = await apiClient<{ checklistItem: ChecklistItem }>(`/api/checklist-items/${checklistItemId}`)
-    return response.checklistItem
-}
-
 export async function updateChecklistItem(
     checklistItemId: number,
-    input: {
-        label?: string;
-        is_done?: boolean;
-    },
+    input: UpdateChecklistItemInput,
 ): Promise<ChecklistItem> {
     const response = await apiClient<{ checklistItem: ChecklistItem }>(`/api/checklist-items/${checklistItemId}`, {
         method: "PATCH",

@@ -7,7 +7,6 @@ import {
 import {
   createChecklist,
   deleteChecklist,
-  getChecklistItem,
   listChecklists,
   updateChecklist,
 } from "../services/checklistItem.service.js";
@@ -59,20 +58,6 @@ export async function checklistItemRoutes(fastify: FastifyInstance) {
     },
   );
 
-  //GET one Checklist GET    /api/checklist-items/:itemId
-  fastify.get<{ Params: { itemId: string } }>(
-    "/api/checklist-items/:itemId",
-    async (request, reply) => {
-      const itemId = Number(request.params.itemId);
-      //Guard
-      if (isNaN(itemId)) {
-        throw new ValidationError("Invalid Item ID");
-      }
-
-      const checklistItem = await getChecklistItem(itemId, request.userId);
-      return reply.status(200).send({ checklistItem });
-    },
-  );
 
   //Update Checklist PATCH  /api/checklist-items/:itemId
   fastify.patch<{ Params: { itemId: string } }>(

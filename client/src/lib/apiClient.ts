@@ -13,6 +13,9 @@ async function rawFetch(path: string, options?: RequestInit) {
   });
 }
 
+// A single promise to coordinate concurrent token refresh attempts.
+let refreshPromise: Promise<boolean> | null = null;
+
 //The generic let's the caller what shape to expect.
 export async function apiClient<T>(
   path: string,
@@ -25,13 +28,26 @@ export async function apiClient<T>(
 
 
   //Access Token Expire? Try to refresh ONCE
-  if (response.status === 401 && !isRetry && path !== "/auth/refresh-token") {
-    const refreshRes = await rawFetch("/auth/refresh-token", {
-      method: "POST"
-    })
+  //We only refresh for protected endpoints (not public auth endpoints starting with /auth/)
+  if (response.status === 401 && !isRetry && !path.startsWith("/auth/")) {
+    if (!refreshPromise) {
+      refreshPromise = rawFetch("/auth/refresh-token", {
+        method: "POST",
+      })
+        .then((res) => {
+          refreshPromise = null; // Clear it when finished
+          return res.ok;
+        })
+        .catch(() => {
+          refreshPromise = null;
+          return false;
+        });
+    }
 
-    if (refreshRes.ok) {
-      //New access token is now set
+    const isRefreshed = await refreshPromise;
+
+    if (isRefreshed) {
+      //New access token is now set, retry the original request
       return apiClient<T>(path, options, true);
     }
 

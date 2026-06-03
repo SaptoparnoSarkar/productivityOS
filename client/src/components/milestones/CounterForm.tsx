@@ -14,19 +14,19 @@ const schema = z.object({
 
 export type CounterFormValues = z.output<typeof schema>;
 
-type Props = {
-    onSubmit: (values: CounterFormValues) => void | Promise<void>;
-}
+type Props =
+    | { mode: 'create'; onSubmit: (v: CounterFormValues) => void | Promise<void> }
+    | { mode: 'edit'; defaultValues: CounterFormValues; onSubmit: (v: CounterFormValues) => void | Promise<void> };
 
-export function CounterForm({ onSubmit }: Props) {
+export function CounterForm(props: Props) {
+    const { onSubmit, mode } = props;
 
     const form = useForm<z.input<typeof schema>, any, z.output<typeof schema>>({
         resolver: zodResolver(schema),
-        defaultValues: {
-            target_value: 100,
-            unit: ''
-        }
-    })
+        defaultValues: mode === 'edit' ? props.defaultValues : { target_value: 100, unit: '' },
+    });
+
+
     return (
         <form onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
@@ -37,7 +37,7 @@ export function CounterForm({ onSubmit }: Props) {
             <button type="submit" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? (
                     <span><Spinner />Saving...</span>
-                ) : 'Create Counter'}
+                ) : (props.mode === 'edit' ? 'Save Changes' : 'Create Counter')}
             </button>
         </form>
     )

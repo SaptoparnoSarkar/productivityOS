@@ -35,19 +35,6 @@ export async function dbGetChecklistItemsByMilestoneId(
   return result.rows;
 }
 
-//Get Checklist Items
-export async function dbGetChecklistItemById(itemId: number, userId: number) {
-  const result = await pool.query(
-    `SELECT mc.*
-         FROM milestone_checklist_items mc
-         JOIN milestones m ON mc.milestone_id = m.id
-         JOIN subjects s ON m.subject_id = s.id
-         WHERE mc.id = $1 AND s.user_id = $2`,
-    [itemId, userId],
-  );
-  return result.rows[0] || null;
-}
-
 //Update Checklist Items
 export async function dbUpdateChecklistItem(
   itemId: number,

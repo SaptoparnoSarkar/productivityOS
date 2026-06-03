@@ -1,7 +1,6 @@
 import {
   dbCreateChecklistItem,
   dbDeleteChecklistItem,
-  dbGetChecklistItemById,
   dbGetChecklistItemsByMilestoneId,
   dbUpdateChecklistItem,
 } from "../db/queries/checklistItems.queries.js";
@@ -31,14 +30,6 @@ export async function listChecklists(milestoneId: number, userId: number) {
   return checklists;
 }
 
-//Get Checklist by Id
-export async function getChecklistItem(itemId: number, userId: number) {
-  const checklist = await dbGetChecklistItemById(itemId, userId);
-  if (!checklist) {
-    throw new NotFoundError("Checklist Not Found");
-  }
-  return checklist;
-}
 
 //Update Checklist
 export async function updateChecklist(

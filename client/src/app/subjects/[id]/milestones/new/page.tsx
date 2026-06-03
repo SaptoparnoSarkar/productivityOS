@@ -1,12 +1,12 @@
 'use client'
 
-import { ChecklistForm, ChecklistFormValues } from "@/components/milestones/ChecklistForm";
+import { ChecklistForm } from "@/components/milestones/ChecklistForm";
 import { CounterForm, CounterFormValues } from "@/components/milestones/CounterForm";
 import MilestoneForm from "@/components/milestones/MilestoneForm";
-
 import { createChecklistItem } from "@/lib/api/checklistItems";
 import { createCounter } from "@/lib/api/counters";
 import { createMilestone } from "@/lib/api/milestones"
+import { ChecklistFormValues } from "@/schemas/checklist.schema";
 import { CreateMilestoneInput } from "@/schemas/milestone.schema";
 import { useParams, useRouter } from "next/navigation"
 import { useState } from "react";
@@ -43,7 +43,7 @@ export default function NewMilestonePage() {
     async function handleChecklistSubmit(values: ChecklistFormValues) {
         if (!createdMilestone) return;
         try {
-            await createChecklistItem(createdMilestone.id, values.label);
+            await createChecklistItem({ milestone_id: createdMilestone.id, label: values.label });
             router.push(`/subjects/${subjectId}/milestones/${createdMilestone.id}`);
         } catch (error) {
             if (error instanceof Error) {

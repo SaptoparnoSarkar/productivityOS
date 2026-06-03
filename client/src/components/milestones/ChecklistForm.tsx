@@ -6,12 +6,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldGroup } from "../ui/field";
 import { CustomInputs } from "../ui/CustomInputs";
+import { createChecklistItemSchema, ChecklistFormValues } from "@/schemas/checklist.schema";
 
-const schema = z.object({
-    label: z.string().trim().min(1, { message: 'Label is required' }).max(200),
-})
 
-export type ChecklistFormValues = z.infer<typeof schema>
 
 type Props = {
     onSubmit: (values: ChecklistFormValues) => void | Promise<void>;
@@ -20,7 +17,7 @@ type Props = {
 export function ChecklistForm({ onSubmit }: Props) {
 
     const form = useForm<ChecklistFormValues>({
-        resolver: zodResolver(schema),
+        resolver: zodResolver(createChecklistItemSchema),
         defaultValues: {
             label: '',
         }
