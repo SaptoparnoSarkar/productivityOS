@@ -16,13 +16,15 @@ async function authMiddleware(fastify: FastifyInstance) {
   //Decorate request with userId
   fastify.decorateRequest("userId");
 
-  //onRequest hook that skips public route
+
   fastify.addHook("onRequest", async (request, reply) => {
     //Build route key
     const routeKey = `${request.method}:${request.routeOptions.url}`;
+
+    //onRequest hook that skips public route
     if (PUBLIC_ROUTES.includes(routeKey)) return;
 
-    //Read access token cookie
+    //If there’s no access_token cookie, the request is unauthorized.
     const token = request.cookies.access_token;
     if (!token) {
       throw new UnauthorizedError("Cookies Not Found");

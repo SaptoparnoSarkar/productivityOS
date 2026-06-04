@@ -1,9 +1,11 @@
+import { AuthShell } from "@/components/auth/AuthShell"
 import { SigninForm } from "@/components/auth/SigninForm"
 
 export default function SigninPage() {
     return (
-        <main className="auth-page">
+        <AuthShell>
             <SigninForm />
-        </main>
+        </AuthShell>
+
     )
 }

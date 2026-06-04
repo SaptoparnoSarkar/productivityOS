@@ -20,7 +20,7 @@ export function SigninForm() {
 
   const router = useRouter();
 
-  const [formError, setFormError] = useState<string>(" ");
+  const [formError, setFormError] = useState<string>("");
 
   async function onSubmit(data: SigninFormData) {
     setFormError("");
@@ -29,6 +29,7 @@ export function SigninForm() {
       router.push("/subjects");
     } catch (error) {
       if (error instanceof Error) {
+
         //Handle Verify Your Email Case
         if (error.message === "Please Verify Your Email") {
           router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
@@ -42,7 +43,7 @@ export function SigninForm() {
   }
 
   return (
-    <div className="auth-card">
+    <>
       <div className="auth-header">
         <h1 className="auth-title">Welcome Back</h1>
         <p className="auth-subtitle">Sign in to your account to continue.</p>
@@ -95,6 +96,6 @@ export function SigninForm() {
           </p>
         </div>
       </form>
-    </div>
+    </>
   );
 }
