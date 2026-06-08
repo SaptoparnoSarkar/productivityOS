@@ -4,59 +4,35 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* DESIGN TOKENS */
 :root {
-  --primary: oklch(0.205 0 0);
-  --primary-hover: #4f46e5;
-  --primary-glow: rgba(99, 102, 241, 0.25);
-  --surface: #ffffff;
-  --surface-border: #e5e7eb;
-  --surface-hover: #f9fafb;
-  --muted: oklch(0.97 0 0);
-  --error: #ef4444;
+
+  /* Error tokens */
+  --error:    #ef4444;
   --error-bg: rgba(239, 68, 68, 0.08);
-  --radius: 0.625rem;
-  --radius-sm: 8px;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+    /* surfaces — each layer one notch lighter (the depth trick) */
+  --bg:            #0a0a0f;   /* app background, near-black blue */
+  --surface:       #16161f;   /* cards, sidebar */
+  --surface-2:     #1f1f2b;   /* inputs, nested elements */
+  --border:        rgba(255,255,255,0.08); /* hairline dividers */
+
+  /* accent — the ONE purple, used scarcely */
+  --accent:        #8b5cf6;
+  --accent-hover:  #a78bfa;
+  --accent-glow:   rgba(139,92,246,0.45); /* for the soft glow */
+
+  /* text — three shades = hierarchy */
+  --text:          #f4f4f5;   /* headings, primary */
+  --text-muted:    #a1a1aa;   /* subtitles, labels */
+  --text-dim:      #6b7280;   /* placeholders, hints */
+
+  /* shape */
+  --radius:        14px;
+  --radius-lg:     20px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --surface: #18181b;
-    --surface-border: #27272a;
-    --surface-hover: #1f1f23;
-    --muted: #a1a1aa;
-    --error-bg: rgba(239, 68, 68, 0.12);
-  }
-}
-
+/* BASE RESET */
 @layer base {
   * {
     box-sizing: border-box;
@@ -65,25 +41,22 @@
   }
 
   body {
-    font-family: var(--font-sans,
-        "Inter",
-        system-ui,
-        -apple-system,
-        sans-serif);
+    font-family: var(--font-sans, "Inter", system-ui, -apple-system, sans-serif);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 }
 
+/* COMPONENTS */
 @layer components {
 
-  /* ─── Auth Page ─── */
+  /*  AUTH — Card */
 
   .auth-glass-card {
     width: 100%;
     max-width: 28rem;
     padding: 2.5rem;
-    background: hsla(232, 36%, 40%, 0.443);
+    background: hsla(234, 33%, 17%, 0.443);
     backdrop-filter: blur(20px) saturate(160%);
     -webkit-backdrop-filter: blur(20px) saturate(160%);
     border: 1px solid rgba(139, 92, 246, 0.35);
@@ -91,11 +64,10 @@
     box-shadow:
       0 8px 40px rgba(79, 38, 200, 0.35),
       0 0 0 1px rgba(167, 139, 250, 0.08) inset;
+    transition: 1000ms ease-in-out;
   }
 
-
-
-  /* ─── Auth Layout ─── */
+  /*  AUTH — Typography  */
 
   .auth-header {
     margin-bottom: 32px;
@@ -106,10 +78,7 @@
     font-weight: 700;
     line-height: 1.25;
     letter-spacing: -0.03em;
-    background: linear-gradient(135deg, #e0d7ff 0%, #c4b5fd 50%, #a78bfa 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: hsla(0, 0%, 100%, 0.867);
   }
 
   .auth-subtitle {
@@ -120,6 +89,26 @@
     color: rgba(196, 181, 253, 0.7);
   }
 
+  .auth-footer {
+    font-size: 13px;
+    color: rgba(196, 181, 253, 0.65);
+  }
+
+  .auth-link {
+    color: #a78bfa;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+  }
+
+  .auth-link:hover {
+    color: #c4b5fd;
+    text-shadow: 0 0 12px rgba(167, 139, 250, 0.6);
+    cursor: pointer;
+  }
+
+  /*  AUTH — Form & Fields  */
+
   .auth-form {
     display: flex;
     flex-direction: column;
@@ -129,10 +118,10 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    color: #e0d7ff;
+    color: #ffffff;
   }
 
-  /* Override shadcn Input inside auth glass card */
+  /* Override shadcn Input inside auth card */
   .auth-glass-card input {
     background: rgba(255, 255, 255, 0.07) !important;
     border-color: rgba(139, 92, 246, 0.4) !important;
@@ -152,13 +141,15 @@
     outline: none;
   }
 
-  /* Labels inside glass card */
+  /* Labels inside auth card */
   .auth-glass-card label {
-    color: #c4b5fd;
+    color: #ffffff;
     font-size: 13px;
     font-weight: 500;
     letter-spacing: 0.01em;
   }
+
+  /*  AUTH — Actions & Buttons  */
 
   .auth-actions {
     display: flex;
@@ -217,40 +208,18 @@
     gap: 8px;
   }
 
-  .auth-spinner {
-    width: 16px;
-    height: 16px;
-    animation: spin 0.8s linear infinite;
-  }
+  /* AUTH — Feedback Messages  */
 
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  .auth-footer {
-    font-size: 13px;
-    color: rgba(196, 181, 253, 0.65);
-  }
-
-  .auth-link {
-    color: #a78bfa;
-    font-weight: 600;
-    text-decoration: none;
-    transition: color 0.2s ease, text-shadow 0.2s ease;
-  }
-
-  .auth-link:hover {
-    color: #c4b5fd;
-    text-shadow: 0 0 12px rgba(167, 139, 250, 0.6);
-    cursor: pointer;
-  }
-
-  .auth-link:disabled {
-    color: rgba(167, 139, 250, 0.4);
-    cursor: not-allowed;
-    opacity: 0.8;
+  .auth-error {
+    color: #fca5a5;
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 0.5rem 0.75rem;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-radius: 8px;
+    animation: fadeShake 0.4s ease-out;
+    width: 100%;
   }
 
   .auth-resend-message {
@@ -260,43 +229,16 @@
     color: #437a22;
   }
 
-  .form-error {
-    color: #fca5a5;
-    font-size: 0.8rem;
-    text-align: center;
-    padding: 0.5rem 0.75rem;
-    background: rgba(239, 68, 68, 0.12);
-    border: 1px solid rgba(239, 68, 68, 0.25);
-    border-radius: 8px;
-    animation: fadeShake 0.4s ease-out;
-    margin-top: 10px;
-  }
-
   @keyframes fadeShake {
-    0% {
-      opacity: 0;
-      transform: translateX(-4px);
-    }
-
-    25% {
-      transform: translateX(4px);
-    }
-
-    50% {
-      transform: translateX(-2px);
-    }
-
-    75% {
-      transform: translateX(2px);
-    }
-
-    100% {
-      opacity: 1;
-      transform: translateX(0);
-    }
+    0%   { opacity: 0; transform: translateX(-4px); }
+    25%  { transform: translateX(4px); }
+    50%  { transform: translateX(-2px); }
+    75%  { transform: translateX(2px); }
+    100% { opacity: 1; transform: translateX(0); }
   }
 
-  /* Subjects */
+  /*  SUBJECTS — Page & Card  */
+
   .subject-page {
     display: flex;
     align-items: center;
@@ -341,7 +283,8 @@
     color: var(--muted-foreground);
   }
 
-  /* Field block — label + control stacked */
+  /*  SUBJECTS — Form & Fields  */
+
   .subject-fields {
     display: flex;
     flex-direction: column;
@@ -364,7 +307,6 @@
     background: #fff;
     font-size: 1rem;
     color: #111;
-    /* Native arrow stays — no need to fight it for a skeleton */
   }
 
   .subject-fields select:focus {
@@ -372,14 +314,14 @@
     border-color: #111;
   }
 
-  /* Top-level form error */
   .form-error {
     color: #c0392b;
     font-size: 0.9rem;
     margin: 1rem 0 0;
   }
 
-  /* Submit button — mirrors the auth "Sign in" button */
+  /*  SUBJECTS — Submit Button  */
+
   .subject-submit-btn {
     width: 100%;
     margin-top: 1.5rem;
@@ -416,8 +358,210 @@
   }
 
   @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
+    to { transform: rotate(360deg); }
+  }
+
+  /*  SIDEBAR  */
+
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 24px 16px;
+    background: #90abdf;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .nav-item {
+    display: block;
+    padding: 10px 14px;
+    border-radius: 10px;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  .nav-locked {
+    color: #5b6472;
+    cursor: not-allowed;
+    font-size: 13px;
+  }
+
+  /*  TOPBAR  */
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 24px;
+  }
+
+  .topbar-search {
+    width: 320px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: #f4f5f7;
+    cursor: not-allowed;
+  }
+
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .topbar-user {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--foreground);
+  }
+
+  .topbar-signout {
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--foreground);
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .topbar-signout:hover {
+    background: var(--surface-hover);
+  }
+
+  /*  HERO  */
+
+  .hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 24px 24px;
+  }
+
+  .hero-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero-title {
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  .hero-subtitle {
+    color: #6b7280;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .btn-primary {
+    padding: 12px 20px;
+    border-radius: 12px;
+    background: #16a34a;
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+  }
+
+  /*  METRIC CARDS  */
+
+  .metric-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 0 24px 24px;
+  }
+
+  .metric-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px;
+    border-radius: 16px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .metric-card-active {
+    background: #16a34a;
+    color: #fff;
+    border-color: transparent;
+  }
+
+  .metric-label {
+    font-size: 13px;
+    opacity: 0.8;
+  }
+
+  .metric-value {
+    font-size: 32px;
+    font-weight: 700;
+  }
+
+  .metric-hint {
+    font-size: 12px;
+    opacity: 0.7;
+  }
+
+  /*  WIDGETS  */
+
+  .widget-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 0 24px 24px;
+  }
+
+  .widget-card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    padding: 20px;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .widget-header {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 12px;
+  }
+
+  .widget-title {
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .widget-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .widget-locked {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #9ca3af;
+    font-size: 14px;
   }
 }

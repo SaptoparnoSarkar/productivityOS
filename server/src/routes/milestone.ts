@@ -3,6 +3,7 @@ import {
   createMilestone,
   deleteMilestone,
   getMilestone,
+  getUpcomingMilestones,
   listMilestones,
   updateMilestone,
 } from "../services/milestone.service.js";
@@ -125,5 +126,12 @@ export async function milestoneRoutes(fastify: FastifyInstance) {
 
       return reply.status(200).send({ message: "Deleted Successfully" });
     },
+
   );
+  
+  //Upcoming Milestone for a User GET /api/milestones/upcoming?limit=5
+  fastify.get('/api/milestones/upcoming',async (request,reply)=>{
+    const milestones = await getUpcomingMilestones(request.userId)
+    return reply.status(200).send({milestones})
+  })
 }

@@ -120,3 +120,12 @@ export async function dbDeleteMilestone(
   );
   return results.rows[0] || null;
 }
+
+//Upcoming Milestones
+export async function dbGetUpcomingMilestones(userId: number, limit: number){
+  const results = await pool.query(
+    `SELECT m.* FROM milestones m JOIN subjects s ON m.subject_id = s.id WHERE s.user_id = $1 AND m.due_date >= NOW() ORDER BY m.due_date ASC LIMIT $2`,
+    [userId, limit]
+  )
+  return results.rows;
+}

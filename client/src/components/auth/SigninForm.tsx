@@ -26,10 +26,9 @@ export function SigninForm() {
     setFormError("");
     try {
       await signin(data.email, data.password);
-      router.push("/subjects");
+      router.push("/dashboard");
     } catch (error) {
       if (error instanceof Error) {
-
         //Handle Verify Your Email Case
         if (error.message === "Please Verify Your Email") {
           router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);

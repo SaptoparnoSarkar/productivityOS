@@ -55,3 +55,8 @@ export async function deleteMilestone(
         method: "DELETE"
     })
 }
+
+export async function listUpcomingMilestone(limit = 5): Promise<Milestone[]> {
+    const response = await apiClient<{milestones: Milestone[]}>(`/api/milestones/upcoming?limit=${limit}`)
+    return response.milestones;
+}

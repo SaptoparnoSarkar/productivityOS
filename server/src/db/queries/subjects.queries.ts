@@ -102,3 +102,12 @@ export async function dbDeleteSubject(subjectId: number, userId: number) {
   );
   return result.rows[0] || null;
 }
+
+//get recent subjects
+export async function dbGetRecentSubjects(userId: number, limit: number) {
+  const result = await pool.query(
+    "SELECT * FROM subjects WHERE user_id = $1 ORDER BY updated_at DESC LIMIT $2",
+    [userId, limit],
+  );
+  return result.rows.length > 0 ? result.rows : null;
+}

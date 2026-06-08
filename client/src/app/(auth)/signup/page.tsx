@@ -1,5 +1,6 @@
 import { SignupForm } from "@/components/auth/SignupForm"
 import type { Metadata } from "next"
+import { AuthShell } from "@/components/auth/AuthShell"
 
 export const metadata: Metadata = {
     title: "Sign Up — ProductivityOS",
@@ -8,8 +9,9 @@ export const metadata: Metadata = {
 
 export default function SignupPage() {
     return (
-        <main className="auth-page">
+        <AuthShell>
             <SignupForm />
-        </main>
+        </AuthShell>
     )
 }
+

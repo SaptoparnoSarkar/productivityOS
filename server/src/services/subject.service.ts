@@ -1,6 +1,7 @@
 import {
   dbCreateSubject,
   dbDeleteSubject,
+  dbGetRecentSubjects,
   dbUpdateSubject,
   getSubjectById,
   getSubjectsByUserId,
@@ -55,4 +56,13 @@ export async function deleteSubject(subjectId: number, userId: number) {
     throw new NotFoundError("Subject Not Found");
   }
   return { message: "Subject Deleted Successfully" };
+}
+
+//Recent Subjects
+export async function getRecentSubjects(userId: number, limit = 5) {
+  const subjects = await dbGetRecentSubjects(userId, limit);
+  if (!subjects) {
+    throw new NotFoundError("No Subjects Created Yet!");
+  }
+  return subjects;
 }

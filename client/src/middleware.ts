@@ -4,7 +4,7 @@ import { jwtVerify } from 'jose'
 //frontend page paths 
 
 const PUBLIC_ROUTES = ['/signin', '/signup', '/verify-email']
-const PROTECTED_ROUTES = ['/dashboard']
+const PROTECTED_ROUTES = ['']
 
 export async function middleware(request: NextRequest) {
     //Get the path

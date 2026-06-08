@@ -6,6 +6,7 @@ import {
 import {
   createSubject,
   deleteSubject,
+  getRecentSubjects,
   getSubject,
   getSubjects,
   updateSubject,
@@ -100,7 +101,12 @@ export async function subjectRoutes(fastify: FastifyInstance) {
         .send({ message: "Subject deleted successfully" });
     },
   );
+
+  //Recent Subjects GET /api/subjects/recent
+  fastify.get("/api/subjects/recent", async (request, reply) => {
+    const subjects = await getRecentSubjects(request.userId);
+    return reply.status(200).send({ subjects });
+  });
 }
 
-//Todo : Make an error toolkit to avoid repeating error handling code
 //Todo: Delete subject + XP reversal hook

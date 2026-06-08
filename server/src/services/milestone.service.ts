@@ -3,6 +3,7 @@ import {
   dbDeleteMilestone,
   dbGetMilestoneById,
   dbGetMilestonesBySubjectId,
+  dbGetUpcomingMilestones,
   dbUpdateMilestone,
 } from "../db/queries/milestones.queries.js";
 import type {
@@ -85,4 +86,13 @@ export async function deleteMilestone(
     throw new NotFoundError("Milestone Not Found");
   }
   return { message: "Milestone Deleted Successfully" };
+}
+
+//Upcoming Milestones
+export async function getUpcomingMilestones(userId:number, limit= 5) {
+  const milestones = await dbGetUpcomingMilestones(userId, limit);
+  if(!milestones){
+    throw new NotFoundError("No Upcoming Milestones");
+  }
+  return milestones;
 }
