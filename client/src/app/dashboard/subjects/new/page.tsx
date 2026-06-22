@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 export default function SubjectCreatePage() {
   const router = useRouter();
   return (
-    <main className="subject-page">
-      <SubjectForm mode="create" onSuccess={() => router.push("/subjects")} />
+    <main className="form-page">
+      <SubjectForm mode="create" onSuccess={() => router.push("/dashboard/subjects")} />
     </main>
   );
 }

@@ -4,8 +4,9 @@ import {
   dbGetChecklistItemsByMilestoneId,
   dbUpdateChecklistItem,
 } from "../db/queries/checklistItems.queries.js";
+import { upsertDailyProgress } from "../db/queries/xp.queries.js";
 import type { UpdateChecklistInputType } from "../schemas/checklistItem.schema.js";
-import { NotFoundError, ValidationError } from "../utils/errors.js";
+import { NotFoundError } from "../utils/errors.js";
 
 //Create CheckList
 export async function createChecklist(
@@ -40,6 +41,13 @@ export async function updateChecklist(
   const updated = await dbUpdateChecklistItem(itemId, userId, input);
   if (!updated) {
     throw new NotFoundError("Checklist Not Found");
+  }
+  const today = new Date().toISOString().split("T")[0]!;
+  if (updated.done === true) {
+    upsertDailyProgress(userId, updated.milestoneId, today, +1);
+  }
+  else {
+    upsertDailyProgress(userId, updated.milestoneId, today, -1)
   }
 
   return updated;

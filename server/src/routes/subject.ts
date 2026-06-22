@@ -6,9 +6,10 @@ import {
 import {
   createSubject,
   deleteSubject,
-  getRecentSubjects,
   getSubject,
   getSubjects,
+  markSubjectComplete,
+  upcomingSubjects,
   updateSubject,
 } from "../services/subject.service.js";
 import { ValidationError } from "../utils/errors.js";
@@ -33,7 +34,7 @@ export async function subjectRoutes(fastify: FastifyInstance) {
   fastify.get("/api/subjects", async (request, reply) => {
     // call service, handle errors
     const subjects = await getSubjects(request.userId);
-    return reply.status(200).send({ subjects });
+    return reply.status(200).send({ subjects: subjects ?? [] });
   });
 
   //Get Subject  GET /api/subjects/:id
@@ -102,11 +103,25 @@ export async function subjectRoutes(fastify: FastifyInstance) {
     },
   );
 
-  //Recent Subjects GET /api/subjects/recent
-  fastify.get("/api/subjects/recent", async (request, reply) => {
-    const subjects = await getRecentSubjects(request.userId);
+  //Upcoming Subjects GET /api/subjects/upcoming
+  fastify.get("/api/subjects/upcoming", async (request, reply) => {
+    const subjects = await upcomingSubjects(request.userId, 5);
     return reply.status(200).send({ subjects });
   });
+
+
+  //Mark Subject Complete PATCH /api/subjects/:id/complete
+  fastify.patch<{ Params: { id: string } }>('/api/subjects/:id/complete', async (request, reply) => {
+    const subjectId = Number(request.params.id);
+    if (isNaN(subjectId)) {
+      throw new ValidationError('Invalid Subject ID');
+    }
+
+    await markSubjectComplete(request.userId, subjectId);
+    return reply
+      .status(200)
+      .send({ message: "Subject Marked Complete" });
+  })
 }
 
-//Todo: Delete subject + XP reversal hook
+//Todo:  XP reversal hook

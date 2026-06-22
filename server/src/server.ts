@@ -10,6 +10,7 @@ import { milestoneRoutes } from "./routes/milestone.js";
 import { checklistItemRoutes } from "./routes/checklistItem.js";
 import { counterRoutes } from "./routes/counter.js";
 import fastifyCors from "@fastify/cors";
+import { xpRouter } from "./routes/xp.js";
 
 //Fastify Instance
 const fastify = Fastify({ logger: true });
@@ -58,6 +59,8 @@ const start = async () => {
     fastify.log.info("checklist routes check");
     await fastify.register(counterRoutes);
     fastify.log.info("counter routes check");
+    await fastify.register(xpRouter);
+    fastify.log.info('xp routes check')
 
     //Start listening
     await fastify.listen({ port: 4000 });

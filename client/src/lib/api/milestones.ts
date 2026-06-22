@@ -56,7 +56,7 @@ export async function deleteMilestone(
     })
 }
 
-export async function listUpcomingMilestone(limit = 5): Promise<Milestone[]> {
-    const response = await apiClient<{milestones: Milestone[]}>(`/api/milestones/upcoming?limit=${limit}`)
+export async function listRecentMilestone(subjectId: number, limit = 5): Promise<Milestone[]> {
+    const response = await apiClient<{ milestones: Milestone[] }>(`/api/subjects/${subjectId}/milestones/recent?limit=${limit}`)
     return response.milestones;
 }

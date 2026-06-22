@@ -1,33 +1,37 @@
-import Link from "next/link";
+'use client';
+import { useState } from "react";
+import { TooltipProvider } from "../ui/tooltip";
+import { NavIcon } from "./NavIcon";
+import { BookOpen, LayoutDashboard, PanelRightClose, PanelRightOpen, Target, Timer, TriangleAlert, Trophy, Zap } from "lucide-react";
 
 const Nav = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Subjects", href: "/subjects" },
-  { label: "Milestones", href: "/milestones" },
-  { label: "XP", locked: true, phase: 6 },
-  { label: "Pomodoro", locked: true, phase: 7 },
-  { label: "Weakness", locked: true, phase: 8 },
-  { label: "Hall of fame", locked: true, phase: 8 },
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Subjects", href: "/dashboard/subjects", icon: BookOpen },
+  { label: "XP", locked: true, phase: 6, icon: Zap },
+  { label: "Pomodoro", locked: true, phase: 7, icon: Timer },
+  { label: "Weakness", locked: true, phase: 8, icon: TriangleAlert },
+  { label: "Hall of Fame", locked: true, phase: 8, icon: Trophy },
 ];
 
 export function Sidebar() {
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const handleSidebar = () => {
+    setSidebarOpen((prev) => !prev);
+  };
+
   return (
-    <aside className="sidebar">
-      <nav>
-        {Nav.map((item) =>
-          item.locked ? (
-            <span key={item.label} className="nav-item nav-locked">
-              🔒 {item.label} · Phase {item.phase}
-            </span>
-          ) : (
-            <Link key={item.label} href={item.href} className="nav-item">
-              {item.label}
-            </Link>
-          ),
-        )}
-      </nav>
+    <aside className={sidebarOpen ? 'sidebar open' : 'sidebar'}>
+      <div>
+        <button onClick={handleSidebar} className="sidebar-toggle-btn">{sidebarOpen ? <PanelRightClose /> : <PanelRightOpen />}</button>
+      </div>
+
+      <TooltipProvider delayDuration={150}>
+        <nav>
+          {Nav.map((item) => <NavIcon key={item.label} {...item} sidebarOpen={sidebarOpen} />)}
+        </nav>
+      </TooltipProvider>
     </aside>
   );
 }
-
 // TODOs: 1. Wire Paths. 2. Add Settings and Help.

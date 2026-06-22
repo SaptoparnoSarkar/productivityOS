@@ -6,7 +6,9 @@ CREATE TABLE milestones (
     type milestone_type_enum NOT NULL,
     title VARCHAR(200) NOT NULL,
     description TEXT,
-    due_date DATE,
+    daily_minimum INT,
+    daily_minimum_unit VARCHAR(50), -- 'problems'/ 'pages'/ 'topics
+    weekly_minimum INT, -- always days
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
@@ -16,3 +18,6 @@ CREATE TABLE milestones (
 );
 
 CREATE INDEX idx_milestones_subject_id ON milestones(subject_id);
+
+
+-- Add life calender

@@ -24,17 +24,24 @@ export function ChecklistForm({ onSubmit }: Props) {
     })
 
     return (
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-            <FieldGroup>
-                <CustomInputs control={form.control} name='label' label='First item' />
-            </FieldGroup>
+        <div className="form">
+            <div className="form-header">
+                <h1 className="form-title">Checklist</h1>
+            </div>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
 
-            <button type='submit' disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? (
-                    <span><Spinner /> Saving...</span>
-                ) : 'Create Checklist'}
-            </button>
-        </form>
+                <FieldGroup>
+                    <div className="fields">
+                        <CustomInputs control={form.control} name='label' label='First item' />
+                    </div>
+                </FieldGroup>
+
+                <button type='submit' className="subject-submit-btn" disabled={form.formState.isSubmitting}>
+                    {form.formState.isSubmitting ? (
+                        <span className="subject-btn-loading"><Spinner /> Saving...</span>
+                    ) : 'Create Checklist'}
+                </button>
+            </form>
+        </div>
     )
-
 }

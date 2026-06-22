@@ -1,34 +1,43 @@
 import * as z from "zod";
 
-// Zod transform to turn empty form values into undefined/null while preserving input types as string | undefined
-const nullableFormString = z
-    .string()
-    .max(2000)
-    .transform((val) => (val === "" ? undefined : val))
-    .optional();
-
-const nullableFormDate = z
-    .string()
-    .date()
-    .or(z.literal(""))
-    .transform((val) => (val === "" ? undefined : val))
-    .optional();
-
-export const createMilestoneSchema = z.object({
+const baseMilestoneFields = z.object({
     type: z.enum(["counter", "checklist"], {
         message: "Type must be either 'counter' or 'checklist'",
     }),
     title: z.string().trim().min(1, { message: "Title is required" }).max(100),
-    description: nullableFormString,
-    due_date: nullableFormDate,
-});
+    description: z.string().max(2000).nullish(),
+    daily_minimum: z.coerce.number().int().positive().optional(),
+    daily_minimum_unit: z.string().optional(),
+    weekly_minimum: z.coerce.number().int().min(1).max(7).optional(),
+})
+
+//Refine applied seperately for create and update
+export const createMilestoneSchema = baseMilestoneFields.refine(
+    (data) => {
+        const hasMin = data.daily_minimum !== undefined;
+        const hasUnit = data.daily_minimum_unit !== undefined;
+        return hasMin === hasUnit;
+    },
+    { message: "daily_minimum and daily_minimum_unit must be provided together" },
+)
+
 export type CreateMilestoneInput = z.infer<typeof createMilestoneSchema>;
 
-export const updateMilestoneSchema = z.object({
-    title: z.string().trim().min(1, { message: "Title is required" }).max(100),
-    description: nullableFormString,
-    due_date: nullableFormDate,
-});
 
+export const updateMilestoneSchema = baseMilestoneFields
+    .omit({ type: true })
+    .partial()
+    .refine(
+        (data) => {
+            const hasMin = data.daily_minimum !== undefined;
+            const hasUnit = data.daily_minimum_unit !== undefined;
+            return hasMin === hasUnit;
+        },
+        { message: "Daily Minimum and Daily Minumum Unit must be provided together." }
+    )
+    .refine(
+        (data) => Object.keys(data).length > 0,
+        { message: "Provide at least one field to update." }
+    );
 
 export type UpdateMilestoneInput = z.infer<typeof updateMilestoneSchema>;

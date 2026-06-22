@@ -3,8 +3,8 @@ import {
   createMilestone,
   deleteMilestone,
   getMilestone,
-  getUpcomingMilestones,
   listMilestones,
+  recentMilestones,
   updateMilestone,
 } from "../services/milestone.service.js";
 import { ValidationError } from "../utils/errors.js";
@@ -128,10 +128,15 @@ export async function milestoneRoutes(fastify: FastifyInstance) {
     },
 
   );
-  
-  //Upcoming Milestone for a User GET /api/milestones/upcoming?limit=5
-  fastify.get('/api/milestones/upcoming',async (request,reply)=>{
-    const milestones = await getUpcomingMilestones(request.userId)
-    return reply.status(200).send({milestones})
+
+  //Recent Milestones GET /api/subjects/:subjectId/milestones/recent
+  fastify.get<{ Params: { subjectId: string } }>('/api/subjects/:subjectId/milestones/recent', async (request, reply) => {
+    const subjectId = Number(request.params.subjectId)
+    if (isNaN(subjectId)) {
+      throw new ValidationError("Invalid Subject ID")
+    }
+
+    const milestones = await recentMilestones(request.userId, subjectId)
+    return reply.status(200).send({ milestones })
   })
 }

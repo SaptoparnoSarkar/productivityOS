@@ -1,9 +1,9 @@
-import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import DashboardContent from '../../components/dashboard/DashboardContent'
 
 export default function DashboardPage() {
   return (
     <div>
-      <DashboardShell />
+      <DashboardContent />
     </div>
   );
 }

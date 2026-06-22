@@ -3,6 +3,7 @@ import type {
   CreateSubjectInput,
   UpdateSubjectInput,
 } from "../../schemas/subject.schema.js";
+import { NotFoundError } from "../../utils/errors.js";
 
 //Create Subject
 export async function dbCreateSubject(
@@ -10,16 +11,14 @@ export async function dbCreateSubject(
   input: CreateSubjectInput,
 ) {
   const result = await pool.query(
-    "INSERT into subjects (user_id, type, title, description, has_pomodoro, daily_minimum, daily_minimum_unit, weekly_minimum) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, title",
+    "INSERT into subjects (user_id, type, title, description, has_pomodoro, due_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, title",
     [
       userId,
       input.type,
       input.title,
       input.description,
       input.has_pomodoro,
-      input.daily_minimum,
-      input.daily_minimum_unit,
-      input.weekly_minimum,
+      input.due_date,
     ],
   );
   return result.rows[0];
@@ -64,19 +63,9 @@ export async function dbUpdateSubject(
     values.push(input.description);
   }
 
-  if (input.daily_minimum !== undefined) {
-    fields.push(`daily_minimum = $${paramIndex++}`);
-    values.push(input.daily_minimum);
-  }
-
-  if (input.daily_minimum_unit !== undefined) {
-    fields.push(`daily_minimum_unit = $${paramIndex++}`);
-    values.push(input.daily_minimum_unit);
-  }
-
-  if (input.weekly_minimum !== undefined) {
-    fields.push(`weekly_minimum = $${paramIndex++}`);
-    values.push(input.weekly_minimum);
+  if (input.due_date !== undefined) {
+    fields.push(`due_date = $${paramIndex++}`);
+    values.push(input.due_date);
   }
 
   //If user sends an empty object, return null
@@ -103,11 +92,50 @@ export async function dbDeleteSubject(subjectId: number, userId: number) {
   return result.rows[0] || null;
 }
 
-//get recent subjects
-export async function dbGetRecentSubjects(userId: number, limit: number) {
+//get due subjects
+export async function dbDueSubjects(userId: number, limit: number) {
   const result = await pool.query(
-    "SELECT * FROM subjects WHERE user_id = $1 ORDER BY updated_at DESC LIMIT $2",
+    `SELECT * FROM subjects s
+        WHERE s.user_id = $1 AND s.due_date >= CURRENT_DATE
+        AND s.status = 'pending'
+        ORDER BY s.due_date ASC
+        LIMIT $2`,
     [userId, limit],
   );
   return result.rows.length > 0 ? result.rows : null;
 }
+
+
+//COMPLETE SUBJECT WITH XP
+export async function dbCompleteSubjectWithXp(
+  userId: number,
+  subjectId: number,
+  amount: number,
+) {
+  const client = await pool.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    const updateSubject = await client.query(
+      `UPDATE subjects SET status='completed', updated_at = NOW() WHERE id=$1 AND user_id=$2 RETURNING *`,
+      [subjectId, userId]
+    )
+
+    if (!updateSubject.rows[0]) throw new NotFoundError('Subject not found')
+
+    await client.query(
+      `INSERT INTO xp_events (user_id, subject_id, type, amount) VALUES ($1, $2, 'subject_completion', $3)`, [userId, subjectId, amount]
+    )
+
+    await client.query('COMMIT');
+    return updateSubject.rows[0];
+
+  } catch (e) {
+    await client.query('ROLLBACK');
+    throw e;
+  } finally {
+    client.release();
+  }
+
+} 

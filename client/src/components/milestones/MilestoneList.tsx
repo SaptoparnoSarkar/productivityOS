@@ -5,12 +5,12 @@ import { Milestone } from "@/types/milestone";
 import Link from "next/link";
 import { useEffect, useState } from "react"
 
-type Props = {
+type Prop = {
     subjectId: number
 }
 
 
-export function MilestoneList({ subjectId }: Props) {
+export function MilestoneList({ subjectId }: Prop) {
 
     const [milestones, setMilestones] = useState<Milestone[]>([]);
     const [loading, setLoading] = useState(true);
@@ -39,9 +39,9 @@ export function MilestoneList({ subjectId }: Props) {
 
         <>
             {milestones.length === 0 ? (
-                <div>
-                    <p>No Milestones Yet.</p>
-                    <Link href={`/subjects/${subjectId}/milestones/new`}>
+                <div className="flex flex-col items-center justify-center p-5">
+                    <p className="text-white/60">No Milestones Yet.</p>
+                    <Link className="text-purple-400 hover:text-purple-600 duration-200" href={`/dashboard/subjects/${subjectId}/milestones/new`}>
                         Click here to create your first milestone.
                     </Link>
                 </div>
@@ -49,14 +49,10 @@ export function MilestoneList({ subjectId }: Props) {
 
                 <ul>
                     {milestones.map((m) => (
-                        <li key={m.id}>
-                            <Link href={`/subjects/${subjectId}/milestones/${m.id}`}>{m.title}</Link>
+                        <li key={m.id} className="text-white hover:text-purple-600 duration-200 cursor-pointer">
+                            <Link href={`/dashboard/subjects/${subjectId}/milestones/${m.id}`}>{m.title}</Link>
                             <span> — {m.type}</span>
                             {m.due_date && <span> (due {m.due_date})</span>}
-
-                            <Link href={`/subjects/${subjectId}/milestones/new`}>
-                                Create New Milestone
-                            </Link>
                         </li>
                     ))}
                 </ul>

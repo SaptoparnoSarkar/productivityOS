@@ -3,7 +3,7 @@ import {
   dbDeleteMilestone,
   dbGetMilestoneById,
   dbGetMilestonesBySubjectId,
-  dbGetUpcomingMilestones,
+  dbRecentMilestones,
   dbUpdateMilestone,
 } from "../db/queries/milestones.queries.js";
 import type {
@@ -18,9 +18,6 @@ export async function createMilestone(
   userId: number,
   input: CreateMilestoneInput,
 ) {
-  if (input.due_date && new Date(input.due_date) < new Date()) {
-    throw new ValidationError("Due date cannot be in the past");
-  }
   const milestone = await dbCreateMilestone(subjectId, userId, input);
   if (!milestone) {
     throw new NotFoundError("Subject Not Found");
@@ -58,9 +55,6 @@ export async function updateMilestone(
     throw new ValidationError("At least one field must be provided");
   }
 
-  if (input.due_date && new Date(input.due_date) < new Date()) {
-    throw new ValidationError("Due date cannot be in the past");
-  }
   const updated = await dbUpdateMilestone(
     milestoneId,
     subjectId,
@@ -88,11 +82,11 @@ export async function deleteMilestone(
   return { message: "Milestone Deleted Successfully" };
 }
 
-//Upcoming Milestones
-export async function getUpcomingMilestones(userId:number, limit= 5) {
-  const milestones = await dbGetUpcomingMilestones(userId, limit);
-  if(!milestones){
-    throw new NotFoundError("No Upcoming Milestones");
+//Recent Milestones
+export async function recentMilestones(userId: number, subjectId: number, limit = 5) {
+  const milestones = await dbRecentMilestones(userId, subjectId, limit);
+  if (!milestones) {
+    throw new NotFoundError("No Recent Milestones");
   }
   return milestones;
 }

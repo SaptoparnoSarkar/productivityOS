@@ -30,6 +30,6 @@ export const REFRESH_TOKEN_OPTIONS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "lax" as const,
-  path: "/",
+  path: "/auth/refresh-token",
   maxAge: 60 * 60 * 24 * 30,
 };

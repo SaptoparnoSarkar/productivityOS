@@ -11,7 +11,7 @@ import { createSubject, updateSubject } from "@/lib/api/subjects";
 import { useState } from "react";
 import { FieldGroup } from "../ui/field";
 import { CustomInputs } from "../ui/CustomInputs";
-import type { Subject } from "@/types/subject";
+import type { CreateSubjectInput, Subject, UpdateSubjectInput } from "@/types/subject";
 import Spinner from "../ui/spinner";
 
 type Props =
@@ -22,11 +22,25 @@ export default function SubjectForm(props: Props) {
   const { mode, onSuccess } = props;
 
   const defaultValues =
-    mode === "edit" ? { title: props.subject.title } : { type: "completable" as const, title: "", has_pomodoro: true, };
+    mode === "edit" ?
+      {
+        title: props.subject.title,
+        due_date: props.subject.due_date,
+        description: props.subject.description
+      } : {
+        type: "completable" as const,
+        title: "",
+        has_pomodoro: false,
+        description: '',
+        due_date: ''
+      };
 
   const schema = props.mode === "edit" ? updateSubjectSchema : createSubjectSchema;
 
-  const form = useForm<z.infer<typeof schema>>({
+  type FormInput = z.input<typeof schema>;
+  type FormOutput = z.output<typeof schema>;
+
+  const form = useForm<FormInput, any, FormOutput>({
     resolver: zodResolver(schema),
     defaultValues,
   });
@@ -42,9 +56,9 @@ export default function SubjectForm(props: Props) {
     setFormError("");
     try {
       if (mode === "create") { // safe: mode === "create" guarantees data matches createSubjectSchema shape
-        await createSubject(data as z.infer<typeof createSubjectSchema>);
+        await createSubject(data as CreateSubjectInput);
       } else {
-        await updateSubject(props.subject.id, data);
+        await updateSubject(props.subject.id, data as UpdateSubjectInput);
       }
       onSuccess();
     } catch (error) {
@@ -57,12 +71,12 @@ export default function SubjectForm(props: Props) {
   }
 
   return (
-    <div className="subject-card">
-      <div className="subject-header">
-        <h1 className="subject-title">
+    <div className="form">
+      <div className="form-header">
+        <h1 className="form-title">
           {mode === "create" ? "New Subject" : "Edit Subject"}
         </h1>
-        <p className="subject-subtitle">
+        <p className="form-subtitle">
           {mode === "create"
             ? "Create a subject to track your work."
             : "Update the subject to track your work."}
@@ -71,24 +85,21 @@ export default function SubjectForm(props: Props) {
 
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
-          <div className="subject-fields">
+          <div className="fields">
             {mode === "create" && (
               <>
+                <CustomInputs control={form.control} name="title" label="Title" placeholder="Enter subject title" />
+                <CustomInputs control={form.control} name='description' label="Description" placeholder="Enter subject description" />
+
                 <label htmlFor="type">Type</label>
                 <select id="type" {...form.register("type")}>
                   <option value="completable">Completable</option>
                   <option value="ongoing">Ongoing</option>
                 </select>
-
-                <label htmlFor="has_pomodoro">Has Pomodoro</label>
-                <input
-                  type="checkbox"
-                  id="has_pomodoro"
-                  {...form.register("has_pomodoro")}
-                />
+                <label htmlFor="has_pomodoro">Has Pomodoro <input type="checkbox" id="has_pomodoro" {...form.register("has_pomodoro")} /></label>
+                <CustomInputs control={form.control} name='due_date' label='Due Date' type="date" />
               </>
             )}
-            <CustomInputs control={form.control} name="title" label="Title" />
           </div>
         </FieldGroup>
 

@@ -29,7 +29,7 @@ export function VerifyEmailForm() {
     async function onSubmit(data: VerifyEmailFormData) {
         try {
             await verifyEmail(data.email, data.code)
-            router.push('/subjects')
+            router.push('/dashboard')
         } catch (error) {
             if (error instanceof Error) {
                 setFormError(error.message)

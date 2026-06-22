@@ -44,7 +44,7 @@ export default function NewMilestonePage() {
         if (!createdMilestone) return;
         try {
             await createChecklistItem({ milestone_id: createdMilestone.id, label: values.label });
-            router.push(`/subjects/${subjectId}/milestones/${createdMilestone.id}`);
+            router.push(`/dashboard/subjects/${subjectId}/milestones/${createdMilestone.id}`);
         } catch (error) {
             if (error instanceof Error) {
                 setFormError(error.message);
@@ -58,7 +58,7 @@ export default function NewMilestonePage() {
         if (!createdMilestone) return;
         try {
             await createCounter(createdMilestone.id, values);
-            router.push(`/subjects/${subjectId}/milestones/${createdMilestone.id}`);
+            router.push(`/dashboard/subjects/${subjectId}/milestones/${createdMilestone.id}`);
         } catch (error) {
             if (error instanceof Error) {
                 setFormError(error.message);
@@ -74,7 +74,7 @@ export default function NewMilestonePage() {
             {createdMilestone === null ? (<MilestoneForm mode="create" onSubmit={handleMilestoneSubmit} />) : createdMilestone.type === 'checklist' ? (
                 <ChecklistForm onSubmit={handleChecklistSubmit} />
             ) : (
-                <CounterForm onSubmit={handleCounterSubmit} />
+                <CounterForm mode='create' onSubmit={handleCounterSubmit} />
             )}
         </div>
     )

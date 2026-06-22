@@ -54,7 +54,7 @@ export default function MilestoneDetail() {
         setDeleteError('');
         try {
             await deleteMilestone(subjectId, milestoneId);
-            router.push(`/subjects/${subjectId}`)
+            router.push(`/dashboard/subjects/${subjectId}`)
         } catch (error) {
             setDeleteError(error instanceof Error ? error.message : 'An error occurred.')
         }
@@ -66,7 +66,7 @@ export default function MilestoneDetail() {
     if (!milestone) return <p>Milestone not found.</p>
 
     return (
-        <div>
+        <div className="text-white">
             <h1>{milestone.title}</h1>
             <p>Type: {milestone.type}</p>
             <p>{milestone.type === 'checklist' ? <ChecklistItemsList milestoneId={milestoneId} /> : <CounterDisplay milestoneId={milestoneId} />}</p>

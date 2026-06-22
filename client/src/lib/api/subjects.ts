@@ -55,8 +55,17 @@ export async function deleteSubject(id: number): Promise<void> {
   });
 }
 
-//Recent Subjects GET /api/subjects/recent -> { subjects: Subject[] }
-export async function listRecentSubjects(limit = 5): Promise<Subject[]> {
-  const response = await apiClient<{ subjects: Subject[]}>(`/api/subjects/recent?limit=${limit}`)
-  return response.subjects
+//Upcoming Subjects GET /api/subjects/upcoming -> { subjects: Subject[] }
+export async function listUpcomingSubjects(limit = 5): Promise<Subject[]> {
+  const response = await apiClient<{ subjects: Subject[] }>(`/api/subjects/upcoming?limit=${limit}`)
+  return response.subjects;
 }
+
+//PATCH Mark subject complete
+export async function markSubjectComplete(id: number): Promise<Subject> {
+  const response = await apiClient<{ message: string, subject: Subject }>(`/api/subjects/${id}/complete`, {
+    method: "PATCH",
+  })
+  return response.subject
+}
+

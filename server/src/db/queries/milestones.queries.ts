@@ -11,16 +11,18 @@ export async function dbCreateMilestone(
   input: CreateMilestoneInput,
 ) {
   const result = await pool.query(
-    `INSERT INTO milestones (subject_id, type, title, description, due_date) 
-        SELECT $1, $2, $3, $4, $5
-        FROM subjects s WHERE s.id = $1 AND s.user_id = $6
+    `INSERT INTO milestones (subject_id, type, title, description, daily_minimum, daily_minimum_unit, weekly_minimum) 
+        SELECT $1, $2, $3, $4, $5, $6, $7
+        FROM subjects s WHERE s.id = $1 AND s.user_id = $8
         RETURNING *`,
     [
       subjectId,
       input.type,
       input.title,
       input.description,
-      input.due_date,
+      input.daily_minimum,
+      input.daily_minimum_unit,
+      input.weekly_minimum,
       userId,
     ],
   );
@@ -78,9 +80,19 @@ export async function dbUpdateMilestone(
     values.push(input.description);
   }
 
-  if (input.due_date !== undefined) {
-    fields.push(`due_date = $${i++}`);
-    values.push(input.due_date);
+  if (input.daily_minimum !== undefined) {
+    fields.push(`daily_minimum = $${i++}`);
+    values.push(input.daily_minimum);
+  }
+
+  if (input.daily_minimum_unit !== undefined) {
+    fields.push(`daily_minimum_unit = $${i++}`);
+    values.push(input.daily_minimum_unit);
+  }
+
+  if (input.weekly_minimum !== undefined) {
+    fields.push(`weekly_minimum = $${i++}`);
+    values.push(input.weekly_minimum);
   }
 
   //If user sends an empty object, return null
@@ -121,11 +133,15 @@ export async function dbDeleteMilestone(
   return results.rows[0] || null;
 }
 
-//Upcoming Milestones
-export async function dbGetUpcomingMilestones(userId: number, limit: number){
+//Recent Milestones
+export async function dbRecentMilestones(userId: number, subjectId: number, limit: number) {
   const results = await pool.query(
-    `SELECT m.* FROM milestones m JOIN subjects s ON m.subject_id = s.id WHERE s.user_id = $1 AND m.due_date >= NOW() ORDER BY m.due_date ASC LIMIT $2`,
-    [userId, limit]
+    `SELECT m.* FROM milestones m
+      JOIN subjects s ON m.subject_id = s.id
+      WHERE m.subject_id = $1 AND s.user_id = $2
+      ORDER BY m.updated_at DESC
+      LIMIT $3`,
+    [subjectId, userId, limit]
   )
   return results.rows;
 }

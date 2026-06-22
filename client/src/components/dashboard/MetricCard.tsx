@@ -14,3 +14,4 @@ export function MetricCard({ label, value, hint, isActive }: MetricCardProps) {
     </div>
   );
 }
+

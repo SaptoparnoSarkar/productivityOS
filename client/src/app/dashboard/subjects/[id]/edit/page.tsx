@@ -46,7 +46,7 @@ export default function EditSubjectPage() {
       <SubjectForm
         mode="edit"
         subject={subject}
-        onSuccess={() => router.push(`/subjects/${id}`)}
+        onSuccess={() => router.push(`/dashboard/subjects/${id}`)}
       />
     </main>
   );

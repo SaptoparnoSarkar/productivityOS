@@ -5,6 +5,7 @@ import {
   dbResetCounter,
   dbUpdateCounter,
 } from "../db/queries/counters.queries.js";
+import { upsertDailyProgress } from "../db/queries/xp.queries.js";
 import type {
   CreateCounterInput,
   UpdateCounterInput,
@@ -73,6 +74,10 @@ export async function incrementCounter(
   }
 
   const increment = await dbIncrementCounter(milestoneId, userId, delta);
+
+  const today = new Date().toISOString().split("T")[0]!; //! I know it returns undefined but it never will
+  await upsertDailyProgress(userId, milestoneId, today, delta);
+
   return increment;
 }
 

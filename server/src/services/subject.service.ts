@@ -1,7 +1,8 @@
 import {
+  dbCompleteSubjectWithXp,
   dbCreateSubject,
   dbDeleteSubject,
-  dbGetRecentSubjects,
+  dbDueSubjects,
   dbUpdateSubject,
   getSubjectById,
   getSubjectsByUserId,
@@ -10,10 +11,13 @@ import type {
   UpdateSubjectInput,
   CreateSubjectInput,
 } from "../schemas/subject.schema.js";
-import { NotFoundError } from "../utils/errors.js";
+import { NotFoundError, ValidationError } from "../utils/errors.js";
 
 //Create Subject
 export async function createSubject(userId: number, input: CreateSubjectInput) {
+  if (input.due_date && new Date(input.due_date) < new Date()) {
+    throw new ValidationError("Due date cannot be in the past");
+  }
   const subject = await dbCreateSubject(userId, input);
   return subject;
 }
@@ -46,6 +50,9 @@ export async function updateSubject(
   if (!updated) {
     throw new NotFoundError("Subject Not Found");
   }
+  if (input.due_date && new Date(input.due_date) < new Date()) {
+    throw new ValidationError("Due date cannot be in the past");
+  }
   return updated;
 }
 
@@ -58,11 +65,19 @@ export async function deleteSubject(subjectId: number, userId: number) {
   return { message: "Subject Deleted Successfully" };
 }
 
-//Recent Subjects
-export async function getRecentSubjects(userId: number, limit = 5) {
-  const subjects = await dbGetRecentSubjects(userId, limit);
-  if (!subjects) {
-    throw new NotFoundError("No Subjects Created Yet!");
+//Upcoming Subjects
+export async function upcomingSubjects(userId: number, limit = 5) {
+  const due = await dbDueSubjects(userId, limit);
+  return due;
+}
+
+//Mark Subject Complete
+export async function markSubjectComplete(userId: number, subjectId: number) {
+  const subject = await getSubjectById(subjectId, userId);
+  if (subject.status === 'completed') {
+    throw new ValidationError('Subject already completed');
   }
-  return subjects;
+  const updated = await dbCompleteSubjectWithXp(userId, subjectId, 500);
+  return updated;
+
 }

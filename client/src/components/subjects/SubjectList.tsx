@@ -4,7 +4,7 @@ import { listSubjects } from "@/lib/api/subjects";
 import { Subject } from "@/types/subject";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { SubjectListView } from "./SubjectListView";
+import { SubjectCard } from "./SubjectCard";
 
 export function SubjectList() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -34,17 +34,26 @@ export function SubjectList() {
 
   //Render states in order:
   if (loading) return <div>Loading...</div>;
+  if (!subjects || subjects.length === 0) return (
+    <div className="text-white">
+      No Subjects Created Yet. Create One to start tracking your progress.
+    </div>
+  )
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <main className="flex flex-col gap-y-2 items-center justify-center">
-      <SubjectListView subjects={subjects} />
+    <div className="flex flex-col items-center gap-1">
+
+      <div className="subjects-grid">
+        {subjects.map((s) => <SubjectCard key={s.id} subject={s} />)}
+      </div>
+
       <button
-        className="border rounded-md bg-black p-2 text-white"
-        onClick={() => router.push("/subjects/new")}
+        className="subject-submit-btn"
+        onClick={() => router.push("/dashboard/subjects/new")}
       >
         Create New Subject
       </button>
-    </main>
+    </div>
   );
 }

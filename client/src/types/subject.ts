@@ -1,4 +1,5 @@
 export type SubjectType = "ongoing" | "completable";
+export type SubjectStatus = 'pending' | 'completed';
 
 export type Subject = {
   id: number;
@@ -7,9 +8,8 @@ export type Subject = {
   title: string;
   description: string | null;
   has_pomodoro: boolean;
-  daily_minimum: number | null;
-  daily_minimum_unit: string | null;
-  weekly_minimum: number | null;
+  status: SubjectStatus;
+  due_date: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -18,11 +18,11 @@ export type CreateSubjectInput = {
   type: SubjectType;
   title: string;
   description?: string;
+  due_date?: string | null;
   has_pomodoro?: boolean;
-  daily_minimum?: number;
-  daily_minimum_unit?: string;
-  weekly_minimum?: number;
+
 };
 
 export type UpdateSubjectInput = Partial<
   Omit<CreateSubjectInput, "type" | "has_pomodoro">>;
+

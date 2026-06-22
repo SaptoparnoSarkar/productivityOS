@@ -44,7 +44,7 @@ export default function EditMilestonePage() {
         setFormError('');
         try {
             await updateMilestone(subjectId, milestoneId, data)
-            router.push(`/subjects/${subjectId}/milestones/${milestoneId}`)
+            router.push(`/dashboard/subjects/${subjectId}/milestones/${milestoneId}`)
         }
         catch (error) {
             setFormError(
