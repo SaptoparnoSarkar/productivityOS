@@ -9,11 +9,11 @@ export async function dbCreateChecklistItem(
 ) {
   const result = await pool.query(
     `INSERT INTO milestone_checklist_items (milestone_id, label, is_done) 
-    SELECT $1, $2, false 
-    FROM milestones m 
-    JOIN subjects s ON m.subject_id = s.id 
-    WHERE m.id = $1 AND s.user_id = $3 AND m.type = 'checklist'
-    RETURNING *`,
+      SELECT $1, $2, false 
+      FROM milestones m 
+      JOIN subjects s ON m.subject_id = s.id 
+      WHERE m.id = $1 AND s.user_id = $3 AND m.type = 'checklist'
+      RETURNING *`,
     [milestoneId, label, userId],
   );
   return result.rows[0] || null;
@@ -26,19 +26,36 @@ export async function dbGetChecklistItemsByMilestoneId(
 ) {
   const result = await pool.query(
     `SELECT mc.*
-         FROM milestone_checklist_items mc
-         JOIN milestones m ON mc.milestone_id = m.id
-         JOIN subjects s ON m.subject_id = s.id
-         WHERE m.id = $1 AND s.user_id = $2`,
+      FROM milestone_checklist_items mc
+      JOIN milestones m ON mc.milestone_id = m.id
+      JOIN subjects s ON m.subject_id = s.id
+      WHERE m.id = $1 AND s.user_id = $2`,
     [milestoneId, userId],
   );
   return result.rows;
+}
+
+//Get Checklist Item (Singular) by Item id
+export async function dbGetChecklistItemById(
+  itemId: number,
+  userId: number,
+) {
+  const result = await pool.query(
+    `SELECT mc.*, m.daily_minimum, m.subject_id
+      FROM milestone_checklist_items mc
+      JOIN milestones m ON mc.milestone_id = m.id
+      JOIN subjects s ON m.subject_id = s.id
+      WHERE mc.id = $1 AND s.user_id = $2`,
+    [itemId, userId],
+  );
+  return result.rows[0] || null;
 }
 
 //Update Checklist Items
 export async function dbUpdateChecklistItem(
   itemId: number,
   userId: number,
+  milestoneId: number,
   input: UpdateChecklistInputType,
 ) {
   const fields: string[] = [];
@@ -59,16 +76,18 @@ export async function dbUpdateChecklistItem(
     return null;
   }
 
-  values.push(itemId, userId);
+  values.push(itemId, milestoneId, userId);
 
   const result = await pool.query(
-    `UPDATE milestone_checklist_items mc SET ${fields.join(", ")}
-        FROM milestones m
-        JOIN subjects s ON m.subject_id = s.id
-        WHERE mc.milestone_id = m.id
-        AND mc.id = $${paramIndex++}
-        AND s.user_id = $${paramIndex++}
-        RETURNING mc.*`,
+    `UPDATE milestone_checklist_items AS mc
+      SET ${fields.join(", ")}
+      FROM milestones AS m
+      JOIN subjects AS s ON m.subject_id = s.id
+      WHERE mc.milestone_id = m.id
+      AND mc.id = $${paramIndex++}
+      AND mc.milestone_id = $${paramIndex++}
+      AND s.user_id = $${paramIndex++}
+      RETURNING mc.*`,
     values,
   );
 
@@ -76,16 +95,17 @@ export async function dbUpdateChecklistItem(
 }
 
 //Delete Checklist items
-export async function dbDeleteChecklistItem(itemId: number, userId: number) {
+export async function dbDeleteChecklistItem(itemId: number, userId: number, milestoneId: number) {
   const result = await pool.query(
-    `DELETE FROM milestone_checklist_items mc
-    USING milestones m, subjects s
-    WHERE mc.milestone_id = m.id 
+    `DELETE FROM milestone_checklist_items AS mc
+      USING milestones AS m, subjects AS s
+      WHERE mc.milestone_id = m.id 
       AND m.subject_id = s.id
       AND mc.id = $1 
-      AND s.user_id = $2
+      AND mc.milestone_id = $2
+      AND s.user_id = $3
     RETURNING mc.*`,
-    [itemId, userId],
+    [itemId, milestoneId, userId]
   );
   return result.rows[0] || null;
 }

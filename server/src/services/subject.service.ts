@@ -79,5 +79,5 @@ export async function markSubjectComplete(userId: number, subjectId: number) {
   }
   const updated = await dbCompleteSubjectWithXp(userId, subjectId, 500);
   return updated;
-
+  // TODO: guard subject-complete on all milestones complete
 }

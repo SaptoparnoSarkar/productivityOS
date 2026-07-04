@@ -21,9 +21,10 @@ export async function listChecklistItems(
 
 export async function updateChecklistItem(
     checklistItemId: number,
+    milestoneId: number,
     input: UpdateChecklistItemInput,
 ): Promise<ChecklistItem> {
-    const response = await apiClient<{ checklistItem: ChecklistItem }>(`/api/checklist-items/${checklistItemId}`, {
+    const response = await apiClient<{ checklistItem: ChecklistItem }>(`/api/milestones/${milestoneId}/checklist-items/${checklistItemId}`, {
         method: "PATCH",
         body: JSON.stringify(input),
     });
@@ -31,9 +32,10 @@ export async function updateChecklistItem(
 }
 
 export async function deleteChecklistItem(
+    milestoneId: number,
     checklistItemId: number,
 ): Promise<void> {
-    await apiClient<{ message: string }>(`/api/checklist-items/${checklistItemId}`, {
+    await apiClient<{ message: string }>(`/api/milestones/${milestoneId}/checklist-items/${checklistItemId}`, {
         method: "DELETE",
     });
 }

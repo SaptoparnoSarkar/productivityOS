@@ -137,5 +137,5 @@ export async function dbCompleteSubjectWithXp(
   } finally {
     client.release();
   }
-
+  // TODO: guard subject-complete on all milestones complete
 } 

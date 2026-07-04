@@ -15,6 +15,7 @@ import {
   NotFoundError,
   ValidationError,
 } from "../utils/errors.js";
+import { awardXp } from "./xp.service.js";
 
 //create counter
 export async function createCounter(
@@ -65,20 +66,50 @@ export async function incrementCounter(
   userId: number,
   delta: number,
 ) {
+  // fetch
   const currentCounter = await dbGetCounterByMilestoneId(milestoneId, userId);
   if (!currentCounter) {
     throw new NotFoundError("Counter not found");
   }
+  // Guard to protect going below 0
   if (currentCounter.current_value + delta < 0) {
     throw new ValidationError("Counter cannot go below zero");
   }
+  // update value
+  const updatedCounter = await dbIncrementCounter(milestoneId, userId, delta);
 
-  const increment = await dbIncrementCounter(milestoneId, userId, delta);
+  //Reward what really happended, not what was requested. (This is for when increment of zero)
+  const realDelta = updatedCounter.current_value - currentCounter.current_value;
 
-  const today = new Date().toISOString().split("T")[0]!; //! I know it returns undefined but it never will
-  await upsertDailyProgress(userId, milestoneId, today, delta);
+  if (realDelta !== 0) {
 
-  return increment;
+    const today = new Date().toISOString().split("T")[0]!; //! I know it returns undefined but it never will
+    const row = await upsertDailyProgress(userId, milestoneId, today, delta);
+
+    //per-tick/per-increment XP
+    const xp = realDelta * 5;
+    await awardXp(userId, 'per_tick', xp, currentCounter.subject_id, milestoneId);
+
+    //Daily's XP fires once.
+    const dailyMinimum = currentCounter.daily_minimum; //Fetch the daily min from milestones
+    const after = row.progress;
+    const before = after - delta;
+
+
+    const wasBelowMinimum = before < dailyMinimum;
+    const isNowAtOrAboveMinimum = after >= dailyMinimum;
+    const justHitMinimum = wasBelowMinimum && isNowAtOrAboveMinimum;
+    if (justHitMinimum) await awardXp(userId, 'daily_completion', 100, currentCounter.subject_id, milestoneId);
+    console.log({ dailyMinimum: currentCounter.daily_minimum, before, after, justHitMinimum });
+  }
+
+  return updatedCounter;
+  // TODO: TRANSACTION NEEDED
+  // Steps: fetch → dbUpdateChecklistItem → upsertDailyProgress → awardXp (per_tick) → awardXp (daily_completion)
+  // are NOT atomic. A crash between any step leaves data partially written:
+  //   - Checklist updated but no XP awarded
+  //   - daily_progress upserted but XP write fails → justHitMinimum can re-fire on next call (double XP)
+  // Wrap in a db transaction so all writes succeed together or all roll back.
 }
 
 //reset counter

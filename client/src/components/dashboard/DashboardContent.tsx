@@ -3,6 +3,7 @@ import { SubjectWidget } from "./SubjectsWidget";
 import { UpcomingMilestoneWidget } from "./RecentMilestoneWidget";
 import { Widget } from "./Widget";
 import Link from "next/link";
+import { XpRankWidget } from "./XpRankWidget";
 
 export default function DashboardShell() {
   return (
@@ -39,7 +40,9 @@ export default function DashboardShell() {
           <UpcomingMilestoneWidget />
         </Widget>
 
-        <Widget state="locked" title="XP & Rank" phase={6} />
+        <Widget state="real" title="XP & Rank" >
+          <XpRankWidget />
+        </Widget>
         <Widget state="locked" title="Weakness" phase={8} />
 
       </section>

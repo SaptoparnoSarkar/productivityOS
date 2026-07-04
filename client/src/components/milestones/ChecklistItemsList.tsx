@@ -3,7 +3,7 @@
 import { createChecklistItem, deleteChecklistItem, listChecklistItems, updateChecklistItem } from "@/lib/api/checklistItems";
 import { ChecklistItem } from "@/types/checklistItem";
 import { useCallback, useEffect, useState } from "react";
-import { CustomInputs } from "../ui/CustomInputs";
+
 
 
 interface Props {
@@ -42,7 +42,7 @@ export default function ChecklistItemsList({ milestoneId }: Props) {
     //For toggling the checkbox
     async function handleToggle(item: ChecklistItem) {
         try {
-            await updateChecklistItem(item.id, { is_done: !item.is_done });
+            await updateChecklistItem(item.id, milestoneId, { is_done: !item.is_done });
             await loadItems();
         } catch (error) {
             setError(error instanceof Error ? error.message : 'Failed to update');
@@ -71,7 +71,7 @@ export default function ChecklistItemsList({ milestoneId }: Props) {
         const label = editLabel.trim();
         if (!label) return;
         try {
-            await updateChecklistItem(itemId, { label });
+            await updateChecklistItem(itemId, milestoneId, { label });
             setEditingId(null);
             await loadItems();
         }
@@ -84,7 +84,7 @@ export default function ChecklistItemsList({ milestoneId }: Props) {
     async function handleDelete(itemId: number) {
         if (!confirm('Delete this item?')) return;
         try {
-            await deleteChecklistItem(itemId)
+            await deleteChecklistItem(itemId, milestoneId)
             await loadItems();
         } catch (error) {
             setError(error instanceof Error ? error.message : 'Failed to delete');

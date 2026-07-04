@@ -123,5 +123,3 @@ export async function subjectRoutes(fastify: FastifyInstance) {
       .send({ message: "Subject Marked Complete" });
   })
 }
-
-//Todo:  XP reversal hook

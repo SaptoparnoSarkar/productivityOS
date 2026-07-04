@@ -5,31 +5,40 @@ export async function dbInsertXpEvent(
     userId: number,
     type: string,
     amount: number,
-    subjectId: number | null,
-    milestoneId: number | null,
+    subjectId: number,
+    milestoneId: number,
 ) {
-    const result = await pool.query(
-        'INSERT INTO xp_events (user_id, type, amount, subject_id, milestone_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-        [userId, type, amount, subjectId, milestoneId]
-    )
-    return result.rows[0]
+    const today = new Date().toISOString().split('T')[0]!;
+    // Why ON CONFLICT? This is to prevent double counting.
+    if (type === "daily_completion") {
+        await pool.query(
+            `INSERT INTO xp_events (user_id, subject_id, milestone_id, type, amount, awarded_date)
+            VALUES($1,$2,$3,$4,$5,$6)
+            ON CONFLICT (user_id, milestone_id, type, awarded_date) DO NOTHING`,
+            [userId, subjectId, milestoneId, type, amount, today]
+        );
+        return;
+    }
+    else {
+        // This here is for single events like first complete of milestone and etc.
+        await pool.query(
+            `INSERT INTO xp_events (user_id, subject_id, milestone_id, type, amount, awarded_date)
+            VALUES ($1,$2,$3,$4,$5,$6)`,
+            [userId, subjectId, milestoneId, type, amount, null]
+        );
+    }
+
+
 }
 
-export async function dbSelectTotalXp(userId: number) {
+// This here is to calculate Total XP. 
+export async function dbGetTotalXp(userId: number) {
     const result = await pool.query(
         'SELECT COALESCE(SUM(amount),0) AS total FROM xp_events WHERE user_id = $1', [userId]
     )
     return Number(result.rows[0].total);
 }
 
-// // Daily xp
-// export async function dbDailyXp(userId: number) {
-//     const result = await pool.query(
-//         'SELECT COALESCE(SUM(amount),0) AS daily_xp FROM xp_events WHERE user_id = $1 AND created_at >= date_trunc($2,now())',
-//         [userId, 'day']
-//     )
-//     return Number(result.rows[0].daily_xp);
-// }
 
 // Daily's Progress Tracker (Insert + Update if already exists)
 export async function upsertDailyProgress(userID: number, milestoneId: number, date: string, delta: number) {
@@ -42,4 +51,26 @@ export async function upsertDailyProgress(userID: number, milestoneId: number, d
         RETURNING *;`, [userID, milestoneId, date, delta]
     )
     return result.rows[0];
+}
+
+// Get all xp events for a user (for the History page)
+export async function getXpEvents(userId: number, limit: number, offset: number) {
+    const result = await pool.query(
+        `
+        SELECT e.id, e.amount, e.type, m.title AS milestone_title, e.created_at FROM xp_events e
+        LEFT JOIN milestones m ON m.id = e.milestone_id
+        WHERE e.user_id = $1
+        ORDER BY e.created_at DESC, e.id DESC
+        LIMIT $2 OFFSET $3;
+        `, [userId, limit, offset]
+    )
+    return result.rows;
+}
+
+// Count all xp events for a user (for pagination)
+export async function countXpEvents(userId: number) {
+    const result = await pool.query(
+        `SELECT COUNT(*) FROM xp_events WHERE user_id = $1`, [userId]
+    )
+    return Number(result.rows[0].count);
 }

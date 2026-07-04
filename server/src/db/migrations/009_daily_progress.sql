@@ -13,5 +13,5 @@ CREATE TABLE daily_progress (
         REFERENCES milestones(id) 
         ON DELETE CASCADE,
 
-    CONSTRAINT unique_daily UNIQUE (user_id, milestone_id, data)
+    CONSTRAINT unique_daily UNIQUE (user_id, milestone_id, progress_date)
 );

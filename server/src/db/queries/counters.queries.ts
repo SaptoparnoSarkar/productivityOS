@@ -31,7 +31,7 @@ export async function dbGetCounterByMilestoneId(
 ) {
   const result = await pool.query(
     `
-    SELECT mc.*
+    SELECT mc.*, m.daily_minimum, m.subject_id
     FROM milestone_counters mc
     JOIN milestones m ON mc.milestone_id = m.id
     JOIN subjects s ON m.subject_id = s.id

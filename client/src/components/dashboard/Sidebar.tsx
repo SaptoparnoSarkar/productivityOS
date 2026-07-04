@@ -7,7 +7,7 @@ import { BookOpen, LayoutDashboard, PanelRightClose, PanelRightOpen, Target, Tim
 const Nav = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Subjects", href: "/dashboard/subjects", icon: BookOpen },
-  { label: "XP", locked: true, phase: 6, icon: Zap },
+  { label: "XP", href: "/dashboard/xp", icon: Zap },
   { label: "Pomodoro", locked: true, phase: 7, icon: Timer },
   { label: "Weakness", locked: true, phase: 8, icon: TriangleAlert },
   { label: "Hall of Fame", locked: true, phase: 8, icon: Trophy },
