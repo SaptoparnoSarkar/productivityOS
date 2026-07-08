@@ -11,6 +11,7 @@ import { checklistItemRoutes } from "./routes/checklistItem.js";
 import { counterRoutes } from "./routes/counter.js";
 import fastifyCors from "@fastify/cors";
 import { xpRouter } from "./routes/xp.js";
+import redis from "./config/redis.js";
 
 //Fastify Instance
 const fastify = Fastify({ logger: true });
@@ -20,6 +21,10 @@ const start = async () => {
     //Verify DB first
     await pool.query("SELECT 1");
     fastify.log.info("Database connected check");
+
+    //Verify Redis
+    await redis.ping();
+    fastify.log.info("Redis connected check")
 
     //Register Cors
     await fastify.register(fastifyCors, {

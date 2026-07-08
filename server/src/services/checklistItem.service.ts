@@ -66,7 +66,7 @@ export async function updateChecklist(
   if (realDelta !== 0) {
     const row = await upsertDailyProgress(userId, updatedChecklist.milestone_id, today, realDelta);
 
-    //Per Tick XP
+    //Per Tick XP reward
     const xp = realDelta * 5;
     await awardXp(userId, 'per_tick', xp, currentChecklist.subject_id, milestoneId);
 

@@ -1,3 +1,4 @@
+import { getCachedXpSummary, invalidateXpSummary, setCachedXpSummary } from "../cache/xp.cache.js";
 import { dbInsertXpEvent, dbGetTotalXp, getXpEvents, countXpEvents } from "../db/queries/xp.queries.js";
 import { getRankForXp, getRankProgress } from "./rank.service.js";
 
@@ -14,16 +15,24 @@ type xpEventType =
 
 // This awards the xp. 
 export async function awardXp(userId: number, type: xpEventType, amount: number, subjectId: number, milestoneId: number) {
-    return dbInsertXpEvent(userId, type, amount, subjectId, milestoneId);
+    const data = await dbInsertXpEvent(userId, type, amount, subjectId, milestoneId);
+    await invalidateXpSummary(userId);
+    return data;
 }
 
 
 export async function getXpSummary(userId: number) {
+
+    const cached = await getCachedXpSummary(userId)
+    if (cached) return cached;
+
     const totalXp = await dbGetTotalXp(userId);
     const rank = getRankForXp(totalXp);
     const progress = getRankProgress(totalXp);
+    const summary = { totalXp, rank, progress };
 
-    return { totalXp, rank, progress }
+    await setCachedXpSummary(userId, summary)
+    return summary;
 }
 
 export async function getXpLog(userId: number, page: number, limit: number) {
