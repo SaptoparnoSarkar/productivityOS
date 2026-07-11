@@ -6,17 +6,17 @@ import {
   dbUpdateChecklistItem,
 } from "../db/queries/checklistItems.queries.js";
 import { upsertDailyProgress } from "../db/queries/xp.queries.js";
-import type { UpdateChecklistInputType } from "../schemas/checklistItem.schema.js";
+import type { CreateChecklistItemsInput, UpdateChecklistItemsInput } from "../schemas/checklistItem.schema.js";
 import { NotFoundError } from "../utils/errors.js";
 import { awardXp } from "./xp.service.js";
 
 //Create CheckList
-export async function createChecklist(
+export async function createChecklistItem(
   milestoneId: number,
-  label: string,
+  input: CreateChecklistItemsInput,
   userId: number,
 ) {
-  const checklist = await dbCreateChecklistItem(milestoneId, label, userId);
+  const checklist = await dbCreateChecklistItem(milestoneId, input.label, userId);
   if (!checklist) {
     throw new NotFoundError("Milestone Not Found");
   }
@@ -35,11 +35,11 @@ export async function listChecklists(milestoneId: number, userId: number) {
 
 
 //Update Checklist
-export async function updateChecklist(
+export async function updateChecklistItem(
   itemId: number,
   userId: number,
   milestoneId: number,
-  input: UpdateChecklistInputType,
+  input: UpdateChecklistItemsInput,
 ) {
   // TODO: TRANSACTION NEEDED
   // Steps: fetch → dbUpdateChecklistItem → upsertDailyProgress → awardXp (per_tick) → awardXp (daily_completion)

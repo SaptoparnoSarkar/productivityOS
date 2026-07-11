@@ -4,8 +4,8 @@ import { deleteMilestone, getMilestone } from "@/lib/api/milestones";
 import { Milestone } from "@/types/milestone";
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react";
-import ChecklistItemsList from "./ChecklistItemsList";
-import CounterDisplay from "./CounterDisplay";
+import ChecklistItemsList from "../checklist/ChecklistItemsList";
+import CounterDisplay from "../counter/CounterDisplay";
 
 
 export default function MilestoneDetail() {
@@ -73,7 +73,6 @@ export default function MilestoneDetail() {
 
             <button onClick={handleDelete} disabled={deleting}>{deleting ? 'Deleting...' : 'Delete'}</button>
             {deleteError && <p className="form-error">{deleteError}</p>}
-
 
         </div>
     )

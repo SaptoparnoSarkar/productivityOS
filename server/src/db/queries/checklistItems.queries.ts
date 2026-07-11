@@ -35,7 +35,7 @@ export async function dbGetChecklistItemsByMilestoneId(
   return result.rows;
 }
 
-//Get Checklist Item (Singular) by Item id
+//Get Checklist Item (Singular) by Item id also fetches the daily minimum.
 export async function dbGetChecklistItemById(
   itemId: number,
   userId: number,

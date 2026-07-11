@@ -7,7 +7,7 @@ import { CustomInputProps } from '@/types/index'
 
 //Gonna reuse this everywhere
 
-export function CustomInputs({ control, name, label, placeholder, autocomplete, type = 'text', inputMode = 'none', disabled = false, }: CustomInputProps) {
+export function CustomInputs({ control, name, label, placeholder, autocomplete, type = 'text', inputMode = 'none', disabled = false, min, max }: CustomInputProps) {
     return (
         <Controller
             name={name}
@@ -25,6 +25,8 @@ export function CustomInputs({ control, name, label, placeholder, autocomplete, 
                         disabled={disabled}
                         style={{ padding: '15px' }}
                         inputMode={inputMode}
+                        min={min}
+                        max={max}
                     />
                     {fieldState.invalid && (<FieldError errors={[fieldState.error]} style={{ color: 'red' }} />
                     )}

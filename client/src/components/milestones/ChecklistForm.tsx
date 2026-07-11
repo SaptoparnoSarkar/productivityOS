@@ -1,25 +1,27 @@
 'use client'
 
 import Spinner from "../ui/spinner";
-import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldGroup } from "../ui/field";
 import { CustomInputs } from "../ui/CustomInputs";
-import { createChecklistItemSchema, ChecklistFormValues } from "@/schemas/checklist.schema";
+import { createChecklistItemsSchema, ChecklistFormValues, ChecklistFormOutput } from "@/schemas/checklist.schema";
+import z from "zod";
+
 
 
 
 type Props = {
-    onSubmit: (values: ChecklistFormValues) => void | Promise<void>;
+    onSubmit: (values: ChecklistFormOutput) => void | Promise<void>;
 }
 
 export function ChecklistForm({ onSubmit }: Props) {
 
-    const form = useForm<ChecklistFormValues>({
-        resolver: zodResolver(createChecklistItemSchema),
+    const form = useForm<z.input<typeof createChecklistItemsSchema>, any, z.output<typeof createChecklistItemsSchema>>({
+        resolver: zodResolver(createChecklistItemsSchema),
         defaultValues: {
             label: '',
+            target_count: 1,
         }
     })
 
@@ -33,6 +35,7 @@ export function ChecklistForm({ onSubmit }: Props) {
                 <FieldGroup>
                     <div className="fields">
                         <CustomInputs control={form.control} name='label' label='First item' />
+                        <CustomInputs control={form.control} name='target_count' type="number" label='How many items are you aiming for?' min={1} max={100} />
                     </div>
                 </FieldGroup>
 

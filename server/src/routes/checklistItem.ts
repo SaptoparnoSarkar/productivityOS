@@ -1,14 +1,14 @@
 import type { FastifyInstance } from "fastify";
 import { ValidationError } from "../utils/errors.js";
 import {
-  createChecklistSchema,
-  updateChecklistSchema,
+  createChecklistItemsSchema,
+  updateChecklistItemsSchema,
 } from "../schemas/checklistItem.schema.js";
 import {
-  createChecklist,
+  createChecklistItem,
   deleteChecklist,
   listChecklists,
-  updateChecklist,
+  updateChecklistItem,
 } from "../services/checklistItem.service.js";
 
 export async function checklistItemRoutes(fastify: FastifyInstance) {
@@ -22,14 +22,14 @@ export async function checklistItemRoutes(fastify: FastifyInstance) {
         throw new ValidationError("Invalid Milestone ID");
       }
 
-      const result = createChecklistSchema.safeParse(request.body);
+      const result = createChecklistItemsSchema.safeParse(request.body);
       if (!result.success) {
         return reply.status(400).send({ message: result.error.message });
       }
 
-      const checklist = await createChecklist(
+      const checklist = await createChecklistItem(
         milestoneId,
-        result.data.label,
+        result.data,
         request.userId,
       );
 
@@ -79,13 +79,13 @@ export async function checklistItemRoutes(fastify: FastifyInstance) {
           ? JSON.parse(request.body)
           : request.body;
 
-      const result = updateChecklistSchema.safeParse(body);
+      const result = updateChecklistItemsSchema.safeParse(body);
 
       if (!result.success) {
         return reply.status(400).send({ message: result.error.message });
       }
 
-      const updated = await updateChecklist(
+      const updated = await updateChecklistItem(
         itemId,
         request.userId,
         milestoneId,

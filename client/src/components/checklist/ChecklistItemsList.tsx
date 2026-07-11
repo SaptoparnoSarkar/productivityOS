@@ -1,5 +1,6 @@
 'use client'
 
+import { getChecklistTarget, setChecklistTarget } from "@/lib/api/checklist";
 import { createChecklistItem, deleteChecklistItem, listChecklistItems, updateChecklistItem } from "@/lib/api/checklistItems";
 import { ChecklistItem } from "@/types/checklistItem";
 import { useCallback, useEffect, useState } from "react";
@@ -16,7 +17,12 @@ export default function ChecklistItemsList({ milestoneId }: Props) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>('');
 
-    //Input for the inline "add item"
+    //Target and Target Edit
+    const [target, setTarget] = useState<number | null>(null);
+    const [editingTarget, setEditingTarget] = useState(false);
+    const [targetInput, setTargetInput] = useState<number>(1);
+
+    //Input for the inline "add item" 
     const [newLabel, setNewLabel] = useState('');
     const [adding, setAdding] = useState(false);
 
@@ -28,6 +34,9 @@ export default function ChecklistItemsList({ milestoneId }: Props) {
         try {
             const data = await listChecklistItems(milestoneId);
             setItems(data);
+            const target = await getChecklistTarget(milestoneId);
+            setTarget(target.target_count);
+
         } catch (error) {
             setError(error instanceof Error ? error.message : 'Failed to Load');
         } finally {
@@ -56,7 +65,7 @@ export default function ChecklistItemsList({ milestoneId }: Props) {
         if (!label) return;
         setAdding(true);
         try {
-            await createChecklistItem({ milestone_id: milestoneId, label })
+            await createChecklistItem(milestoneId, { label: label });
             setNewLabel('');
             await loadItems();
         } catch (error) {
@@ -66,7 +75,8 @@ export default function ChecklistItemsList({ milestoneId }: Props) {
         }
     }
 
-    //Save Handler for Edit
+
+    //Save Handler for Editing Checklist Items
     async function handleSaveLabel(itemId: number) {
         const label = editLabel.trim();
         if (!label) return;
@@ -80,6 +90,18 @@ export default function ChecklistItemsList({ milestoneId }: Props) {
         }
     }
 
+    //Save Handler for Editing Checklist Target
+    async function handleSaveTarget() {
+        try {
+            await setChecklistTarget(milestoneId, { target_count: targetInput });
+            setEditingTarget(false);
+            await loadItems();
+        }
+        catch (error) {
+            setError(error instanceof Error ? error.message : 'Failed to update target');
+        }
+    }
+
     //Delete Handler 
     async function handleDelete(itemId: number) {
         if (!confirm('Delete this item?')) return;
@@ -90,6 +112,9 @@ export default function ChecklistItemsList({ milestoneId }: Props) {
             setError(error instanceof Error ? error.message : 'Failed to delete');
         }
     }
+    //Count of done checklist items
+    const doneCount = items.filter(i => i.is_done).length;
+    const isComplete = target !== null && doneCount >= target;
 
 
     if (loading) return <div>Loading...</div>
@@ -97,6 +122,20 @@ export default function ChecklistItemsList({ milestoneId }: Props) {
 
     return (
         <div>
+            {editingTarget ? (
+                <>
+                    <input type="number" min={1} max={100} value={targetInput} onChange={(e) => setTargetInput(Number(e.target.value))} />
+                    <button type="button" onClick={handleSaveTarget}>Save</button>
+                    <button type="button" onClick={() => setEditingTarget(false)}>Cancel</button>
+                </>
+            ) : (
+                <>
+                    <span>{doneCount} / {target} done {isComplete && '✅'}</span>
+                    <button type="button" onClick={() => { setEditingTarget(true); setTargetInput(target || 1) }}> Edit Target </button>
+                </>
+            )
+            }
+
             {/* tiny inline add form */}
             <form onSubmit={handleAdd}>
                 <input

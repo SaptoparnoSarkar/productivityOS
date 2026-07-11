@@ -6,7 +6,6 @@ export type ChecklistItem = {
 }
 
 export type CreateChecklistItemInput = {
-    milestone_id: number,
     label: string
 }
 

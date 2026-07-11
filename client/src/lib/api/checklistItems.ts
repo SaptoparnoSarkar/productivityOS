@@ -3,11 +3,12 @@ import { apiClient } from "../apiClient";
 
 
 export async function createChecklistItem(
+    milestoneId: number,
     input: CreateChecklistItemInput
 ): Promise<ChecklistItem> {
-    const response = await apiClient<{ message: string; checklistItem: ChecklistItem }>(`/api/milestones/${input.milestone_id}/checklist-items`, {
+    const response = await apiClient<{ message: string; checklistItem: ChecklistItem }>(`/api/milestones/${milestoneId}/checklist-items`, {
         method: "POST",
-        body: JSON.stringify({ label: input.label }),
+        body: JSON.stringify(input),
     })
     return response.checklistItem
 }

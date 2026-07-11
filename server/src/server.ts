@@ -12,6 +12,7 @@ import { counterRoutes } from "./routes/counter.js";
 import fastifyCors from "@fastify/cors";
 import { xpRouter } from "./routes/xp.js";
 import redis from "./config/redis.js";
+import { checklistRoutes } from "./routes/checklist.js";
 
 //Fastify Instance
 const fastify = Fastify({ logger: true });
@@ -61,9 +62,11 @@ const start = async () => {
     await fastify.register(milestoneRoutes);
     fastify.log.info("milestone routes check");
     await fastify.register(checklistItemRoutes);
-    fastify.log.info("checklist routes check");
+    fastify.log.info("checklistItem routes check");
     await fastify.register(counterRoutes);
     fastify.log.info("counter routes check");
+    await fastify.register(checklistRoutes);
+    fastify.log.info("checklist routes check");
     await fastify.register(xpRouter);
     fastify.log.info('xp routes check')
 
