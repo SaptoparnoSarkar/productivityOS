@@ -9,7 +9,7 @@ const baseMilestoneFields = z.object({
   daily_minimum: z.number().int().positive().optional(),
   daily_minimum_unit: z.string().optional(),
   weekly_minimum: z.number().int().min(1).max(7).optional(),
-})
+});
 
 //Refine applied seperately for create and update
 export const createMilestoneSchema = baseMilestoneFields.refine(
@@ -19,10 +19,9 @@ export const createMilestoneSchema = baseMilestoneFields.refine(
     return hasMin === hasUnit;
   },
   { message: "daily_minimum and daily_minimum_unit must be provided together" },
-)
+);
 
 export type CreateMilestoneInput = z.infer<typeof createMilestoneSchema>;
-
 
 export const updateMilestoneSchema = baseMilestoneFields
   .omit({ type: true })
@@ -33,11 +32,20 @@ export const updateMilestoneSchema = baseMilestoneFields
       const hasUnit = data.daily_minimum_unit !== undefined;
       return hasMin === hasUnit;
     },
-    { message: "Daily Minimum and Daily Minumum Unit must be provided together." }
+    {
+      message:
+        "Daily Minimum and Daily Minumum Unit must be provided together.",
+    },
   )
-  .refine(
-    (data) => Object.keys(data).length > 0,
-    { message: "Provide at least one field to update." }
-  );
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "Provide at least one field to update.",
+  });
 
 export type UpdateMilestoneInput = z.infer<typeof updateMilestoneSchema>;
+
+// For isActive Validation
+export const setActiveSchema = z.object({
+  isActive: z.boolean(),
+});
+
+export type SetActiveInput = z.infer<typeof setActiveSchema>;

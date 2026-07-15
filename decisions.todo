@@ -1,0 +1,10 @@
+Phase 7:
+    ✔ isActive query in milestone queries @done(26-07-13 12:23)
+    ✔ isActive service in milestone service @done(26-07-13 13:04)
+    ✔ PATCH /api/milestones/:id/active Route + Zod @done(26-07-13 13:23)
+    ✔ Tweak isActive deactive sql for never let active count hit 0 as long the user has 1 milestone @done(26-07-15 12:28)
+    ✔ isActive apiClient, UI, types @done(26-07-15 12:28)
+    ✔ Fix getAllMilestones returning undefined @done(26-07-15 14:56)
+    ☐ Fix Recent Milestone Links Clickable.
+    
+    

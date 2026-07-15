@@ -1,16 +1,23 @@
 import {
   dbCreateMilestone,
   dbDeleteMilestone,
+  dbGetAllMilestones,
   dbGetMilestoneById,
   dbGetMilestonesBySubjectId,
   dbRecentMilestones,
+  dbSetMilestoneActive,
   dbUpdateMilestone,
 } from "../db/queries/milestones.queries.js";
 import type {
   CreateMilestoneInput,
   UpdateMilestoneInput,
 } from "../schemas/milestone.schema.js";
-import { NotFoundError, ValidationError } from "../utils/errors.js";
+import {
+  ConflictError,
+  DatabaseError,
+  NotFoundError,
+  ValidationError,
+} from "../utils/errors.js";
 
 //Create a Milestone
 export async function createMilestone(
@@ -31,12 +38,8 @@ export async function listMilestones(subjectId: number, userId: number) {
 }
 
 //Get Milestone by Id
-export async function getMilestone(
-  milestoneId: number,
-  subjectId: number,
-  userId: number,
-) {
-  const milestone = await dbGetMilestoneById(milestoneId, subjectId, userId);
+export async function getMilestone(milestoneId: number, userId: number) {
+  const milestone = await dbGetMilestoneById(milestoneId, userId);
   if (!milestone) {
     throw new NotFoundError("Milestone Not Found");
   }
@@ -83,10 +86,46 @@ export async function deleteMilestone(
 }
 
 //Recent Milestones
-export async function recentMilestones(userId: number, subjectId: number, limit = 5) {
-  const milestones = await dbRecentMilestones(userId, subjectId, limit);
+export async function recentMilestones(userId: number, limit = 5) {
+  const milestones = await dbRecentMilestones(userId, limit);
   if (!milestones) {
     throw new NotFoundError("No Recent Milestones");
+  }
+  return milestones;
+}
+
+// isActive Milestones
+export async function setMilestoneActive(
+  milestoneId: number,
+  userId: number,
+  isActive: boolean,
+) {
+  const updated = await dbSetMilestoneActive(milestoneId, userId, isActive);
+  // Happy Path
+  if (updated) {
+    return updated;
+  }
+  // Null Path. no row updated.
+  else {
+    // Check Ownership first
+    const milestone = await getMilestone(milestoneId, userId);
+    if (!milestone) {
+      throw new NotFoundError("Milestone not found");
+    }
+    //Now tell the user why
+    if (isActive) {
+      throw new ConflictError("Max 5 active milestones");
+    } else {
+      throw new ConflictError("At least 1 milestone must stay active");
+    }
+  }
+}
+
+//Get All Milestones
+export async function getAllMilestones(userId: number) {
+  const milestones = await dbGetAllMilestones(userId);
+  if (!milestones) {
+    throw new NotFoundError("No milestones founds.");
   }
   return milestones;
 }

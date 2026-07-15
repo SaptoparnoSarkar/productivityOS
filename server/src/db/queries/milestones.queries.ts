@@ -4,6 +4,9 @@ import type {
   UpdateMilestoneInput,
 } from "../../schemas/milestone.schema.js";
 
+// FIXME: drop subjectId from everywhere except dbCreateMilestone. As milestone lookup already traces owner ship
+// without it.
+
 //Create Milestone
 export async function dbCreateMilestone(
   subjectId: number,
@@ -45,16 +48,12 @@ export async function dbGetMilestonesBySubjectId(
 }
 
 //Fetch a single Milestone by milestoneId
-export async function dbGetMilestoneById(
-  milestoneId: number,
-  subjectId: number,
-  userId: number,
-) {
+export async function dbGetMilestoneById(milestoneId: number, userId: number) {
   const result = await pool.query(
     `SELECT m.* FROM milestones m
          JOIN subjects s ON m.subject_id = s.id
-         WHERE m.id= $1 AND m.subject_id = $2 AND s.user_id = $3`,
-    [milestoneId, subjectId, userId],
+         WHERE m.id = $1 AND s.user_id = $2`,
+    [milestoneId, userId],
   );
   return result.rows[0] || null;
 }
@@ -134,14 +133,72 @@ export async function dbDeleteMilestone(
 }
 
 //Recent Milestones
-export async function dbRecentMilestones(userId: number, subjectId: number, limit: number) {
+export async function dbRecentMilestones(userId: number, limit: number) {
   const results = await pool.query(
     `SELECT m.* FROM milestones m
       JOIN subjects s ON m.subject_id = s.id
-      WHERE m.subject_id = $1 AND s.user_id = $2
+      WHERE s.user_id = $1
       ORDER BY m.updated_at DESC
-      LIMIT $3`,
-    [subjectId, userId, limit]
-  )
+      LIMIT $2`,
+    [userId, limit],
+  );
   return results.rows;
+}
+
+//set milestone active
+//The subquery only allows the flip if the user has less than 5 active.
+export async function dbSetMilestoneActive(
+  milestoneId: number,
+  userId: number,
+  isActive: boolean,
+) {
+  if (isActive) {
+    const result = await pool.query(
+      ` 
+        UPDATE milestones m
+        SET is_active = true
+        FROM subjects s WHERE m.subject_id = s.id
+        AND m.id = $1 AND s.user_id = $2
+        AND (
+          SELECT COUNT(*) FROM milestones m2
+          JOIN subjects s2 ON m2.subject_id = s2.id
+          WHERE s2.user_id = $2 AND m2.is_active = true
+        ) < 5
+        RETURNING m.*
+      `,
+      [milestoneId, userId],
+    );
+    return result.rows[0] || null;
+  } else {
+    const result = await pool.query(
+      `
+        UPDATE milestones m
+        SET is_active = false
+        FROM subjects s WHERE m.subject_id = s.id
+        AND m.id = $1 AND s.user_id = $2
+        AND (
+          SELECT COUNT(*) FROM milestones m2
+          JOIN subjects s2 ON m2.subject_id = s2.id
+          WHERE s2.user_id = $2 AND m2.is_active = true
+        ) > 1
+        RETURNING m.*
+      `,
+      [milestoneId, userId],
+    );
+    return result.rows[0] || null;
+  }
+}
+
+// Get milestones across all subjects
+export async function dbGetAllMilestones(userId: number) {
+  const result = await pool.query(
+    `SELECT m.*, s.title AS subject_name
+    FROM milestones m
+    JOIN subjects s ON m.subject_id = s.id
+    WHERE s.user_id = $1
+    ORDER BY m.created_at DESC, m.id DESC`,
+    [userId],
+  );
+
+  return result.rows;
 }

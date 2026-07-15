@@ -1,6 +1,6 @@
 "use client";
 
-import { listRecentMilestone } from "@/lib/api/milestones";
+import { listRecentMilestones } from "@/lib/api/milestones";
 import { Milestone } from "@/types/milestone";
 import { useEffect, useState } from "react";
 import { MilestoneListView } from "../milestones/MilestoneListView";
@@ -15,7 +15,7 @@ export function UpcomingMilestoneWidget() {
     setLoading(true);
     async function fetchRecentMilestones() {
       try {
-        const data = await listRecentMilestone(5);
+        const data = await listRecentMilestones(5);
         setMilestones(data);
       } catch (error) {
         setError(

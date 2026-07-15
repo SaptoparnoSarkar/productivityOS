@@ -1,5 +1,5 @@
 CREATE TYPE milestone_type_enum AS ENUM ('counter', 'checklist');
-CREATE TYPE milestone_frequency_enum AS ENUM ('daily', 'weekly');
+
 
 CREATE TABLE milestones (
     id SERIAL PRIMARY KEY,
@@ -7,10 +7,10 @@ CREATE TABLE milestones (
     type milestone_type_enum NOT NULL,
     title VARCHAR(200) NOT NULL,
     description TEXT,
-    frequency milestone_frequency_enum NOT NULL DEFAULT 'daily',
     daily_minimum INT,
     daily_minimum_unit VARCHAR(50), -- 'problems'/ 'pages'/ 'topics
     weekly_minimum INT, -- always days
+    is_active BOOLEAN DEFAULT FALSE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
@@ -22,4 +22,4 @@ CREATE TABLE milestones (
 CREATE INDEX idx_milestones_subject_id ON milestones(subject_id);
 
 
--- Add life calender
+-- TODO: Add life calender
