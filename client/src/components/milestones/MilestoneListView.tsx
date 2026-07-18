@@ -2,7 +2,11 @@ import { Milestone } from "@/types/milestone";
 import { AlarmClock } from "lucide-react";
 import Link from "next/link";
 
-export function MilestoneListView({ milestones }: { milestones: Milestone[] }) {
+type Props = {
+  milestones: Milestone[];
+};
+
+export function MilestoneListView({ milestones }: Props) {
   if (milestones.length === 0)
     return (
       <div className="flex flex-col items-center justify-center pt-5 ">
@@ -15,7 +19,7 @@ export function MilestoneListView({ milestones }: { milestones: Milestone[] }) {
       {milestones.map((m) => (
         <li key={m.id} className="milestone-widget__links">
           <Link
-            href={`/dashboard/subjects/milestones/${m.id}`}
+            href={`/dashboard/subjects/${m.subject_id}/milestones/${m.id}`}
             className="flex justify-between w-[350px]"
           >
             <p>{m.title}</p>

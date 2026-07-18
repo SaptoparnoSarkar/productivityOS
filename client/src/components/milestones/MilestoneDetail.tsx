@@ -35,7 +35,7 @@ export default function MilestoneDetail() {
     }
     async function fetchMilestone() {
       try {
-        const data = await getMilestone(subjectId, milestoneId);
+        const data = await getMilestone(milestoneId);
         setMilestone(data);
       } catch (error) {
         setError(error instanceof Error ? error.message : "An error occurred");

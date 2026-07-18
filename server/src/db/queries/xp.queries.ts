@@ -2,75 +2,65 @@ import { pool } from "../../config/db.js";
 
 // Append-only never update/delete xp_events.
 export async function dbInsertXpEvent(
-    userId: number,
-    type: string,
-    amount: number,
-    subjectId: number,
-    milestoneId: number,
+  userId: number,
+  type: string,
+  amount: number,
+  subjectId: number,
+  milestoneId: number,
 ) {
-    const today = new Date().toISOString().split('T')[0]!;
-    // Why ON CONFLICT? This is to prevent double counting.
-    if (type === "daily_completion") {
-        await pool.query(
-            `INSERT INTO xp_events (user_id, subject_id, milestone_id, type, amount, awarded_date)
+  const today = new Date().toISOString().split("T")[0]!;
+  // Why ON CONFLICT? This is to prevent double counting.
+  if (type === "daily_completion") {
+    await pool.query(
+      `INSERT INTO xp_events (user_id, subject_id, milestone_id, type, amount, awarded_date)
             VALUES($1,$2,$3,$4,$5,$6)
             ON CONFLICT (user_id, milestone_id, type, awarded_date) DO NOTHING`,
-            [userId, subjectId, milestoneId, type, amount, today]
-        );
-        return;
-    }
-    else {
-        // This here is for single events like first complete of milestone and etc.
-        await pool.query(
-            `INSERT INTO xp_events (user_id, subject_id, milestone_id, type, amount, awarded_date)
+      [userId, subjectId, milestoneId, type, amount, today],
+    );
+    return;
+  } else {
+    // This here is for single events like first complete of milestone and etc.
+    await pool.query(
+      `INSERT INTO xp_events (user_id, subject_id, milestone_id, type, amount, awarded_date)
             VALUES ($1,$2,$3,$4,$5,$6)`,
-            [userId, subjectId, milestoneId, type, amount, null]
-        );
-    }
-
-
+      [userId, subjectId, milestoneId, type, amount, null],
+    );
+  }
 }
 
-// This here is to calculate Total XP. 
+// Get calculation Total XP.
 export async function dbGetTotalXp(userId: number) {
-    const result = await pool.query(
-        'SELECT COALESCE(SUM(amount),0) AS total FROM xp_events WHERE user_id = $1', [userId]
-    )
-    return Number(result.rows[0].total);
-}
-
-
-// Daily's Progress Tracker (Insert + Update if already exists)
-export async function upsertDailyProgress(userID: number, milestoneId: number, date: string, delta: number) {
-    const result = await pool.query(
-        `INSERT INTO daily_progress (user_id, milestone_id, progress_date, progress)
-        VALUES ($1,$2,$3,$4)
-        ON CONFLICT (user_id, milestone_id, progress_date)
-        DO UPDATE
-        SET PROGRESS = daily_progress.progress + EXCLUDED.progress
-        RETURNING *;`, [userID, milestoneId, date, delta]
-    )
-    return result.rows[0];
+  const result = await pool.query(
+    "SELECT COALESCE(SUM(amount),0) AS total FROM xp_events WHERE user_id = $1",
+    [userId],
+  );
+  return Number(result.rows[0].total);
 }
 
 // Get all xp events for a user (for the History page)
-export async function getXpEvents(userId: number, limit: number, offset: number) {
-    const result = await pool.query(
-        `
+export async function getXpEvents(
+  userId: number,
+  limit: number,
+  offset: number,
+) {
+  const result = await pool.query(
+    `
         SELECT e.id, e.amount, e.type, m.title AS milestone_title, e.created_at FROM xp_events e
         LEFT JOIN milestones m ON m.id = e.milestone_id
         WHERE e.user_id = $1
         ORDER BY e.created_at DESC, e.id DESC
         LIMIT $2 OFFSET $3;
-        `, [userId, limit, offset]
-    )
-    return result.rows;
+        `,
+    [userId, limit, offset],
+  );
+  return result.rows;
 }
 
-// Count all xp events for a user (for pagination)
+//  Get the count all xp events for a user (for pagination)
 export async function countXpEvents(userId: number) {
-    const result = await pool.query(
-        `SELECT COUNT(*) FROM xp_events WHERE user_id = $1`, [userId]
-    )
-    return Number(result.rows[0].count);
+  const result = await pool.query(
+    `SELECT COUNT(*) FROM xp_events WHERE user_id = $1`,
+    [userId],
+  );
+  return Number(result.rows[0].count);
 }

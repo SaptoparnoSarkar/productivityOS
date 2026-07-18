@@ -4,6 +4,7 @@ import MilestoneCard from "@/components/milestones/MilestoneCard";
 import { getAllMilestones, setMilestoneActive } from "@/lib/api/milestones";
 import { MilestoneWithSubject } from "@/types/milestone";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function MilestonePage() {
   const [milestones, setMilestones] = useState<MilestoneWithSubject[]>([]);
@@ -37,10 +38,8 @@ export default function MilestonePage() {
       const freshData = await getAllMilestones();
       setMilestones(freshData);
     } catch (error) {
-      setError(
-        error instanceof Error
-          ? error.message
-          : "An error occured. Please try again.",
+      toast.error(
+        error instanceof Error ? error.message : "Something went wrong",
       );
     } finally {
       setTogglingId(null);
@@ -83,5 +82,3 @@ export default function MilestonePage() {
     </div>
   );
 }
-
-// TODO: Toster message of at least one milestone needs to stay active

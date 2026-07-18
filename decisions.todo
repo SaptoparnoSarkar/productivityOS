@@ -5,6 +5,9 @@ Phase 7:
     ✔ Tweak isActive deactive sql for never let active count hit 0 as long the user has 1 milestone @done(26-07-15 12:28)
     ✔ isActive apiClient, UI, types @done(26-07-15 12:28)
     ✔ Fix getAllMilestones returning undefined @done(26-07-15 14:56)
-    ☐ Fix Recent Milestone Links Clickable.
+    ✔ Fix Recent Milestone Links Clickable. @done(26-07-17 00:24)
     
-    
+    Streak: 
+        ☐ 
+       
+        

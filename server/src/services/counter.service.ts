@@ -5,7 +5,7 @@ import {
   dbResetCounter,
   dbUpdateCounter,
 } from "../db/queries/counters.queries.js";
-import { upsertDailyProgress } from "../db/queries/xp.queries.js";
+import { upsertDailyProgress } from "../db/queries/dailyprogress.queries.js";
 import type {
   CreateCounterInput,
   UpdateCounterInput,
@@ -82,25 +82,41 @@ export async function incrementCounter(
   const realDelta = updatedCounter.current_value - currentCounter.current_value;
 
   if (realDelta !== 0) {
-
     const today = new Date().toISOString().split("T")[0]!; //! I know it returns undefined but it never will
     const row = await upsertDailyProgress(userId, milestoneId, today, delta);
 
     //per-tick/per-increment XP
     const xp = realDelta * 5;
-    await awardXp(userId, 'per_tick', xp, currentCounter.subject_id, milestoneId);
+    await awardXp(
+      userId,
+      "per_tick",
+      xp,
+      currentCounter.subject_id,
+      milestoneId,
+    );
 
     //Daily's XP fires once.
     const dailyMinimum = currentCounter.daily_minimum; //Fetch the daily min from milestones
     const after = row.progress;
     const before = after - delta;
 
-
     const wasBelowMinimum = before < dailyMinimum;
     const isNowAtOrAboveMinimum = after >= dailyMinimum;
     const justHitMinimum = wasBelowMinimum && isNowAtOrAboveMinimum;
-    if (justHitMinimum) await awardXp(userId, 'daily_completion', 100, currentCounter.subject_id, milestoneId);
-    console.log({ dailyMinimum: currentCounter.daily_minimum, before, after, justHitMinimum });
+    if (justHitMinimum)
+      await awardXp(
+        userId,
+        "daily_completion",
+        100,
+        currentCounter.subject_id,
+        milestoneId,
+      );
+    console.log({
+      dailyMinimum: currentCounter.daily_minimum,
+      before,
+      after,
+      justHitMinimum,
+    });
   }
 
   return updatedCounter;

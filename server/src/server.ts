@@ -25,7 +25,7 @@ const start = async () => {
 
     //Verify Redis
     await redis.ping();
-    fastify.log.info("Redis connected check")
+    fastify.log.info("Redis connected check");
 
     //Register Cors
     await fastify.register(fastifyCors, {
@@ -68,7 +68,7 @@ const start = async () => {
     await fastify.register(checklistRoutes);
     fastify.log.info("checklist routes check");
     await fastify.register(xpRouter);
-    fastify.log.info('xp routes check')
+    fastify.log.info("xp routes check");
 
     //Start listening
     await fastify.listen({ port: 4000 });
