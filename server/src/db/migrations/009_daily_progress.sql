@@ -4,6 +4,7 @@ CREATE TABLE daily_progress (
     milestone_id INT NOT NULL,
     progress_date DATE NOT NULL,
     progress INT NOT NULL DEFAULT 0,
+    is_daily_done BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 
     CONSTRAINT fk_user FOREIGN KEY (user_id)

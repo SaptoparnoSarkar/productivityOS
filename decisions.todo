@@ -8,6 +8,16 @@ Phase 7:
     ✔ Fix Recent Milestone Links Clickable. @done(26-07-17 00:24)
     
     Streak: 
-        ☐ 
+        ✔ dbMarkDailyDone (only returns if false->true so XP is only awarded once.) @done(26-07-20 20:45)
+        ✔ Updated Counter and its logic in incrementCounter same with checklist. @done(26-07-21 00:30)
+        ✔ Add time to user's table & set account to Asia/Kolkata @done(26-07-21 17:54)
+        ✔ Write migrations for weekly_streak_contracts and contract_items @done(26-07-21 17:54)
+        ✔ Write DB query that creates a weekly contract transactionally. @done(26-07-22 01:23)
+        ✔ weekly streak contract pipeline end-to-end finished. @done(26-07-23 00:09)
+        ✔ Create a check that says did the user complete today's promised streak contract items. @done(26-07-26 21:33)
+        ✔ Apply Fix: Do not calculate progress date in NOde. Let psql derive it from the user's stored timezone inside upsertDailyProgress @done(26-07-25 01:35)
+        ☐ Create one query that evaluates every date in the current week
+
+        
        
         

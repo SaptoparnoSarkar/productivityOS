@@ -14,7 +14,6 @@ import type {
 } from "../schemas/milestone.schema.js";
 import {
   ConflictError,
-  DatabaseError,
   NotFoundError,
   ValidationError,
 } from "../utils/errors.js";

@@ -5,7 +5,10 @@ import {
   dbGetChecklistItemsByMilestoneId,
   dbUpdateChecklistItem,
 } from "../db/queries/checklistItems.queries.js";
-import { upsertDailyProgress } from "../db/queries/dailyprogress.queries.js";
+import {
+  dbMarkDailyDone,
+  upsertDailyProgress,
+} from "../db/queries/dailyprogress.queries.js";
 import type {
   CreateChecklistItemsInput,
   UpdateChecklistItemsInput,
@@ -67,8 +70,6 @@ export async function updateChecklistItem(
   );
   if (!updatedChecklist) throw new NotFoundError("Checklist Not Found");
 
-  const today = new Date().toISOString().split("T")[0]!;
-
   let realDelta = 0;
   //To fix duplicate Postman calls.
   if (currentChecklist.is_done === false && updatedChecklist.is_done === true)
@@ -80,7 +81,6 @@ export async function updateChecklistItem(
     const row = await upsertDailyProgress(
       userId,
       updatedChecklist.milestone_id,
-      today,
       realDelta,
     );
 
@@ -95,23 +95,21 @@ export async function updateChecklistItem(
     );
 
     //This is for daily minimum xp reward fires once.
-    const dailyMinumum = currentChecklist.daily_minimum;
-    const after = row.progress;
-    const before = after - realDelta;
+    if (row.progress >= currentChecklist.daily_minimum) {
+      const newlyCompleted = await dbMarkDailyDone(userId, milestoneId);
 
-    const wasBelowMinimum = before < dailyMinumum;
-    const isNowAtOrAboveMinimum = after >= dailyMinumum;
-    const justHitMinimum = wasBelowMinimum && isNowAtOrAboveMinimum;
-    if (justHitMinimum)
-      await awardXp(
-        userId,
-        "daily_completion",
-        100,
-        currentChecklist.subject_id,
-        milestoneId,
-      );
+      //only the request that flips FALSE to TRUE awards daily XP.
+      if (newlyCompleted) {
+        await awardXp(
+          userId,
+          "daily_completion",
+          100,
+          currentChecklist.subject_id,
+          milestoneId,
+        );
+      }
+    }
   }
-
   return updatedChecklist;
 }
 

@@ -5,7 +5,10 @@ import {
   dbResetCounter,
   dbUpdateCounter,
 } from "../db/queries/counters.queries.js";
-import { upsertDailyProgress } from "../db/queries/dailyprogress.queries.js";
+import {
+  dbMarkDailyDone,
+  upsertDailyProgress,
+} from "../db/queries/dailyprogress.queries.js";
 import type {
   CreateCounterInput,
   UpdateCounterInput,
@@ -66,26 +69,26 @@ export async function incrementCounter(
   userId: number,
   delta: number,
 ) {
-  // fetch
+  // 1. fetch the current counter value
   const currentCounter = await dbGetCounterByMilestoneId(milestoneId, userId);
   if (!currentCounter) {
     throw new NotFoundError("Counter not found");
   }
-  // Guard to protect going below 0
+  // 2. Guard to protect going below 0
   if (currentCounter.current_value + delta < 0) {
     throw new ValidationError("Counter cannot go below zero");
   }
-  // update value
+  // 3. update value
   const updatedCounter = await dbIncrementCounter(milestoneId, userId, delta);
 
-  //Reward what really happended, not what was requested. (This is for when increment of zero)
+  // 4. Reward what really happended, not what was requested. (This is for when increment of zero)
   const realDelta = updatedCounter.current_value - currentCounter.current_value;
 
   if (realDelta !== 0) {
-    const today = new Date().toISOString().split("T")[0]!; //! I know it returns undefined but it never will
-    const row = await upsertDailyProgress(userId, milestoneId, today, delta);
+    // 5. Update the daily progress table (which determines your weekly streak)
+    const row = await upsertDailyProgress(userId, milestoneId, realDelta);
 
-    //per-tick/per-increment XP
+    // 6.Reward per-tick/per-increment XP
     const xp = realDelta * 5;
     await awardXp(
       userId,
@@ -95,31 +98,25 @@ export async function incrementCounter(
       milestoneId,
     );
 
-    //Daily's XP fires once.
-    const dailyMinimum = currentCounter.daily_minimum; //Fetch the daily min from milestones
-    const after = row.progress;
-    const before = after - delta;
+    // 7. Daily's XP fires once
+    if (row.progress >= currentCounter.daily_minimum) {
+      const newlyCompleted = await dbMarkDailyDone(userId, milestoneId);
 
-    const wasBelowMinimum = before < dailyMinimum;
-    const isNowAtOrAboveMinimum = after >= dailyMinimum;
-    const justHitMinimum = wasBelowMinimum && isNowAtOrAboveMinimum;
-    if (justHitMinimum)
-      await awardXp(
-        userId,
-        "daily_completion",
-        100,
-        currentCounter.subject_id,
-        milestoneId,
-      );
-    console.log({
-      dailyMinimum: currentCounter.daily_minimum,
-      before,
-      after,
-      justHitMinimum,
-    });
+      // Only the winning request receives a row and awards daily xp.
+      if (newlyCompleted) {
+        await awardXp(
+          userId,
+          "daily_completion",
+          100,
+          currentCounter.subject_id,
+          milestoneId,
+        );
+      }
+    }
   }
 
   return updatedCounter;
+
   // TODO: TRANSACTION NEEDED
   // Steps: fetch → dbUpdateChecklistItem → upsertDailyProgress → awardXp (per_tick) → awardXp (daily_completion)
   // are NOT atomic. A crash between any step leaves data partially written:
