@@ -13,7 +13,7 @@ import fastifyCors from "@fastify/cors";
 import { xpRouter } from "./routes/xp.js";
 import redis from "./config/redis.js";
 import { checklistRoutes } from "./routes/checklist.js";
-import { weeklyStreakRoutes } from "./routes/weeklyStreak.js";
+import { streakRoutes } from "./routes/streak.js";
 
 //Fastify Instance
 const fastify = Fastify({ logger: true });
@@ -70,7 +70,7 @@ const start = async () => {
     fastify.log.info("checklist routes check");
     await fastify.register(xpRouter);
     fastify.log.info("xp routes check");
-    await fastify.register(weeklyStreakRoutes);
+    await fastify.register(streakRoutes);
     fastify.log.info("weeklyStreak routes check");
 
     //Start listening

@@ -16,3 +16,4 @@ CREATE TABLE daily_progress (
 
     CONSTRAINT unique_daily UNIQUE (user_id, milestone_id, progress_date)
 );
+

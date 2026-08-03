@@ -16,8 +16,10 @@ Phase 7:
         ✔ weekly streak contract pipeline end-to-end finished. @done(26-07-23 00:09)
         ✔ Create a check that says did the user complete today's promised streak contract items. @done(26-07-26 21:33)
         ✔ Apply Fix: Do not calculate progress date in NOde. Let psql derive it from the user's stored timezone inside upsertDailyProgress @done(26-07-25 01:35)
-        ☐ Create one query that evaluates every date in the current week
-
+        ☐ write deriveStreakCount which counts the number of streaks the user has achieved. if the streak is broken, it will not count the streak. this function will be called by the weekly streak contract pipeline.
+        ☐ refine xplogpage
+        ☐ revisit to check redis invalidation of counter increment service and checklist update service.
+        ☐ check the streak flow from queries to services to the front-end more clearly. understand it deeper as well.
         
        
         

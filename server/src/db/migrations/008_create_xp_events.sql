@@ -8,6 +8,7 @@ CREATE TABLE xp_events (
     milestone_id INT,
     type xp_events_type_enum NOT NULL,
     amount INT NOT NULL,
+    multiplier_applied BOOLEAN NOT NULL DEFAULT FALSE,
     awarded_date DATE,
 
     CONSTRAINT fk_user FOREIGN KEY (user_id)
