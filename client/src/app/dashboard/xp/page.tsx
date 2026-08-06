@@ -136,8 +136,8 @@ export default function XpLogPage() {
                 <div className="flex items-center gap-2">
                   {event.amount > 0 ? `+${event.amount}` : event.amount} XP
                   {event.multiplier_applied && (
-                    <span className="text-xs rounded-full px-2">
-                      <FlameIcon className="text-orange-400" /> +"2x"
+                    <span className="text-xs rounded-full px-2 flex items-center gap-1">
+                      <FlameIcon className="text-orange-400" /> 2x
                     </span>
                   )}
                 </div>

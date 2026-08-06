@@ -16,10 +16,21 @@ Phase 7:
         ✔ weekly streak contract pipeline end-to-end finished. @done(26-07-23 00:09)
         ✔ Create a check that says did the user complete today's promised streak contract items. @done(26-07-26 21:33)
         ✔ Apply Fix: Do not calculate progress date in NOde. Let psql derive it from the user's stored timezone inside upsertDailyProgress @done(26-07-25 01:35)
-        ☐ write deriveStreakCount which counts the number of streaks the user has achieved. if the streak is broken, it will not count the streak. this function will be called by the weekly streak contract pipeline.
-        ☐ refine xplogpage
+        ✔ write deriveStreakCount which counts the number of streaks the user has achieved. if the streak is broken, it will not count the streak. this function will be called by the weekly streak contract pipeline. @done(26-08-04 21:18)
+        ✔ refine xplogpage @done(26-08-07 00:38)
         ☐ revisit to check redis invalidation of counter increment service and checklist update service.
         ☐ check the streak flow from queries to services to the front-end more clearly. understand it deeper as well.
+        fix navigation for streak and milestone active page from the dashboard page.
+
+
+
+
+Features:
+    Introduce life map.
+    Introduce github calender active days data starts from 2026.
+    Introduce daily xp creds, that unlocks distractions.
+    Change Milestones Complete -> Shows the under contract of today's milestone status and if all complete under today's contract color changes to green.
+
         
        
         

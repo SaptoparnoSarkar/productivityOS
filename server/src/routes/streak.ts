@@ -28,9 +28,9 @@ export async function streakRoutes(fastify: FastifyInstance) {
         .send({ message: "Today's contract status fetched", status });
     },
   );
-
-  //GET /api/streaks/history/test
-  fastify.get("/api/streaks/history/test", async (request, reply) => {
+  // Changed history/test -> week
+  //GET /api/streak/week
+  fastify.get("/api/streaks/week", async (request, reply) => {
     const history = await getWeeklyHistoricalProgress(request.userId);
     const streak = await getStreakCount(request.userId);
     return reply

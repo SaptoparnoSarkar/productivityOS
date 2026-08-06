@@ -1,5 +1,6 @@
 "use client";
 
+import { ActiveCapacityBar } from "@/components/milestones/ActiveCapacityBar";
 import MilestoneCard from "@/components/milestones/MilestoneCard";
 import { getAllMilestones, setMilestoneActive } from "@/lib/api/milestones";
 import { MilestoneWithSubject } from "@/types/milestone";
@@ -61,15 +62,19 @@ export default function MilestonePage() {
     );
 
   return (
-    <div>
+    <div className="ml-14 mt-22">
       <div className="mb-4">
-        <h1 className="text-2xl font-bold text-white">Milestones</h1>
-        <p className="text-gray-400">
-          Active Milestones:{" "}
-          {milestones.filter((m) => m.is_active === true).length}
-        </p>
+        <h1 className="text-6xl font-bold  text-white">Milestones</h1>
+        <div className="text-gray-400 mt-3 text-lg flex shrink-0 items-center gap-2 mr-5">
+          Active: {milestones.filter((m) => m.is_active === true).length} of{" "}
+          {milestones.length}
+          <ActiveCapacityBar
+            active={milestones.filter((m) => m.is_active === true).length}
+            max={5}
+          />
+        </div>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mr-12 mb-2">
         {milestones.map((m) => (
           <MilestoneCard
             key={m.id}
