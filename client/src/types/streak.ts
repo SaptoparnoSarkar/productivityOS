@@ -1,8 +1,12 @@
+export type DayProgress = {
+  progress_date: string;
+  qualified: boolean;
+};
+
 export type StreakWeek = {
   message: string;
-  history: {
-    progress_date: string;
-    qualified: boolean;
-  }[];
+  history: DayProgress[];
   streak: number;
 };
+
+// pulled the inline object out into its own named type.

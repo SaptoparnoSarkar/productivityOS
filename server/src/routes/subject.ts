@@ -50,9 +50,8 @@ export async function subjectRoutes(fastify: FastifyInstance) {
       }
 
       //call services
-
-      const subject = await getSubject(subjectId, request.userId);
-      return reply.status(200).send({ subject });
+      const { subject, stats } = await getSubject(subjectId, request.userId);
+      return reply.status(200).send({ subject, stats });
     },
   );
 
@@ -92,7 +91,7 @@ export async function subjectRoutes(fastify: FastifyInstance) {
       //parse and guard url param
       const subjectId = Number(request.params.id);
       if (isNaN(subjectId)) {
-        throw new ValidationError('Invalid Subject ID');
+        throw new ValidationError("Invalid Subject ID");
       }
 
       //call services
@@ -109,17 +108,19 @@ export async function subjectRoutes(fastify: FastifyInstance) {
     return reply.status(200).send({ subjects });
   });
 
-
   //Mark Subject Complete PATCH /api/subjects/:id/complete
-  fastify.patch<{ Params: { id: string } }>('/api/subjects/:id/complete', async (request, reply) => {
-    const subjectId = Number(request.params.id);
-    if (isNaN(subjectId)) {
-      throw new ValidationError('Invalid Subject ID');
-    }
+  fastify.patch<{ Params: { id: string } }>(
+    "/api/subjects/:id/complete",
+    async (request, reply) => {
+      const subjectId = Number(request.params.id);
+      if (isNaN(subjectId)) {
+        throw new ValidationError("Invalid Subject ID");
+      }
 
-    await markSubjectComplete(request.userId, subjectId);
-    return reply
-      .status(200)
-      .send({ message: "Subject Marked Complete" });
-  })
+      const subject = await markSubjectComplete(request.userId, subjectId);
+      return reply
+        .status(200)
+        .send({ message: "Subject Marked Complete", subject });
+    },
+  );
 }

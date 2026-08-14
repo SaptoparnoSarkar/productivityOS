@@ -25,6 +25,16 @@ export async function dbCreateStreakContract(userId: number) {
 
     const contract = contractResult.rows[0]!;
 
+    const existingItems = await client.query(
+      "SELECT 1 FROM streak_contract_items WHERE contract_id = $1 LIMIT 1",
+      [contract.id],
+    );
+
+    if (existingItems.rowCount) {
+      await client.query("COMMIT");
+      return contract;
+    }
+
     // All set_active = 'true' milestones will get attached to this contract ID.
     const insertContractItems = await client.query(
       `INSERT INTO streak_contract_items (
@@ -61,9 +71,9 @@ export async function dbCreateStreakContract(userId: number) {
 export async function dbGetTodayContractStatus(userId: number) {
   const statusResult = await pool.query(
     `WITH user_dates AS (
-      SELECT timezone,
-          (CURRENT_TIMESTAMP AT TIME ZONE timezone)::date AS today_date,
-          date_trunc('week', CURRENT_TIMESTAMP AT TIME ZONE timezone)::date AS week_start_date
+      SELECT
+          (CURRENT_TIMESTAMP AT TIME ZONE u.timezone)::date AS today_date,
+          date_trunc('week', CURRENT_TIMESTAMP AT TIME ZONE u.timezone)::date AS week_start_date
           FROM users u WHERE u.id = $1
           )
   
@@ -77,13 +87,15 @@ export async function dbGetTodayContractStatus(userId: number) {
       JOIN streak_contracts sc ON sc.id = sci.contract_id
       JOIN milestones m ON m.id = sci.milestone_id
 
+      CROSS JOIN user_dates ud
+
       LEFT JOIN daily_progress dp
         ON dp.milestone_id = sci.milestone_id
         AND dp.user_id = $1
-        AND dp.progress_date = $3
+        AND dp.progress_date = ud.today_date
 
       WHERE sc.user_id = $1
-        AND sc.week_start_date = $2
+        AND sc.week_start_date = ud.week_start_date
     `,
     [userId],
   );

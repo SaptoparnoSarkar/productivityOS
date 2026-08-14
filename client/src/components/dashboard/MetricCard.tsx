@@ -1,6 +1,6 @@
 type MetricCardProps = {
   label: string;
-  value: string | number;
+  value: number;
   hint?: string;
   isActive?: boolean;
 };
@@ -14,4 +14,3 @@ export function MetricCard({ label, value, hint, isActive }: MetricCardProps) {
     </div>
   );
 }
-

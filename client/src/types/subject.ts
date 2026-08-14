@@ -1,5 +1,5 @@
 export type SubjectType = "ongoing" | "completable";
-export type SubjectStatus = 'pending' | 'completed';
+export type SubjectStatus = "pending" | "completed";
 
 export type Subject = {
   id: number;
@@ -20,9 +20,11 @@ export type CreateSubjectInput = {
   description?: string;
   due_date?: string | null;
   has_pomodoro?: boolean;
-
 };
 
-export type UpdateSubjectInput = Partial<
-  Omit<CreateSubjectInput, "type" | "has_pomodoro">>;
+export type MilestoneStats = { total: number; done: number };
+export type SubjectDetail = { subject: Subject; stats: MilestoneStats };
 
+export type UpdateSubjectInput = Partial<
+  Omit<CreateSubjectInput, "type" | "has_pomodoro">
+>;

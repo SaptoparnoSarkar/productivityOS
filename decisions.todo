@@ -22,6 +22,11 @@ Phase 7:
         ☐ check the streak flow from queries to services to the front-end more clearly. understand it deeper as well.
         fix navigation for streak and milestone active page from the dashboard page.
 
+    Fixes:
+        ✔ Add subject mark complete guard. @done(26-08-08 22:15)
+        ✔ Add milestone completion state. @done(26-08-08 22:15)
+        ☐ Change the middleware name to proxy.
+
 
 
 

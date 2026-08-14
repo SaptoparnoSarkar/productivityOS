@@ -3,7 +3,7 @@ import {
   dbDeleteMilestone,
   dbGetAllMilestones,
   dbGetMilestoneById,
-  dbGetMilestonesBySubjectId,
+  dbGetMilestonesWithProgress,
   dbRecentMilestones,
   dbSetMilestoneActive,
   dbUpdateMilestone,
@@ -33,7 +33,7 @@ export async function createMilestone(
 
 //List Milestones from SubjectId
 export async function listMilestones(subjectId: number, userId: number) {
-  return await dbGetMilestonesBySubjectId(subjectId, userId);
+  return await dbGetMilestonesWithProgress(subjectId, userId);
 }
 
 //Get Milestone by Id
@@ -101,9 +101,7 @@ export async function setMilestoneActive(
 ) {
   const updated = await dbSetMilestoneActive(milestoneId, userId, isActive);
   // Happy Path
-  if (updated) {
-    return updated;
-  }
+  if (updated) return updated;
   // Null Path. no row updated.
   else {
     // Check Ownership first
@@ -113,6 +111,11 @@ export async function setMilestoneActive(
     }
     //Now tell the user why
     if (isActive) {
+      if (milestone.subject_status !== "pending") {
+        throw new ConflictError(
+          "Cannot activate a milestone in a completed subject",
+        );
+      }
       throw new ConflictError("Max 5 active milestones");
     } else {
       throw new ConflictError("At least 1 milestone must stay active");

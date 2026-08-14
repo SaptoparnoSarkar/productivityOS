@@ -1,5 +1,5 @@
 import { pool } from "../../config/db.js";
-import type { UpdateChecklistInputType } from "../../schemas/checklistItem.schema.js";
+import type { UpdateChecklistItemsInput } from "../../schemas/checklistItem.schema.js";
 
 //Create Checklist Items
 export async function dbCreateChecklistItem(
@@ -36,10 +36,7 @@ export async function dbGetChecklistItemsByMilestoneId(
 }
 
 //Get Checklist Item (Singular) by Item id also fetches the daily minimum.
-export async function dbGetChecklistItemById(
-  itemId: number,
-  userId: number,
-) {
+export async function dbGetChecklistItemById(itemId: number, userId: number) {
   const result = await pool.query(
     `SELECT mc.*, m.daily_minimum, m.subject_id
       FROM milestone_checklist_items mc
@@ -56,7 +53,7 @@ export async function dbUpdateChecklistItem(
   itemId: number,
   userId: number,
   milestoneId: number,
-  input: UpdateChecklistInputType,
+  input: UpdateChecklistItemsInput,
 ) {
   const fields: string[] = [];
   const values: any[] = [];
@@ -95,7 +92,11 @@ export async function dbUpdateChecklistItem(
 }
 
 //Delete Checklist items
-export async function dbDeleteChecklistItem(itemId: number, userId: number, milestoneId: number) {
+export async function dbDeleteChecklistItem(
+  itemId: number,
+  userId: number,
+  milestoneId: number,
+) {
   const result = await pool.query(
     `DELETE FROM milestone_checklist_items AS mc
       USING milestones AS m, subjects AS s
@@ -105,7 +106,7 @@ export async function dbDeleteChecklistItem(itemId: number, userId: number, mile
       AND mc.milestone_id = $2
       AND s.user_id = $3
     RETURNING mc.*`,
-    [itemId, milestoneId, userId]
+    [itemId, milestoneId, userId],
   );
   return result.rows[0] || null;
 }

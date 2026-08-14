@@ -9,11 +9,12 @@ import {
   dbMarkDailyDone,
   upsertDailyProgress,
 } from "../db/queries/dailyprogress.queries.js";
+import { dbGetMilestoneById } from "../db/queries/milestones.queries.js";
 import type {
   CreateChecklistItemsInput,
   UpdateChecklistItemsInput,
 } from "../schemas/checklistItem.schema.js";
-import { NotFoundError } from "../utils/errors.js";
+import { ConflictError, NotFoundError } from "../utils/errors.js";
 import { awardXp } from "./xp.service.js";
 
 //Create CheckList
@@ -58,6 +59,13 @@ export async function updateChecklistItem(
   // Wrap in a db transaction so all writes succeed together or all roll back.
 
   //Fetch
+  const milestone = await dbGetMilestoneById(milestoneId, userId);
+  if (!milestone) throw new NotFoundError("Milestone Not Found");
+  if (!milestone.is_active)
+    throw new ConflictError(
+      "Milestone is not active. Activate it to log progress.",
+    );
+
   const currentChecklist = await dbGetChecklistItemById(itemId, userId);
   if (!currentChecklist) throw new NotFoundError("Checklist Not Found");
 
@@ -95,7 +103,7 @@ export async function updateChecklistItem(
     );
 
     //This is for daily minimum xp reward fires once.
-    if (row.progress >= currentChecklist.daily_minimum) {
+    if (row.progress >= milestone.daily_minimum) {
       const newlyCompleted = await dbMarkDailyDone(userId, milestoneId);
 
       //only the request that flips FALSE to TRUE awards daily XP.

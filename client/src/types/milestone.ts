@@ -10,6 +10,9 @@ export type Milestone = {
   daily_minimum_unit: string | null;
   weekly_minimum: number | null;
   is_active: boolean;
+  current_progress: number;
+  target: number;
+  is_done: boolean;
   created_at: string;
   updated_at: string;
 };

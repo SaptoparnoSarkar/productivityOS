@@ -417,67 +417,13 @@
     }
   }
 
-  /* SUBJECT - List Card */
-  .subjects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 18px;
-  }
-
-  .subject-card {
-    background: var(--app-surface);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    padding: 18px;
-    transition:
-      transform 0.2s ease-in-out,
-      box-shadow 0.2s;
-  }
-
-  .subject-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
-  }
-
-  .subject-card__top {
-    display: flex;
-    justify-content: space-between;
-    align-items: start;
-    gap: 8px;
-  }
-
-  .subject-card__title {
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--app-text);
-  }
-
-  .subject-card__badge {
-    font-size: 11px;
-    text-transform: capitalize;
-    padding: 2px 8px;
-    border-radius: 999px;
-    background: rgba(139, 92, 246, 0.15);
-    color: var(--app-accent);
-  }
-
-  .subject-card__desc {
-    margin-top: 8px;
-    font-size: 13px;
-    color: var(--app-text-muted);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
   /* SUBJECT DETAIL PAGE */
   .detail-card {
     display: flex;
     flex-direction: column;
-    background: var(--app-surface);
+    background: rgb(17 24 39);
     border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 10px;
+    border-radius: 20px;
     padding: 18px;
     min-width: 55rem;
     min-height: 250px;

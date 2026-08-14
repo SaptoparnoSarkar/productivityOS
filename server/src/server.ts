@@ -14,6 +14,7 @@ import { xpRouter } from "./routes/xp.js";
 import redis from "./config/redis.js";
 import { checklistRoutes } from "./routes/checklist.js";
 import { streakRoutes } from "./routes/streak.js";
+import { dashboardRoutes } from "./routes/dashboard.js";
 
 //Fastify Instance
 const fastify = Fastify({ logger: true });
@@ -72,6 +73,8 @@ const start = async () => {
     fastify.log.info("xp routes check");
     await fastify.register(streakRoutes);
     fastify.log.info("weeklyStreak routes check");
+    await fastify.register(dashboardRoutes);
+    fastify.log.info("dashboardMetric route check");
 
     //Start listening
     await fastify.listen({ port: 4000 });

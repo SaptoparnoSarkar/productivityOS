@@ -65,12 +65,16 @@ export default function MilestonePage() {
     <div className="ml-14 mt-22">
       <div className="mb-4">
         <h1 className="text-6xl font-bold  text-white">Milestones</h1>
+        <p className="mt-2 text-white/80">
+          Activate your milestones for next week. This week's contract is
+          locked.
+        </p>
         <div className="text-gray-400 mt-3 text-lg flex shrink-0 items-center gap-2 mr-5">
           Active: {milestones.filter((m) => m.is_active === true).length} of{" "}
           {milestones.length}
           <ActiveCapacityBar
             active={milestones.filter((m) => m.is_active === true).length}
-            max={5}
+            max={milestones.length}
           />
         </div>
       </div>

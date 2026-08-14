@@ -3,6 +3,7 @@ import {
   dbCreateSubject,
   dbDeleteSubject,
   dbDueSubjects,
+  dbGetMilestoneStats,
   dbUpdateSubject,
   getSubjectById,
   getSubjectsByUserId,
@@ -11,7 +12,11 @@ import type {
   UpdateSubjectInput,
   CreateSubjectInput,
 } from "../schemas/subject.schema.js";
-import { NotFoundError, ValidationError } from "../utils/errors.js";
+import {
+  ConflictError,
+  NotFoundError,
+  ValidationError,
+} from "../utils/errors.js";
 
 //Create Subject
 export async function createSubject(userId: number, input: CreateSubjectInput) {
@@ -37,7 +42,11 @@ export async function getSubject(subjectId: number, userId: number) {
   if (!subject) {
     throw new NotFoundError("Subject Not Found");
   }
-  return subject;
+  const milestoneStats = await dbGetMilestoneStats(subjectId, userId);
+  return {
+    subject,
+    stats: { total: milestoneStats.total, done: milestoneStats.done },
+  };
 }
 
 //Update Subject
@@ -74,10 +83,19 @@ export async function upcomingSubjects(userId: number, limit = 5) {
 //Mark Subject Complete
 export async function markSubjectComplete(userId: number, subjectId: number) {
   const subject = await getSubjectById(subjectId, userId);
-  if (subject.status === 'completed') {
-    throw new ValidationError('Subject already completed');
+  if (!subject) throw new NotFoundError("Subject Not Found");
+
+  if (subject.status === "completed") {
+    throw new ValidationError("Subject already completed");
   }
-  const updated = await dbCompleteSubjectWithXp(userId, subjectId, 500);
-  return updated;
-  // TODO: guard subject-complete on all milestones complete
+
+  const { total, done } = await dbGetMilestoneStats(subjectId, userId);
+
+  if (total === 0) {
+    throw new ConflictError("Create and complete at least 1 milestone.");
+  }
+  if (done < total) {
+    throw new ConflictError(`${done}/${total} milestones complete.`);
+  }
+  return await dbCompleteSubjectWithXp(userId, subjectId, 500);
 }

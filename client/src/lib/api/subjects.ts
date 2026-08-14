@@ -2,6 +2,7 @@ import { apiClient } from "../apiClient";
 import {
   CreateSubjectInput,
   Subject,
+  SubjectDetail,
   UpdateSubjectInput,
 } from "@/types/subject";
 
@@ -14,9 +15,9 @@ export async function listSubjects(): Promise<Subject[]> {
 }
 
 //GET /api/subjects/:id { subject: Subject }
-export async function getSubject(id: number): Promise<Subject> {
-  const response = await apiClient<{ subject: Subject }>(`/api/subjects/${id}`);
-  return response.subject;
+export async function getSubject(id: number): Promise<SubjectDetail> {
+  const response = await apiClient<SubjectDetail>(`/api/subjects/${id}`);
+  return response;
 }
 
 // POST /api/subjects { message, subject: Subject }
@@ -57,15 +58,19 @@ export async function deleteSubject(id: number): Promise<void> {
 
 //Upcoming Subjects GET /api/subjects/upcoming -> { subjects: Subject[] }
 export async function listUpcomingSubjects(limit = 5): Promise<Subject[]> {
-  const response = await apiClient<{ subjects: Subject[] }>(`/api/subjects/upcoming?limit=${limit}`)
+  const response = await apiClient<{ subjects: Subject[] }>(
+    `/api/subjects/upcoming?limit=${limit}`,
+  );
   return response.subjects;
 }
 
 //PATCH Mark subject complete
 export async function markSubjectComplete(id: number): Promise<Subject> {
-  const response = await apiClient<{ message: string, subject: Subject }>(`/api/subjects/${id}/complete`, {
-    method: "PATCH",
-  })
-  return response.subject
+  const response = await apiClient<{ message: string; subject: Subject }>(
+    `/api/subjects/${id}/complete`,
+    {
+      method: "PATCH",
+    },
+  );
+  return response.subject;
 }
-

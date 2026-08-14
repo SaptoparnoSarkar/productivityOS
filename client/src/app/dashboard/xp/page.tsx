@@ -1,6 +1,7 @@
 "use client";
 
 import { getXpLog } from "@/lib/api/xp";
+import { cn } from "@/lib/utils";
 import { XpLogResponse } from "@/types/xp";
 import {
   BookOpen,
@@ -18,6 +19,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+
 // Event Icons
 const EVENT_ICONS: Record<string, LucideIcon> = {
   daily_completion: CalendarDays,
@@ -60,7 +62,7 @@ export default function XpLogPage() {
   if (!data) return null;
 
   //destructure
-  const { events, page, totalPages, totalCount } = data.log;
+  const { events, totalPages } = data.log;
 
   //Sliding Window Pagination
   const WINDOW_SIZE = 5;
@@ -123,7 +125,10 @@ export default function XpLogPage() {
             return (
               <div
                 key={event.id}
-                className="grid grid-cols-4 px-6 py-4 items-center text-sm hover:bg-white/6 transition-colors"
+                className={cn(
+                  "grid grid-cols-4 px-6 py-4 items-center text-sm hover:bg-white/6 transition-colors",
+                  event.amount > 0 ? "bg-green-300/10" : "bg-red-300/10",
+                )}
               >
                 <div className="flex items-center gap-2">
                   <span className="border p-2 border-purple-400/80 rounded-lg bg-purple-400/25">
@@ -132,7 +137,9 @@ export default function XpLogPage() {
                   {event.type}
                 </div>
 
-                <div>{event.milestone_title ?? "Milestone deleted"}</div>
+                <div className="uppercase">
+                  {event.milestone_title ?? event.type ?? "Milestone Delete"}
+                </div>
                 <div className="flex items-center gap-2">
                   {event.amount > 0 ? `+${event.amount}` : event.amount} XP
                   {event.multiplier_applied && (

@@ -9,6 +9,7 @@ import {
   dbMarkDailyDone,
   upsertDailyProgress,
 } from "../db/queries/dailyprogress.queries.js";
+import { dbGetMilestoneById } from "../db/queries/milestones.queries.js";
 import type {
   CreateCounterInput,
   UpdateCounterInput,
@@ -69,15 +70,21 @@ export async function incrementCounter(
   userId: number,
   delta: number,
 ) {
-  // 1. fetch the current counter value
+  // 1. fetch
+  const milestone = await dbGetMilestoneById(milestoneId, userId);
+  if (!milestone) throw new NotFoundError("Milestone Not Found");
+  if (!milestone.isActive)
+    throw new ConflictError(
+      "Milestone is not active. Activate it to log progress.",
+    );
+
   const currentCounter = await dbGetCounterByMilestoneId(milestoneId, userId);
-  if (!currentCounter) {
-    throw new NotFoundError("Counter not found");
-  }
+  if (!currentCounter) throw new NotFoundError("Counter not found");
+
   // 2. Guard to protect going below 0
-  if (currentCounter.current_value + delta < 0) {
+  if (currentCounter.current_value + delta < 0)
     throw new ValidationError("Counter cannot go below zero");
-  }
+
   // 3. update value
   const updatedCounter = await dbIncrementCounter(milestoneId, userId, delta);
 

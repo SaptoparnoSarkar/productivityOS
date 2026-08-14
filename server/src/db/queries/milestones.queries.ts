@@ -32,20 +32,20 @@ export async function dbCreateMilestone(
   return result.rows[0] || null;
 }
 
-//Fetch Milestones by subjectID
-export async function dbGetMilestonesBySubjectId(
-  subjectId: number,
-  userId: number,
-) {
-  const result = await pool.query(
-    `SELECT m.* FROM milestones m
-         JOIN subjects s ON m.subject_id = s.id
-         WHERE m.subject_id = $1 AND s.user_id = $2
-         ORDER BY m.created_at DESC`,
-    [subjectId, userId],
-  );
-  return result.rows;
-}
+// //Fetch Milestones by subjectID
+// export async function dbGetMilestonesBySubjectId(
+//   subjectId: number,
+//   userId: number,
+// ) {
+//   const result = await pool.query(
+//     `SELECT m.* FROM milestones m
+//          JOIN subjects s ON m.subject_id = s.id
+//          WHERE m.subject_id = $1 AND s.user_id = $2
+//          ORDER BY m.created_at DESC`,
+//     [subjectId, userId],
+//   );
+//   return result.rows;
+// }
 
 //Fetch a single Milestone by milestoneId
 export async function dbGetMilestoneById(milestoneId: number, userId: number) {
@@ -56,6 +56,47 @@ export async function dbGetMilestoneById(milestoneId: number, userId: number) {
     [milestoneId, userId],
   );
   return result.rows[0] || null;
+}
+
+//Fetch A single Milestone's Status (Counter/Checklist Status)
+export async function dbGetMilestonesWithProgress(
+  subjectId: number,
+  userId: number,
+) {
+  const result = await pool.query(
+    `SELECT 
+      m.id,
+      m.subject_id,
+      m.title,
+      m.type,
+      m.description,
+      m.daily_minimum,
+      m.daily_minimum_unit,
+      m.weekly_minimum,
+      m.created_at,
+      m.updated_at,
+      s.status as subject_status,
+      m.is_active,
+        COALESCE(mc.current_value, k.ticked)::int AS current_progress,
+        COALESCE(mc.target_value, cl.target_count)::int AS target,
+        ((m.type = 'counter' AND mc.current_value >= mc.target_value)
+        OR (m.type = 'checklist' AND cl.target_count > 0 AND k.ticked >= cl.target_count)) AS is_done
+      FROM milestones m
+      JOIN subjects s ON m.subject_id = s.id
+      LEFT JOIN milestone_counters mc ON mc.milestone_id = m.id
+      LEFT JOIN (
+        SELECT milestone_id,
+          COUNT(*) FILTER (WHERE is_done) AS ticked
+        FROM milestone_checklist_items
+        GROUP BY milestone_id
+      )AS k ON k.milestone_id = m.id
+      LEFT JOIN milestone_checklists cl ON cl.milestone_id = m.id
+      WHERE m.subject_id = $1 AND s.user_id = $2
+      ORDER BY m.created_at DESC
+    `,
+    [subjectId, userId],
+  );
+  return result.rows;
 }
 
 //Update Milestones
@@ -164,6 +205,7 @@ export async function dbSetMilestoneActive(
           JOIN subjects s2 ON m2.subject_id = s2.id
           WHERE s2.user_id = $2 AND m2.is_active = true
         ) < 5
+        AND s.status = 'pending'
         RETURNING m.*
       `,
       [milestoneId, userId],
