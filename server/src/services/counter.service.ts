@@ -73,7 +73,7 @@ export async function incrementCounter(
   // 1. fetch
   const milestone = await dbGetMilestoneById(milestoneId, userId);
   if (!milestone) throw new NotFoundError("Milestone Not Found");
-  if (!milestone.isActive)
+  if (!milestone.is_active)
     throw new ConflictError(
       "Milestone is not active. Activate it to log progress.",
     );

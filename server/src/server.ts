@@ -15,6 +15,9 @@ import redis from "./config/redis.js";
 import { checklistRoutes } from "./routes/checklist.js";
 import { streakRoutes } from "./routes/streak.js";
 import { dashboardRoutes } from "./routes/dashboard.js";
+import { pomodoroRoutes } from "./routes/pomodoro.js";
+import { weaknessRoutes } from "./routes/weakness.js";
+import { showcaseRoutes } from "./routes/showcase.js";
 
 //Fastify Instance
 const fastify = Fastify({ logger: true });
@@ -75,7 +78,12 @@ const start = async () => {
     fastify.log.info("weeklyStreak routes check");
     await fastify.register(dashboardRoutes);
     fastify.log.info("dashboardMetric route check");
-
+    await fastify.register(pomodoroRoutes);
+    fastify.log.info("pomodoro routes check");
+    await fastify.register(weaknessRoutes);
+    fastify.log.info("weakness routes check");
+    await fastify.register(showcaseRoutes);
+    fastify.log.info("showcase routes check");
     //Start listening
     await fastify.listen({ port: 4000 });
   } catch (err) {

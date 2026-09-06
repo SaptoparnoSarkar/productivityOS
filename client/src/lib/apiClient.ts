@@ -26,7 +26,6 @@ export async function apiClient<T>(
 
   let response = await rawFetch(path, options);
 
-
   //Access Token Expire? Try to refresh ONCE
   //We only refresh for protected endpoints (not public auth endpoints starting with /auth/)
   if (response.status === 401 && !isRetry && !path.startsWith("/auth/")) {

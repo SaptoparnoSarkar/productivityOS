@@ -62,14 +62,14 @@ export default function MilestonePage() {
     );
 
   return (
-    <div className="ml-14 mt-22">
+    <div className="ml-14 mt-15 mr-12">
       <div className="mb-4">
-        <h1 className="text-6xl font-bold  text-white">Milestones</h1>
-        <p className="mt-2 text-white/80">
+        <h1 className="header-text">Milestones</h1>
+        <p className="subheading-text">
           Activate your milestones for next week. This week's contract is
           locked.
         </p>
-        <div className="text-gray-400 mt-3 text-lg flex shrink-0 items-center gap-2 mr-5">
+        <div className="text-gray-400 mt-10 text-lg flex shrink-0 items-center gap-2 mr-5">
           Active: {milestones.filter((m) => m.is_active === true).length} of{" "}
           {milestones.length}
           <ActiveCapacityBar
@@ -78,7 +78,7 @@ export default function MilestonePage() {
           />
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mr-12 mb-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-2">
         {milestones.map((m) => (
           <MilestoneCard
             key={m.id}

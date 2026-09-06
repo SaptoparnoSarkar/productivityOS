@@ -7,14 +7,23 @@ type NavIconProps = {
   label: string;
   icon: React.ElementType;
   locked?: boolean;
-  active?: boolean;
+  active: boolean;
   sidebarOpen: boolean;
 };
 
-export function NavIcon({ href, label, icon: Icon, locked, active, sidebarOpen }: NavIconProps) {
+export function NavIcon({
+  href,
+  label,
+  icon: Icon,
+  locked,
+  active,
+  sidebarOpen,
+}: NavIconProps) {
   const inner = (
-    <span className={`nav-item ${active ? "nav-item-active" : ""} ${locked ? "nav-locked" : ""}`}>
-      <Icon size={20} className='shrink-0' />
+    <span
+      className={`nav-item ${active ? "bg-purple-500 " : ""} ${locked ? "nav-locked" : ""}`}
+    >
+      <Icon size={22} className="shrink-0" />
       <p className="transition-all duration-300 whitespace-nowrap">
         {sidebarOpen && label}
       </p>
@@ -28,8 +37,12 @@ export function NavIcon({ href, label, icon: Icon, locked, active, sidebarOpen }
       <TooltipTrigger asChild>
         {locked ? inner : <Link href={href!}>{inner}</Link>}
       </TooltipTrigger>
-      <TooltipContent side="right" className="border border-purple-400 bg-[#17151f] text-white shadow-[0_0_24px_rgba(168,85,247,0.35)]">
-        {label}{locked ? " 🔒" : ""}
+      <TooltipContent
+        side="right"
+        className="border border-purple-400 bg-[#17151f] text-white shadow-[0_0_24px_rgba(168,85,247,0.35)]"
+      >
+        {label}
+        {locked ? " 🔒" : ""}
       </TooltipContent>
     </Tooltip>
   );

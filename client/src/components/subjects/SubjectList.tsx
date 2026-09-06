@@ -8,7 +8,7 @@ import { SubjectCard } from "./SubjectCard";
 import { GhostCard } from "./GhostCard";
 import { cn } from "@/lib/utils";
 
-const FILTERS = ["all", "completable", "ongoing"] as const;
+const FILTERS = ["all", "pending", "completed"] as const;
 type Filter = (typeof FILTERS)[number];
 
 export function SubjectList() {
@@ -40,7 +40,7 @@ export function SubjectList() {
 
   //derive visible subjects
   const visible =
-    filter === "all" ? subjects : subjects.filter((s) => s.type === filter);
+    filter === "all" ? subjects : subjects.filter((s) => s.status === filter);
 
   //Render states in order:
   if (loading) return <div>Loading...</div>;
@@ -53,19 +53,23 @@ export function SubjectList() {
     );
 
   return (
-    <div className="flex flex-col gap-1 mx-14">
+    <div className="flex flex-col gap-1 ml-14 my-15 mr-12">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-white font-bold text-6xl">Subjects</h1>
-          <p className="text-slate-400 mt-2 text-lg mb-12">
-            Total:{subjects.length}, One-off:{" "}
-            {subjects.filter((s) => s.type === "completable").length}, Habit:{" "}
-            {subjects.filter((s) => s.type === "ongoing").length}
+          <h1 className="header-text">Subjects</h1>
+          <p className="subheading-text">
+            Master your subjects with dedicated focus and organized progress
+            tracking.
+          </p>
+          <p className="text-slate-400 mt-2 text-lg">
+            Total: {subjects.length}, Ongoing:{" "}
+            {subjects.filter((s) => s.status === "pending").length} Completed:{" "}
+            {subjects.filter((s) => s.status === "completed").length}
           </p>
         </div>
         <div>
           <button
-            className="w-42 p-3 bg-black text-white mb-10 text-lg font-bold cursor-pointer rounded-2xl hover:bg-purple-600 transition-all duration-200"
+            className="w-42 h-[79px] p-3 bg-black text-white mb-10 text-lg font-bold cursor-pointer rounded-2xl hover:bg-purple-600 transition-all duration-200"
             onClick={() => router.push("/dashboard/subjects/new")}
           >
             + New Subject
@@ -73,7 +77,7 @@ export function SubjectList() {
         </div>
       </div>
 
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-4 mt-10">
         {FILTERS.map((f) => (
           <button
             key={f}
@@ -85,7 +89,7 @@ export function SubjectList() {
                 : "border border-gray-700 text-slate-400 hover:text-white",
             )}
           >
-            {f === "all" ? "All" : f === "completable" ? "One-off" : "Habit"}
+            {f === "all" ? "All" : f === "pending" ? "Pending" : "Completed"}
           </button>
         ))}
       </div>

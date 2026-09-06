@@ -17,7 +17,10 @@ export function MilestoneListView({ milestones }: Props) {
   return (
     <ul className="flex flex-col gap-4 mt-2">
       {milestones.map((m) => (
-        <li key={m.id} className="milestone-widget__links">
+        <li
+          key={m.id}
+          className="border-l-4 border-purple-500 pl-2.5 ml-2 hover:border-purple-700/90 cursor-pointer transition-all duration-300 text-white font-bold  "
+        >
           <Link
             href={`/dashboard/subjects/${m.subject_id}/milestones/${m.id}`}
             className="flex justify-between w-[350px]"

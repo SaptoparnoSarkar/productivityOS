@@ -25,7 +25,7 @@ export default function EditSubjectPage() {
     async function fetchSubject() {
       try {
         const data = await getSubject(id);
-        setSubject(data);
+        setSubject(data.subject);
       } catch (error) {
         setError(
           error instanceof Error ? error.message : "Failed to load subject",

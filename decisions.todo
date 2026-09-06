@@ -28,7 +28,15 @@ Phase 7:
         ☐ Change the middleware name to proxy.
 
 
-
+Phase 9: 
+    ✔ Pomodoro Migration (pomodoro_sessions, pomodoro_milestone) @done(26-08-17 11:58)
+    ✔ Don;t Pomodoro_session in multiplier_eligible @done(26-08-17 11:26)
+    ✔ Alter type and add pomodoro in milestones @done(26-08-17 11:44)
+    ✔ Pomodoro queries @done(26-08-17 17:52)
+    ✔ Pomodoro utils (start,resolve,calculate,xprule) @done(26-08-21 12:52)
+    ✔ Pomodoro Service @done(26-08-21 18:52)
+    ✔ Pomodoro Routes @done(26-08-21 18:52)
+    ☐ BroadcastChannel - a small addition once the UI exists
 
 Features:
     Introduce life map.
@@ -38,4 +46,6 @@ Features:
 
         
        
-        
+Phase 10:
+    ☐ Make a custom class with global css that will be shared by all loading and error states across the program.
+    

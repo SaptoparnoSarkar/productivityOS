@@ -91,17 +91,17 @@ export default function XpLogPage() {
   const pageNumbers = getPageWindow(currentPage, totalPages, WINDOW_SIZE);
 
   return (
-    <div className="text-white px-10 mb-6 ">
+    <div className="ml-14 mt-15 mr-12 ">
       {/* Header */}
       <div className="mb-10">
-        <h1 className="text-2xl font-bold">XP Log</h1>
-        <p className="text-slate-400 text-sm mt-1">
+        <h1 className="header-text">XP Log</h1>
+        <p className="subheading-text">
           Track all XP you've earned on your producitivity journey.{" "}
         </p>
       </div>
 
       {/* Table Contents */}
-      <div className="border border-purple-300/20 rounded-lg overflow-hidden">
+      <div className="border border-purple-300/20 rounded-lg overflow-hidden mt-10">
         {/* Table Header */}
         <div className="grid grid-cols-4 bg-purple-950/60 px-6 py-6 text-sm font-medium text-slate-300">
           <div className="flex items-center gap-2">
@@ -126,7 +126,7 @@ export default function XpLogPage() {
               <div
                 key={event.id}
                 className={cn(
-                  "grid grid-cols-4 px-6 py-4 items-center text-sm hover:bg-white/6 transition-colors",
+                  "grid grid-cols-4 px-6 py-4 items-center text-sm hover:bg-white/6 transition-colors text-white",
                   event.amount > 0 ? "bg-green-300/10" : "bg-red-300/10",
                 )}
               >
