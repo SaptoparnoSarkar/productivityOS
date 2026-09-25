@@ -5,7 +5,7 @@ type Envelope<T> = { message: string; data: T };
 
 export async function promoteSubject(id: number): Promise<Showcase> {
   const response = await apiClient<Envelope<Showcase>>(
-    `/api/subject/${id}/promote`,
+    `/api/subjects/${id}/promote`,
     {
       method: "POST",
     },

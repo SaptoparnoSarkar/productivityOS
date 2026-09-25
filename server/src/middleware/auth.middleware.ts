@@ -13,9 +13,7 @@ const PUBLIC_ROUTES = [
 ];
 
 async function authMiddleware(fastify: FastifyInstance) {
-  //Decorate request with userId
   fastify.decorateRequest("userId");
-
 
   fastify.addHook("onRequest", async (request, reply) => {
     //Build route key

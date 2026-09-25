@@ -16,8 +16,8 @@ CREATE TABLE pomodoro_sessions(
     total_paused_seconds INT NOT NULL DEFAULT 0,
     pause_count INT NOT NULL DEFAULT 0,
     started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    ends_at TIMESTAMPTZ NOT NULL, --Computed in services (started_at + planned_seconds),
-    completed_at TIMESTAMPTZ NULL, --read it as Finalised_at
+    ends_at TIMESTAMPTZ NOT NULL, 
+    completed_at TIMESTAMPTZ NULL,
 
     CONSTRAINT fk_user FOREIGN KEY(user_id)
         REFERENCES users(id)

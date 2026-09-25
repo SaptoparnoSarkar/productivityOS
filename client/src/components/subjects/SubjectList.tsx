@@ -53,7 +53,7 @@ export function SubjectList() {
     );
 
   return (
-    <div className="flex flex-col gap-1 ml-14 my-15 mr-12">
+    <div className="flex flex-col gap-1 ml-14 mt-2 mr-12 mb-12">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="header-text">Subjects</h1>

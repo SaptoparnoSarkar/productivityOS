@@ -1,5 +1,4 @@
 // The server never runs a countdown, a session is a row with started_at and ends_at. All tabs agree for free sync.
-// Pause has a scaled budget.
 
 // Constants and ladder preset
 const POMODORO_TIMER_PRESETS = {
@@ -12,6 +11,8 @@ const POMODORO_TIMER_PRESETS = {
   7200: { mins: 120, xp: 300 },
 } as const;
 
+export type PresetSeconds = keyof typeof POMODORO_TIMER_PRESETS;
+
 const GRACE_PERIOD_SECONDS = 120;
 const MAX_PAUSES_PER_SESSION = 2;
 const PAUSE_BUDGET_RATIO = 0.25;
@@ -22,8 +23,6 @@ export const PRESET_SECONDS = Object.keys(POMODORO_TIMER_PRESETS).map(
   Number,
 ) as PresetSeconds[];
 
-// Types
-export type PresetSeconds = keyof typeof POMODORO_TIMER_PRESETS;
 export type PomodoroSessionRow = {
   id: number;
   user_id: number;
@@ -39,7 +38,12 @@ export type PomodoroSessionRow = {
   ends_at: Date;
   completed_at: Date | null;
 };
-export type PomodoroStatus = "running" | "completable" | "abandoned" | "paused";
+export type PomodoroStatus =
+  | "running"
+  | "completable"
+  | "abandoned"
+  | "paused"
+  | "pause_expired";
 
 // Guard
 export function isValidPreset(seconds: number): seconds is PresetSeconds {
@@ -51,7 +55,6 @@ export function getPresetXp(plannedSeconds: PresetSeconds) {
   return POMODORO_TIMER_PRESETS[plannedSeconds].xp;
 }
 
-// the scaling formula
 export function calculatePauseBudget(plannedSeconds: number) {
   const base = Math.floor(
     Math.min(
@@ -63,35 +66,34 @@ export function calculatePauseBudget(plannedSeconds: number) {
 }
 
 // wallet minus spent
-export function getRemainingPauseBudget(session: PomodoroSessionRow) {
-  const budget = calculatePauseBudget(session.planned_seconds);
-  const remaining = Math.max(0, budget - session.total_paused_seconds);
-  return remaining;
+export function getRemainingPauseDuration(session: PomodoroSessionRow) {
+  const totalBudget = calculatePauseBudget(session.planned_seconds);
+  const remainingDuration = Math.max(
+    0,
+    totalBudget - session.total_paused_seconds,
+  );
+  return remainingDuration;
 }
 
-// Guard to return a friendly ConflictError instead of Postgres 23505 due to partial unqiue index.
 export function canStart(activeSession: unknown) {
   return !activeSession;
 }
 
-// two guards
 export function canPause(session: PomodoroSessionRow) {
   return (
     session.status === "active" &&
     session.pause_count < MAX_PAUSES_PER_SESSION &&
-    getRemainingPauseBudget(session) > 0
+    getRemainingPauseDuration(session) > 0
   );
 }
 
-//Computers truth from timeStampsz
 export function resolveSession(session: PomodoroSessionRow, now: Date) {
-  // Paused row uses a paused_at
   if (session.status === "paused") {
-    const remainingBudget = getRemainingPauseBudget(session);
+    const remainingPausedDuration = getRemainingPauseDuration(session);
     const deadline = new Date(
-      session.paused_at!.getTime() + remainingBudget * 1000,
+      session.paused_at!.getTime() + remainingPausedDuration * 1000,
     );
-    return now > deadline ? "abandoned" : "paused";
+    return now >= deadline ? "pause_expired" : "paused";
   }
 
   // Active row uses a ends_at
@@ -111,15 +113,15 @@ export function resolveSession(session: PomodoroSessionRow, now: Date) {
 
 // pause duration + new ends_at
 export function calculateResumeValues(session: PomodoroSessionRow, now: Date) {
-  const remaining = getRemainingPauseBudget(session);
+  const remaining = getRemainingPauseDuration(session);
   const rawPaused = Math.floor(
     (now.getTime() - session.paused_at!.getTime()) / 1000,
   );
-  const pauseSeconds = Math.min(rawPaused, remaining);
-  const newEndsAt = new Date(session.ends_at.getTime() + pauseSeconds * 1000);
-  const newTotalPaused = session.total_paused_seconds + pauseSeconds;
+  const pausedSeconds = Math.min(rawPaused, remaining);
+  const newEndsAt = new Date(session.ends_at.getTime() + pausedSeconds * 1000);
+  const newTotalPaused = session.total_paused_seconds + pausedSeconds;
 
-  return { pauseSeconds, newEndsAt, newTotalPaused };
+  return { pausedSeconds, newEndsAt, newTotalPaused };
 }
 
 // How many seconds the user actually worked, as opposed to planned_seconds, excludes the pauses and calculated the work seconds.

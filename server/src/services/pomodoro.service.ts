@@ -1,12 +1,15 @@
 import { invalidateXpSummary } from "../cache/xp.cache.js";
 import {
   dbCreateSession,
-  dbFinishSession,
+  dbAbandonSession,
   dbFinishSessionWithXp,
   dbGetActiveSession,
   dbGetSubjectHours,
+  dbGetTotalAllSubjectHours,
   dbPauseSession,
   dbResumeSession,
+  dbGetRecentPomodoroSessions,
+  dbGetTodayHours,
 } from "../db/queries/pomodoro.queries.js";
 import { getSubjectById } from "../db/queries/subjects.queries.js";
 import type { startSessionSchemaInput } from "../schemas/pomodoro.schema.js";
@@ -21,13 +24,13 @@ import {
   canPause,
   canStart,
   getPresetXp,
-  getRemainingPauseBudget,
+  getRemainingPauseDuration,
   isValidPreset,
   resolveSession,
 } from "../utils/pomodoro.utils.js";
 import { getMilestone } from "./milestone.service.js";
 
-// private helper shared 3 steps
+//Helper Function
 async function resolveAndSync(userId: number, now: Date) {
   const session = await dbGetActiveSession(userId);
   if (!session) {
@@ -35,9 +38,35 @@ async function resolveAndSync(userId: number, now: Date) {
   }
 
   const verdict = resolveSession(session, now);
+
+  if (verdict === "pause_expired") {
+    const { newEndsAt, newTotalPaused } = calculateResumeValues(session, now);
+
+    const resumed = await dbResumeSession(
+      userId,
+      session.id,
+      newEndsAt,
+      newTotalPaused,
+    );
+
+    // Handle another req winning the race
+    if (!resumed) {
+      const latestSession = await dbGetActiveSession(userId);
+
+      return {
+        session: latestSession,
+        verdict: latestSession ? resolveSession(latestSession, now) : null,
+      };
+    }
+    return {
+      session: resumed,
+      verdict: "running",
+    };
+  }
+
   if (verdict === "abandoned") {
-    const actual = calculateActualSeconds(session, now);
-    await dbFinishSession(userId, session.id, "abandoned", actual);
+    const actualSeconds = calculateActualSeconds(session, now);
+    await dbAbandonSession(userId, session.id, actualSeconds);
     return { session: undefined, verdict: "abandoned" };
   } else {
     return { session, verdict };
@@ -47,12 +76,16 @@ async function resolveAndSync(userId: number, now: Date) {
 // Service Starts Here
 export async function getActiveSession(userId: number) {
   const now = new Date();
+
   const { session, verdict } = await resolveAndSync(userId, now);
+
   if (!session) {
     return { session: null, verdict };
   }
-  const remainingBudget = getRemainingPauseBudget(session);
+
+  const remainingBudget = getRemainingPauseDuration(session);
   const can_pause = canPause(session);
+
   return { session, verdict, remainingBudget, can_pause };
 }
 
@@ -152,7 +185,7 @@ export async function pauseSession(userId: number) {
     if (session.pause_count >= 2) {
       throw new ConflictError("Max pauses used.");
     }
-    const remaining = getRemainingPauseBudget(session);
+    const remaining = getRemainingPauseDuration(session);
     throw new ConflictError(
       "You've used up your pause budget. Remaining: " + remaining + "s",
     );
@@ -162,7 +195,7 @@ export async function pauseSession(userId: number) {
   if (!paused) {
     throw new ConflictError("Already Paused");
   }
-  const remaining = getRemainingPauseBudget(paused);
+  const remaining = getRemainingPauseDuration(paused);
   return { paused, remaining };
 }
 
@@ -170,8 +203,12 @@ export async function pauseSession(userId: number) {
 export async function resumeSession(userId: number) {
   const now = new Date();
   const { session, verdict } = await resolveAndSync(userId, now);
+
   if (!session) {
     throw new NotFoundError("No session to resume");
+  }
+  if (verdict === "running" && session.status === "active") {
+    return session;
   }
   if (verdict !== "paused") {
     throw new ValidationError("Not paused");
@@ -192,4 +229,28 @@ export async function resumeSession(userId: number) {
 // Get the actual hours invested in the subject
 export async function getSubjectHours(userId: number) {
   return await dbGetSubjectHours(userId);
+}
+
+export async function getTotalAllSubjectHours(userId: number) {
+  return await dbGetTotalAllSubjectHours(userId);
+}
+
+export async function abandonSession(userId: number) {
+  const now = new Date();
+  const session = await dbGetActiveSession(userId);
+  if (!session) throw new NotFoundError("Session not found");
+
+  const actualSeconds = calculateActualSeconds(session, now);
+  const abandoned = await dbAbandonSession(userId, session.id, actualSeconds);
+
+  if (!abandoned) throw new ConflictError("Session already finished");
+  return abandoned;
+}
+
+export async function getSummary(userId: number) {
+  const recents = await dbGetRecentPomodoroSessions(userId, 5);
+  const todayTotalHours = await dbGetTodayHours(userId);
+  const subjectHours = await dbGetSubjectHours(userId);
+
+  return { recents, todayTotalHours, subjectHours };
 }

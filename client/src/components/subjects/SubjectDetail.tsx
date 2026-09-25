@@ -27,6 +27,7 @@ import {
 import formatDate from "@/lib/subjects/derive";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { promoteSubject } from "@/lib/api/showcase";
 
 export default function SubjectDetailPage() {
   const params = useParams();
@@ -96,6 +97,7 @@ export default function SubjectDetailPage() {
     setCompleteError("");
     try {
       await markSubjectComplete(id);
+      await promoteSubject(id);
       toast.success("Subject complete. +500 XP");
     } catch (error) {
       toast.error(

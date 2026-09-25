@@ -1,8 +1,11 @@
 import type { FastifyInstance } from "fastify/types/instance.js";
 import {
+  abandonSession,
   completeSession,
   getActiveSession,
   getSubjectHours,
+  getSummary,
+  getTotalAllSubjectHours,
   pauseSession,
   resumeSession,
   startSession,
@@ -55,5 +58,28 @@ export async function pomodoroRoutes(fastify: FastifyInstance) {
     return reply
       .status(200)
       .send({ message: "subject hours fetched successfully", data });
+  });
+  //All total subject hours
+  fastify.get("/api/pomodoro/total-hours", async (request, reply) => {
+    const userId = request.userId;
+    const data = await getTotalAllSubjectHours(userId);
+    return reply.status(200).send({ message: "Total Subject Hours", data });
+  });
+  // abandon session
+  fastify.post("/api/pomodoro/abandon", async (request, reply) => {
+    const userId = request.userId;
+    const data = await abandonSession(userId);
+    return reply
+      .status(200)
+      .send({ message: "Pomodoro Session Abandoned", data });
+  });
+
+  // Summary
+  fastify.get("/api/pomodoro/summary", async (request, reply) => {
+    const userId = request.userId;
+    const data = await getSummary(userId);
+    return reply
+      .status(200)
+      .send({ message: "Pomodoro Summary fetched successfully", data });
   });
 }

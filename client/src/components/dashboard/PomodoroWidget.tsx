@@ -7,6 +7,7 @@ import { formatMMSS, secondsRemaining } from "@/lib/pomodoro/pomodoro";
 import { fetchActiveSession } from "@/lib/api/pomodoro";
 import { PauseBars } from "../pomodoro/PauseBars";
 import { cn } from "@/lib/utils";
+import { Dot } from "lucide-react";
 
 export function PomodoroWidget() {
   // Remaining, total, label, verdict
@@ -34,6 +35,7 @@ export function PomodoroWidget() {
     session?.status === "paused" && session.paused_at
       ? Date.parse(session.paused_at)
       : Date.now();
+
   const remaining = session
     ? secondsRemaining(session.ends_at, now)
     : selectedPreset;
@@ -86,30 +88,39 @@ export function PomodoroWidget() {
   }
   const size = 160;
 
+  if (loadingSession) return <div>Loading Session</div>;
+  if (error) return <div>{error}</div>;
+
   return (
-    <div className="grid grid-cols-2 min-w-50 ">
-      {session ? (
-        <>
+    <div className="grid grid-cols-2 relative">
+      <div className="relative top-7">
+        {session ? (
+          <>
+            <TimerRing
+              remaining={remaining}
+              total={session.planned_seconds}
+              label={formatMMSS(remaining)}
+              verdict={null}
+              size={size}
+            />
+          </>
+        ) : (
           <TimerRing
-            remaining={remaining}
-            total={session.planned_seconds}
-            label={formatMMSS(remaining)}
+            remaining={selectedPreset}
+            total={selectedPreset}
+            label={formatMMSS(selectedPreset)}
             verdict={null}
             size={size}
           />
-        </>
-      ) : (
-        <TimerRing
-          remaining={selectedPreset}
-          total={selectedPreset}
-          label={formatMMSS(selectedPreset)}
-          verdict={null}
-          size={size}
-        />
-      )}
+        )}
+        <p className="relative bottom-16 left-11 font-semibold text-neutral-400 text-sm">
+          {session?.status === "active" || session?.status === "paused"
+            ? "of " + formatMMSS(session?.planned_seconds ?? selectedPreset)
+            : ""}{" "}
+        </p>
+      </div>
       <div className="mt-10 flex flex-col gap-2 opacity-0 2xl:opacity-100">
         <PauseBars pauseCount={session?.pause_count ?? 0} />
-        {verdict}
         <div>
           <p
             className={cn(
@@ -120,6 +131,23 @@ export function PomodoroWidget() {
             Pause Budget: {formatMMSS(pausedBudgetRemaining)}
           </p>
         </div>
+      </div>
+      <div className="text-white absolute right-2 top-1">
+        {verdict === "running" ? (
+          <div className="flex">
+            <div className="text-green-400 relative bottom-2 left-2">
+              <Dot size={40} />
+            </div>
+            running
+          </div>
+        ) : (
+          <div className="flex">
+            <div className="text-red-400 relative bottom-2 left-2">
+              <Dot size={40} />
+            </div>
+            paused
+          </div>
+        )}
       </div>
     </div>
   );

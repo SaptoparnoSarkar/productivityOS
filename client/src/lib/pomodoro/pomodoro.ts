@@ -1,5 +1,3 @@
-// now is injected
-
 import { PresetSeconds } from "@/types/pomodoro";
 
 //Seconds Remaining
@@ -20,6 +18,7 @@ export type Preset = {
   minutes: string;
   xp: number;
 };
+
 export const PRESETS: Preset[] = [
   {
     seconds: 600,
@@ -57,3 +56,25 @@ export const PRESETS: Preset[] = [
     xp: 300,
   },
 ];
+
+// Budget Calc
+const PAUSE_BUDGET_RATIO = 0.25;
+const MIN_PAUSE_BUDGET_SECONDS = 180;
+const MAX_PAUSE_BUDGET_SECONDS = 600;
+
+export function calculatePauseBudget(plannedSeconds: number) {
+  const base = Math.floor(
+    Math.min(
+      Math.max(plannedSeconds * PAUSE_BUDGET_RATIO, MIN_PAUSE_BUDGET_SECONDS),
+      MAX_PAUSE_BUDGET_SECONDS,
+    ),
+  );
+  return base;
+}
+
+export function formatFocusTime(totalSeconds: number) {
+  const hours = Math.floor(totalSeconds / 3600);
+  const mins = Math.floor((totalSeconds % 3600) / 60);
+
+  return `${hours}h ${mins}m`;
+}

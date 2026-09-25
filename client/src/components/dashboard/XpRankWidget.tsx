@@ -38,7 +38,7 @@ export function XpRankWidget() {
 
   return (
     <div className="w-full">
-      <div className="rounded-lg border-purple-600 border-2 mt-4 p-4 space-y-3 hover:shadow-lg hover:shadow-purple-400 transition duration-400 ease-in-out">
+      <div className="pt-10">
         <div className="flex items-center justify-between">
           <div className="font-semibold">{rank.name}</div>
           <div className="text-stale-500">{totalXp} XP</div>

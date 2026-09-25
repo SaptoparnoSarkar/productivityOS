@@ -39,8 +39,33 @@ export type CompleteResult = {
   xp: number;
 };
 
+export type TotalSubjectHours = {
+  total_seconds: number;
+  total_sessions: number;
+};
+
 export type SubjectHours = {
   subject_id: number;
   title: string;
   total_seconds: number;
+};
+
+export type PomodoroToday = {
+  total_seconds: number;
+  total_sessions: number;
+};
+
+export type RecentPomodoroSession = {
+  id: number;
+  subject_title: string;
+  status: "completed" | "abandoned";
+  planned_seconds: number;
+  actual_seconds: number;
+  completed_at: string;
+};
+
+export type PomodoroSummary = {
+  recents: RecentPomodoroSession[];
+  todayTotalHours: PomodoroToday;
+  subjectHours: SubjectHours[];
 };

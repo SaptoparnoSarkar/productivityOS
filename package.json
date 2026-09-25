@@ -1,0 +1,27 @@
+{
+  "name": "productivityos",
+  "version": "1.0.0",
+  "description": "A productivity dashboard that gamifies your life. You can earn xp, track daily completions, build consistency.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:client": "npm run dev --prefix client",
+    "dev:server": "npm run dev --prefix server",
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SaptoparnoSarkar/productivityOS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/SaptoparnoSarkar/productivityOS/issues"
+  },
+  "homepage": "https://github.com/SaptoparnoSarkar/productivityOS#readme",
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
+}

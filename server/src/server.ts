@@ -1,23 +1,25 @@
 import "dotenv/config";
 import { pool } from "./config/db.js";
+import redis from "./config/redis.js";
 import Fastify from "fastify";
 import fastifyCookie from "@fastify/cookie";
 import authMiddleware from "./middleware/auth.middleware.js";
-import { authRoutes } from "./routes/auth.js";
-import { subjectRoutes } from "./routes/subject.js";
 import { AppError } from "./utils/errors.js";
-import { milestoneRoutes } from "./routes/milestone.js";
-import { checklistItemRoutes } from "./routes/checklistItem.js";
-import { counterRoutes } from "./routes/counter.js";
 import fastifyCors from "@fastify/cors";
+
+// Routes
+import { authRoutes } from "./routes/auth.js";
 import { xpRouter } from "./routes/xp.js";
-import redis from "./config/redis.js";
 import { checklistRoutes } from "./routes/checklist.js";
 import { streakRoutes } from "./routes/streak.js";
 import { dashboardRoutes } from "./routes/dashboard.js";
 import { pomodoroRoutes } from "./routes/pomodoro.js";
 import { weaknessRoutes } from "./routes/weakness.js";
 import { showcaseRoutes } from "./routes/showcase.js";
+import { milestoneRoutes } from "./routes/milestone.js";
+import { checklistItemRoutes } from "./routes/checklistItem.js";
+import { counterRoutes } from "./routes/counter.js";
+import { subjectRoutes } from "./routes/subject.js";
 
 //Fastify Instance
 const fastify = Fastify({ logger: true });
@@ -38,17 +40,12 @@ const start = async () => {
       credentials: true,
       methods: ["GET", "POST", "PATCH", "DELETE"],
     });
-    fastify.log.info("cors plugin check");
 
     //Register Cookie Plugin
     await fastify.register(fastifyCookie, {
       secret: process.env.COOKIE_SECRET!,
     });
     fastify.log.info("fastify cookie plugin check");
-
-    //Register Auth Middleware
-    await fastify.register(authMiddleware);
-    fastify.log.info("auth middleware check");
 
     //Global Error Handler Class
     fastify.setErrorHandler((err, req, reply) => {
@@ -58,6 +55,10 @@ const start = async () => {
       req.log.error(err);
       return reply.status(500).send({ message: "Internal Server Error" });
     });
+
+    //Register Middleware
+    await fastify.register(authMiddleware);
+    fastify.log.info("auth middleware check");
 
     //Register routes
     await fastify.register(authRoutes);

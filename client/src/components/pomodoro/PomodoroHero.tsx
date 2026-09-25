@@ -95,10 +95,10 @@ export function PomodoroHero() {
   const pausedBudgetRemaining =
     session?.status === "paused" && session.paused_at
       ? Math.max(
-          0,
-          remainingBudget -
-            Math.floor((Date.now() - Date.parse(session.paused_at)) / 1000),
-        )
+        0,
+        remainingBudget -
+        Math.floor((Date.now() - Date.parse(session.paused_at)) / 1000),
+      )
       : remainingBudget;
 
   //Pause Budget Expiry Refresher
@@ -150,7 +150,6 @@ export function PomodoroHero() {
         planned_seconds: preset,
       });
       await refresh();
-      // The start response has a different shape. Don't teach your component two shapes.
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -189,7 +188,9 @@ export function PomodoroHero() {
   //Complete Lock
   const hasReachedEnd =
     session !== null && Date.now() >= Date.parse(session.ends_at);
+
   const completingRef = useRef(false);
+
   useEffect(() => {
     if (session?.status !== "active" || !hasReachedEnd) return;
     if (completingRef.current) return;

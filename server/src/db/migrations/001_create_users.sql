@@ -9,3 +9,4 @@ CREATE TABLE users (
 
 -- TODO: add timezone selection to onboarding or account
 -- settings so every user can choose their own IANA timezone.
+

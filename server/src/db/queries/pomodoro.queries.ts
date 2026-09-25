@@ -33,21 +33,20 @@ export async function dbCreateSession(
 }
 
 // Terminate session. This is for abandanment.
-export async function dbFinishSession(
+export async function dbAbandonSession(
   userId: number,
   sessionId: number,
-  status: "completed" | "abandoned",
   actualSeconds: number,
 ) {
   const result = await pool.query<PomodoroSessionRow>(
     `UPDATE pomodoro_sessions p
-      SET status = $3,
-        actual_seconds = $4,
+      SET status = 'abandoned',
+        actual_seconds = $3,
         completed_at = NOW()
       WHERE id = $2 AND status IN ('active','paused') AND user_id = $1
     RETURNING p.*
     `,
-    [userId, sessionId, status, actualSeconds],
+    [userId, sessionId, actualSeconds],
   );
   return result.rows[0];
 }
@@ -136,6 +135,38 @@ export async function dbGetSubjectHours(userId: number) {
       ORDER BY total_seconds DESC
     `,
     [userId],
+  );
+  return result.rows;
+}
+
+export async function dbGetTotalAllSubjectHours(userId: number) {
+  const result = await pool.query(
+    `SELECT COALESCE(SUM(actual_seconds),0)::int AS total_seconds, COALESCE(COUNT(id),0)::int AS total_sessions FROM pomodoro_sessions WHERE user_id = $1 AND status = 'completed'
+    `,
+    [userId],
+  );
+  return result.rows[0];
+}
+
+export async function dbGetTodayHours(userId: number) {
+  const result = await pool.query(
+    `SELECT COALESCE(SUM(actual_seconds), 0)::int AS total_seconds, COUNT(*)::int AS total_sessions FROM pomodoro_sessions WHERE user_id = $1 AND status = 'completed' AND completed_at >= CURRENT_DATE AND completed_at < CURRENT_DATE + INTERVAL '1 day'`,
+    [userId],
+  );
+  return result.rows[0];
+}
+
+export async function dbGetRecentPomodoroSessions(
+  userId: number,
+  limit: number,
+) {
+  const result = await pool.query(
+    `SELECT p.id, s.title AS subject_title, p.status, p.planned_seconds, p.actual_seconds, p.completed_at FROM pomodoro_sessions p 
+      JOIN subjects s ON s.id = p.subject_id
+    WHERE p.user_id = $1 AND p.status IN ('completed','abandoned')  
+    ORDER BY completed_at DESC
+    LIMIT $2`,
+    [userId, limit],
   );
   return result.rows;
 }

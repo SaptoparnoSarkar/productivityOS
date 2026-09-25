@@ -2,7 +2,6 @@ import { cn } from "@/lib/utils";
 import { MilestoneWithSubject } from "@/types/milestone";
 import Spinner from "../ui/spinner";
 import { Goal } from "lucide-react";
-import { Button } from "../ui/button";
 import { Toggle } from "../ui/Toggle";
 
 type Props = {

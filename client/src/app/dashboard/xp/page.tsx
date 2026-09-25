@@ -91,7 +91,7 @@ export default function XpLogPage() {
   const pageNumbers = getPageWindow(currentPage, totalPages, WINDOW_SIZE);
 
   return (
-    <div className="ml-14 mt-15 mr-12 ">
+    <div className="ml-14 mt-2 mr-12 mb-10 ">
       {/* Header */}
       <div className="mb-10">
         <h1 className="header-text">XP Log</h1>

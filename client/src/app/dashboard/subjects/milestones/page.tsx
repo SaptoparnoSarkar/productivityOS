@@ -62,7 +62,7 @@ export default function MilestonePage() {
     );
 
   return (
-    <div className="ml-14 mt-15 mr-12">
+    <div className="ml-14 mt-2 mr-12">
       <div className="mb-4">
         <h1 className="header-text">Milestones</h1>
         <p className="subheading-text">

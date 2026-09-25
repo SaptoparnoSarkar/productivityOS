@@ -24,8 +24,8 @@ export default function WeaknessWidget() {
     fetchWeakness();
   }, []);
 
-  if (loading) <div>Loading...</div>;
-  if (error) <div>{error}</div>;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
   if (weakness?.length === 0) return <div>You don't have any weakness</div>;
 
   return (

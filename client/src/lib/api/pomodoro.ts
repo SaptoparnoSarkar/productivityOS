@@ -3,8 +3,10 @@ import {
   CompleteResult,
   PauseResult,
   PomodoroSessionWire,
+  PomodoroSummary,
   ResumeResult,
   SubjectHours,
+  TotalSubjectHours,
 } from "@/types/pomodoro";
 import { apiClient } from "../apiClient";
 import { StartSessionInput } from "@/schemas/pomodoro.schema";
@@ -63,6 +65,30 @@ export async function completeSession(): Promise<CompleteResult> {
 export async function fetchSubjectHours(): Promise<SubjectHours> {
   const response = await apiClient<Envelope<SubjectHours>>(
     `/api/pomodoro/subject-hours`,
+  );
+  return response.data;
+}
+
+export async function fetchTotalSubjectHours(): Promise<TotalSubjectHours> {
+  const response = await apiClient<Envelope<TotalSubjectHours>>(
+    `/api/pomodoro/total-hours`,
+  );
+  return response.data;
+}
+
+export async function abandonSession(): Promise<PomodoroSessionWire> {
+  const response = await apiClient<Envelope<PomodoroSessionWire>>(
+    `/api/pomodoro/abandon`,
+    {
+      method: "POST",
+    },
+  );
+  return response.data;
+}
+
+export async function fetchPomodoroSummary(): Promise<PomodoroSummary> {
+  const response = await apiClient<Envelope<PomodoroSummary>>(
+    `/api/pomodoro/summary`,
   );
   return response.data;
 }

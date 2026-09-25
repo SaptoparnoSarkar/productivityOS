@@ -3,13 +3,21 @@ import { MetricCard } from "./MetricCard";
 import { SubjectWidget } from "./SubjectsWidget";
 import { UpcomingMilestoneWidget } from "./RecentMilestoneWidget";
 import { Widget } from "./Widget";
-import Link from "next/link";
 import { XpRankWidget } from "./XpRankWidget";
 import { useEffect, useState } from "react";
 import { Dashboard } from "@/types/dashboard";
 import { dashboardMetric } from "@/lib/api/dashboard";
 import { PomodoroWidget } from "./PomodoroWidget";
 import WeaknessWidget from "./WeaknessWidget";
+import ShowcaseWidget from "./ShowcaseWidget";
+import {
+  AlarmCheck,
+  BookOpen,
+  Clock,
+  Trophy,
+  UnlinkIcon,
+  Zap,
+} from "lucide-react";
 
 export default function DashboardShell() {
   const [metricValue, setMetricValue] = useState<Dashboard>({
@@ -30,7 +38,7 @@ export default function DashboardShell() {
   }, []);
 
   return (
-    <main className="ml-14 mt-15 mr-12">
+    <main className="ml-14 mt-2 mr-12">
       <section className="flex items-center justify-between">
         <div className="flex flex-col">
           <h1 className="header-text">Dashboard</h1>
@@ -74,32 +82,32 @@ export default function DashboardShell() {
       </section>
 
       <section className="grid grid-cols-4 gap-4 my-8">
-        <Widget state="real" title="Subjects Due Soon">
+        <Widget title="Subjects Due Soon" icon={BookOpen}>
           <SubjectWidget />
         </Widget>
 
-        <Widget state="real" title="Recent Milestones">
+        <Widget title="Recent Milestones" icon={AlarmCheck}>
           <UpcomingMilestoneWidget />
         </Widget>
 
-        <Widget state="real" title="XP & Rank">
+        <Widget title="XP & Rank" icon={Zap}>
           <XpRankWidget />
         </Widget>
-        <Widget state="real" title="Weakness">
+        <Widget title="Weakness" icon={UnlinkIcon}>
           <WeaknessWidget />
         </Widget>
       </section>
 
       <section className="grid grid-cols-4 gap-4 my-8">
-        <Widget state="real" title="Pomodoro">
+        <Widget title="Pomodoro" icon={Clock}>
           <PomodoroWidget />
         </Widget>
 
         {/* Placeholder for floating dock */}
         <div className="col-start-2 col-end-4" aria-hidden="true" />
 
-        <Widget state="real" title="Hall of Fame">
-          <WeaknessWidget />
+        <Widget title="Hall of Fame" icon={Trophy}>
+          <ShowcaseWidget />
         </Widget>
       </section>
     </main>

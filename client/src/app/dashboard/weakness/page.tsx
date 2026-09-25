@@ -43,7 +43,7 @@ export default function WeaknessPage() {
   if (!items || items.length === 0) return <div>No weakness items</div>;
 
   return (
-    <div className="ml-14 mt-15 mr-12">
+    <div className="ml-14 mt-2 mr-12 mb-10">
       <div className="flex gap-4 mb-4 justify-between w-full">
         <div>
           <h1 className="header-text">Weakness Items</h1>
