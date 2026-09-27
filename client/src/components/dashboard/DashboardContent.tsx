@@ -26,7 +26,7 @@ export default function DashboardShell() {
       totalSubjects: 0,
       activeMilestones: 0,
       completedDailies: 0,
-      streak: 0,
+      xpToday: 0,
     },
   });
   useEffect(() => {
@@ -58,26 +58,27 @@ export default function DashboardShell() {
         <MetricCard
           label="Total Subjects"
           value={metricValue.metrics.totalSubjects}
-          hint="_"
+          text="Add your first Subject"
           isActive={metricValue.metrics.totalSubjects > 0}
-        />
-        <MetricCard
-          label="Completed Milestone Daily's"
-          value={metricValue.metrics.completedDailies}
-          hint="_"
-          isActive={metricValue.metrics.completedDailies > 0}
         />
         <MetricCard
           label="Active Milestones"
           value={metricValue.metrics.activeMilestones}
-          hint="_"
+          text="Create your first Milestone"
           isActive={metricValue.metrics.activeMilestones > 0}
         />
         <MetricCard
-          label="Streak"
-          value={metricValue.metrics.streak}
-          hint="_"
-          isActive={metricValue.metrics.streak >= 3}
+          label="Completed Milestone Daily's"
+          value={metricValue.metrics.completedDailies}
+          text="Create your first Milestone Daily"
+          isActive={metricValue.metrics.completedDailies > 0}
+        />
+
+        <MetricCard
+          label="Today's XP"
+          value={metricValue.metrics.xpToday}
+          text="Get to work"
+          isActive={metricValue.metrics.xpToday > 0}
         />
       </section>
 

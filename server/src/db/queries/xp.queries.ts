@@ -65,3 +65,11 @@ export async function dbCountXpEvents(userId: number) {
   );
   return Number(result.rows[0].count);
 }
+
+
+export async function dbGetTodayXp(userId: number) {
+  const result = await pool.query(
+    `SELECT COALESCE(SUM(amount),0) AS total FROM xp_events WHERE user_id = $1 AND DATE(awarded_date) = CURRENT_DATE`, [userId]
+  )
+  return Number(result.rows[0].total);
+}

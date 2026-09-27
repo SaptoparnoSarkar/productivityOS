@@ -54,13 +54,11 @@
   }
 
   body {
-    font-family: var(
-      --font-sans,
-      "Inter",
-      system-ui,
-      -apple-system,
-      sans-serif
-    );
+    font-family: var(--font-sans,
+        "Inter",
+        system-ui,
+        -apple-system,
+        sans-serif);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -68,6 +66,7 @@
 
 /* COMPONENTS */
 @layer components {
+
   /* GLOBAL form error */
   .form-error {
     color: #c0392b;
@@ -211,11 +210,9 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.12) 0%,
-      transparent 60%
-    );
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.12) 0%,
+        transparent 60%);
     pointer-events: none;
   }
 
@@ -617,6 +614,7 @@
       min-height: 190px;
     }
   }
+
   .metric-card-active {
     background: var(--app-accent);
     box-shadow: 0 0 24px var(--app-accent-glow);
@@ -627,11 +625,6 @@
   .metric-label {
     font-size: 13px;
     opacity: 0.8;
-  }
-
-  .metric-value {
-    font-size: 32px;
-    font-weight: 700;
   }
 
   .metric-hint {
@@ -663,11 +656,9 @@
       inset: 0;
       pointer-events: none;
       border-radius: inherit;
-      background: radial-gradient(
-        800px circle at var(--x-px) var(--y-px),
-        rgb(167, 139, 250, 0.1),
-        transparent 55%
-      );
+      background: radial-gradient(800px circle at var(--x-px) var(--y-px),
+          rgb(167, 139, 250, 0.1),
+          transparent 55%);
     }
 
     &:before {
@@ -711,31 +702,30 @@
     max-height: 220px;
     padding: 0 2px;
     overflow-y: auto;
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      black,
-      black calc(100% - var(--fade-b)),
-      transparent
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      black,
-      black calc(100% - var(--fade-b)),
-      transparent
-    );
+    -webkit-mask-image: linear-gradient(to bottom,
+        black,
+        black calc(100% - var(--fade-b)),
+        transparent);
+    mask-image: linear-gradient(to bottom,
+        black,
+        black calc(100% - var(--fade-b)),
+        transparent);
     animation: fade-out-bottom both;
     animation-timeline: scroll(self y);
   }
 
   @keyframes fade-out-bottom {
+
     0%,
     90% {
       --fade-b: 3rem;
     }
+
     100% {
       --fade-b: 0rem;
     }
   }
+
   .rank-scroll::-webkit-scrollbar {
     display: none;
   }
