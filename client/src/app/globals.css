@@ -35,7 +35,7 @@
   --app-surface: #2d2437;
   --app-surface-2: #110d16;
   --app-border: #ffffff14;
-  --app-accent: #8b5cf6;
+  --app-accent: #734bcf;
   --app-accent-hover: #a78bfa;
   --app-accent-glow: rgba(124, 58, 237, 0.45);
   --app-text: #f4f4f5;
@@ -579,12 +579,13 @@
   }
 
   .btn-primary {
-    padding: 12px 20px;
-    border-radius: 12px;
-    background: var(--app-accent);
+    padding: 8px 16px;
+    border-radius: 15px;
+    background: #642ee2;
     box-shadow: 0 0 24px var(--app-accent-glow);
-    color: #fff;
-    font-weight: 600;
+    color: #ffffff;
+    font-weight: 300;
+    font-size: medium;
     border: none;
     cursor: pointer;
   }
@@ -598,22 +599,6 @@
     padding: 0 24px 24px;
   }
 
-  .metric-card {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 20px;
-    border-radius: 16px;
-    background: var(--app-surface);
-    color: var(--app-text);
-    border: 1px solid var(--app-border);
-  }
-
-  @media (min-width: 1980px) {
-    .metric-card {
-      min-height: 190px;
-    }
-  }
 
   .metric-card-active {
     background: var(--app-accent);
@@ -642,7 +627,7 @@
     --border: 2px;
 
     height: 260px;
-    background: rgba(17, 13, 22, 0.9);
+    background: rgba(17, 13, 22, 0.4);
     border-radius: 20px;
     overflow: hidden;
     position: relative;

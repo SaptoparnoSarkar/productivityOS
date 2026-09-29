@@ -1,7 +1,7 @@
 
 // RANKS
 const RANKS = [
-    { name: "Private / Recruit", minXp: 0 },
+    { name: "Recruit", minXp: 0 },
     { name: "Corporal", minXp: 500 },
     { name: "Sergeant", minXp: 1500 },
     { name: "Lieutenant", minXp: 3500 },

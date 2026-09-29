@@ -1,5 +1,6 @@
 import { listWeaknesses } from "@/lib/api/weakness";
 import { Weakness } from "@/types/weakness";
+import { UnlinkIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -26,7 +27,13 @@ export default function WeaknessWidget() {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
-  if (weakness?.length === 0) return <div>You don't have any weakness</div>;
+  if (weakness?.length === 0) return (
+
+    <div className="flex flex-col items-center justify-center h-35">
+      <UnlinkIcon className="text-[#642ee2]" size={30} />
+      <p className="text-white font-bold mt-4 cursor-default">No weaknesses yet</p>
+    </div>
+  )
 
   return (
     <div>

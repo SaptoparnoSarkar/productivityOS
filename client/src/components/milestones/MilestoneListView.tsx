@@ -9,9 +9,9 @@ type Props = {
 export function MilestoneListView({ milestones }: Props) {
   if (milestones.length === 0)
     return (
-      <div className="flex flex-col items-center justify-center pt-5 ">
-        <AlarmClock className="w-15 h-15 text-purple-500" />
-        <p className="mt-4 cursor-default">No Milestones Yet.</p>
+      <div className="flex flex-col items-center justify-center h-35">
+        <AlarmClock className="text-[#642ee2]" size={30} />
+        <p className="mt-4 cursor-default text-white font-bold">No milestones yet</p>
       </div>
     );
   return (

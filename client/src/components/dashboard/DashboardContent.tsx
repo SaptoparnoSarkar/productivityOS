@@ -18,6 +18,7 @@ import {
   UnlinkIcon,
   Zap,
 } from "lucide-react";
+import { Greeting } from "./Greeting";
 
 export default function DashboardShell() {
   const [metricValue, setMetricValue] = useState<Dashboard>({
@@ -43,7 +44,7 @@ export default function DashboardShell() {
         <div className="flex flex-col">
           <h1 className="header-text">Dashboard</h1>
           <p className="subheading-text">
-            Plan, prioritize and accomplish your tasks with ease.
+            <Greeting />
           </p>
         </div>
 
@@ -68,7 +69,7 @@ export default function DashboardShell() {
           isActive={metricValue.metrics.activeMilestones > 0}
         />
         <MetricCard
-          label="Completed Milestone Daily's"
+          label="Dailies Completed"
           value={metricValue.metrics.completedDailies}
           text="Create your first Milestone Daily"
           isActive={metricValue.metrics.completedDailies > 0}
@@ -83,7 +84,8 @@ export default function DashboardShell() {
       </section>
 
       <section className="grid grid-cols-4 gap-4 my-8">
-        <Widget title="Subjects Due Soon" icon={BookOpen}>
+
+        <Widget title="Subjects" icon={BookOpen}>
           <SubjectWidget />
         </Widget>
 
@@ -94,9 +96,11 @@ export default function DashboardShell() {
         <Widget title="XP & Rank" icon={Zap}>
           <XpRankWidget />
         </Widget>
+
         <Widget title="Weakness" icon={UnlinkIcon}>
           <WeaknessWidget />
         </Widget>
+
       </section>
 
       <section className="grid grid-cols-4 gap-4 my-8">

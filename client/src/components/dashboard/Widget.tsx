@@ -27,11 +27,12 @@ export function Widget(props: WidgetProps) {
       onPointerMove={handlePointerMove}
     >
       <div className="flex flex-col text-white gap-4">
-        <div className="bg-gray-400/20 h-13 flex items-center pl-5">
-          <div className=" text-slate-300/80">
-            <Icon size={20} />
+        <div className="bg-gray-400/20 h-2.5" />
+        <div className="flex items-center gap-2 pl-4">
+          <div className=" text-gray-400">
+            <Icon size={18} />
           </div>
-          <div className="font-bold text-lg pl-2">{props.title}</div>
+          <div className="font-bold text-lg text-blue-100">{props.title}</div>
         </div>
 
         <div className="flex flex-col px-4 pb-2">{props.children}</div>
