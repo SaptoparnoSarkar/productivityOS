@@ -38,7 +38,7 @@ export default function XpBody() {
   const { totalXp, rank, progress } = data.summary;
 
   const RANKS = [
-    { name: "Private / Recruit", minXp: 0 },
+    { name: "Recruit", minXp: 0 },
     { name: "Corporal", minXp: 500 },
     { name: "Sergeant", minXp: 1500 },
     { name: "Lieutenant", minXp: 3500 },
@@ -64,7 +64,7 @@ export default function XpBody() {
           />
         </div>
         <p className="text-slate-400 text-sm mt-3">
-          {progress.text} . {progress.percent}%
+          {progress.text} • {progress.percent}%
         </p>
       </div>
       <div className="border border-slate-700 w-85 p-6 rounded-2xl ">
@@ -76,13 +76,12 @@ export default function XpBody() {
             return (
               <div
                 key={r.name}
-                className={`relative flex items-center gap-3 rounded-lg py-2 pl-4 pr-2 ${
-                  isCurrent
-                    ? "bg-purple-500/10 ring-1 ring-purple-600/60 text-purple-200"
-                    : isUnlocked
-                      ? "text-white"
-                      : "text-slate-500/60"
-                }`}
+                className={`relative flex items-center gap-3 rounded-lg py-2 pl-4 pr-2 mt-2 ${isCurrent
+                  ? "bg-purple-500/10 ring-1 ring-purple-600/60 text-purple-200"
+                  : isUnlocked
+                    ? "text-white"
+                    : "text-slate-500/60"
+                  }`}
               >
                 <span>
                   {isUnlocked && !isCurrent && (
@@ -111,7 +110,7 @@ export default function XpBody() {
           {(totalHours.total_seconds / 360).toFixed(1)} hours
         </p>
         <p className="text-slate-400 text-sm">
-          all subjects combined . {totalHours.total_sessions} pomodoro sessions
+          all subjects combined • {totalHours.total_sessions} pomodoro sessions
         </p>
       </div>
     </div>

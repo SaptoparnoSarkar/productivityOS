@@ -55,7 +55,7 @@ export function TimerRing({
         textAnchor="middle"
         dominantBaseline="middle"
         fill="white"
-        fontSize={0.18 * size}
+        fontSize={0.15 * size}
       >
         {label}
       </text>

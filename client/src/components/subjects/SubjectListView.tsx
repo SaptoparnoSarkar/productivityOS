@@ -1,13 +1,14 @@
 import { Subject } from "@/types/subject";
-import { BookOpen } from "lucide-react";
 import Link from "next/link";
 
 export function SubjectListView({ subjects }: { subjects: Subject[] }) {
   if (!subjects || subjects.length === 0)
     return (
-      <div className="flex flex-col items-center justify-center py-10">
-        <BookOpen className="w-15 h-15 text-purple-500" />
-        <p className="mt-4 cursor-default">No dues. Keep it up!</p>
+      <div className="flex flex-col items-center justify-center gap-5 h-40">
+        <p className="text-white font-bold cursor-default">No subjects yet</p>
+        <Link href={"/dashboard/subjects/new"} className="btn-primary">
+          + Add Subject
+        </Link>
       </div>
     );
 

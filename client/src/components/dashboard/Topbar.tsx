@@ -18,7 +18,7 @@ export function Topbar() {
     }
   }
   return (
-    <header className="flex items-center justify-between gap-4 px-4 py-4 border-b border-gray-600/30">
+    <header className="flex items-center justify-between gap-4 px-4 py-4 border-b border-gray-600/30 bg-black/30">
       <input
         type="text"
         placeholder="Search for Tasks, Projects  ..."
@@ -29,7 +29,7 @@ export function Topbar() {
       {/* Right Cluster */}
       <div className="topbar-actions">
         <div className="topbar-user">
-          <span>{}</span>
+          <span>{ }</span>
           {/* TODO: Link the session user's name to display on topbar */}
         </div>
         <button

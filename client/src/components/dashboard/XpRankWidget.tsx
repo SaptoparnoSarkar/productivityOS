@@ -2,6 +2,7 @@
 
 import { getXpSummary } from "@/lib/api/xp";
 import { XpSummaryResponse } from "@/types/xp";
+import { Dot } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -38,13 +39,12 @@ export function XpRankWidget() {
 
   return (
     <div className="w-full">
-      <div className="pt-10">
-        <div className="flex items-center justify-between">
+      <div className="pt-10 flex flex-col gap-2">
+        <div className="flex items-center ">
           <div className="font-semibold">{rank.name}</div>
-          <div className="text-stale-500">{totalXp} XP</div>
+          <Dot />
+          <p className="text-stale-500">{totalXp} XP</p>
         </div>
-
-        <div className="text-sm text-stale-500">{progress.text}</div>
 
         {/* Track and fill Progress Bar */}
         <div className="w-full h-2 bg-gray-600 rounded-full">
@@ -53,14 +53,16 @@ export function XpRankWidget() {
             style={{ width: `${progress.percent}%` }}
           />
         </div>
+
+        <div className="text-sm text-stale-500">{progress.text}</div>
       </div>
 
       <Link
         href="/dashboard/xp"
-        className="block mt-4 text-right text-blue-500 hover:text-amber-50 duration-500 ease-in-out"
+        className="block text-purple-400 text-sm cursor-pointer duration-300 ease-in-out mt-4"
       >
         {" "}
-        View All {`->`}
+        View Log {`->`}
       </Link>
     </div>
   );

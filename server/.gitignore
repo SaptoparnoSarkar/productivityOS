@@ -4,7 +4,7 @@ next-env.d.ts
 devlog.md
 
 # env files (can opt-in for committing if needed)
-.env*
+.env
 
 # dependencies
 /node_modules

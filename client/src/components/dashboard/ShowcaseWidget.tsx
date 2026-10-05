@@ -1,6 +1,7 @@
 "use client";
 import { listShowcase } from "@/lib/api/showcase";
 import { Showcase } from "@/types/showcase";
+import { Trophy } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -28,7 +29,12 @@ export default function ShowcaseWidget() {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
   if (showcase?.length === 0 || showcase === null)
-    return <div>You don't have any weakness</div>;
+    return (
+      <div className="flex flex-col items-center justify-center h-35">
+        <Trophy className="text-[#642ee2]" size={30} />
+        <p className="mt-4 cursor-default text-white font-bold">No showcases yet</p>
+      </div>
+    );
 
   return (
     <div>

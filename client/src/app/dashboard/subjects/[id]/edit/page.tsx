@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 export default function EditSubjectPage() {
   const params = useParams();
   const id = Number(params.id);
+
   const router = useRouter();
 
   const [subject, setSubject] = useState<Subject | null>(null);
@@ -21,7 +22,6 @@ export default function EditSubjectPage() {
       setLoading(false);
       return;
     }
-
     async function fetchSubject() {
       try {
         const data = await getSubject(id);

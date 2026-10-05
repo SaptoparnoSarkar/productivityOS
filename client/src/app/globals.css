@@ -35,7 +35,7 @@
   --app-surface: #2d2437;
   --app-surface-2: #110d16;
   --app-border: #ffffff14;
-  --app-accent: #8b5cf6;
+  --app-accent: #734bcf;
   --app-accent-hover: #a78bfa;
   --app-accent-glow: rgba(124, 58, 237, 0.45);
   --app-text: #f4f4f5;
@@ -54,13 +54,11 @@
   }
 
   body {
-    font-family: var(
-      --font-sans,
-      "Inter",
-      system-ui,
-      -apple-system,
-      sans-serif
-    );
+    font-family: var(--font-sans,
+        "Inter",
+        system-ui,
+        -apple-system,
+        sans-serif);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -68,6 +66,7 @@
 
 /* COMPONENTS */
 @layer components {
+
   /* GLOBAL form error */
   .form-error {
     color: #c0392b;
@@ -211,11 +210,9 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.12) 0%,
-      transparent 60%
-    );
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.12) 0%,
+        transparent 60%);
     pointer-events: none;
   }
 
@@ -288,19 +285,7 @@
     }
   }
 
-  /* SUBJECTS */
-
-  /* Global Form except AUTH */
-  .form-page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    max-height: 100vh;
-    position: relative;
-    overflow: hidden;
-    scrollbar-color: black;
-    /* background: linear-gradient(135deg, #fafafa 0%, #f4f4f5 50%, #fafafa 100%); */
-  }
+  /* FORM */
 
   .form {
     position: relative;
@@ -308,9 +293,9 @@
     max-width: 540px;
     min-width: 440px;
     margin: 0 auto;
-    padding: 48px 40px 40px;
-    border-radius: 16px;
-    background: var(--app-surface);
+    padding: 40px 40px 40px;
+    border-radius: 12px;
+    background: #1A1A22;
     color: var(--app-text);
     border: 1px solid var(--surface-border);
     box-shadow:
@@ -330,19 +315,17 @@
   }
 
   .form-title {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 600;
-    line-height: 1.3;
-    letter-spacing: -0.02em;
-    color: var(--app-text);
+    color: white;
+    margin-bottom: -8px;
   }
 
   .form-subtitle {
     margin-top: 6px;
     font-size: 14px;
     font-weight: 400;
-    line-height: 1.5;
-    color: var(--app-text-dim);
+    color: rgba(255, 255, 255, 0.6);
   }
 
   .fields {
@@ -504,7 +487,7 @@
     align-items: stretch;
     gap: 8px;
     padding: 20px 8px;
-    background: var(--app-surface);
+    background: rgba(0, 0, 0, 0.3);
     border-right: 1px solid rgba(255, 255, 255, 0.06);
     transition: width 0.2s ease;
   }
@@ -582,12 +565,13 @@
   }
 
   .btn-primary {
-    padding: 12px 20px;
-    border-radius: 12px;
-    background: var(--app-accent);
+    padding: 8px 16px;
+    border-radius: 15px;
+    background: #642ee2;
     box-shadow: 0 0 24px var(--app-accent-glow);
-    color: #fff;
-    font-weight: 600;
+    color: #ffffff;
+    font-weight: 300;
+    font-size: medium;
     border: none;
     cursor: pointer;
   }
@@ -601,22 +585,7 @@
     padding: 0 24px 24px;
   }
 
-  .metric-card {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 20px;
-    border-radius: 16px;
-    background: var(--app-surface);
-    color: var(--app-text);
-    border: 1px solid var(--app-border);
-  }
 
-  @media (min-width: 1980px) {
-    .metric-card {
-      min-height: 190px;
-    }
-  }
   .metric-card-active {
     background: var(--app-accent);
     box-shadow: 0 0 24px var(--app-accent-glow);
@@ -627,11 +596,6 @@
   .metric-label {
     font-size: 13px;
     opacity: 0.8;
-  }
-
-  .metric-value {
-    font-size: 32px;
-    font-weight: 700;
   }
 
   .metric-hint {
@@ -649,7 +613,7 @@
     --border: 2px;
 
     height: 260px;
-    background: rgba(17, 13, 22, 0.9);
+    background: rgba(17, 13, 22, 0.4);
     border-radius: 20px;
     overflow: hidden;
     position: relative;
@@ -663,11 +627,9 @@
       inset: 0;
       pointer-events: none;
       border-radius: inherit;
-      background: radial-gradient(
-        800px circle at var(--x-px) var(--y-px),
-        rgb(167, 139, 250, 0.1),
-        transparent 55%
-      );
+      background: radial-gradient(800px circle at var(--x-px) var(--y-px),
+          rgb(167, 139, 250, 0.1),
+          transparent 55%);
     }
 
     &:before {
@@ -711,32 +673,33 @@
     max-height: 220px;
     padding: 0 2px;
     overflow-y: auto;
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      black,
-      black calc(100% - var(--fade-b)),
-      transparent
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      black,
-      black calc(100% - var(--fade-b)),
-      transparent
-    );
+    -webkit-mask-image: linear-gradient(to bottom,
+        black,
+        black calc(100% - var(--fade-b)),
+        transparent);
+    mask-image: linear-gradient(to bottom,
+        black,
+        black calc(100% - var(--fade-b)),
+        transparent);
     animation: fade-out-bottom both;
     animation-timeline: scroll(self y);
   }
 
   @keyframes fade-out-bottom {
+
     0%,
     90% {
       --fade-b: 3rem;
     }
+
     100% {
       --fade-b: 0rem;
     }
   }
+
   .rank-scroll::-webkit-scrollbar {
     display: none;
   }
 }
+
+/* FORM CUSTOM CSS */

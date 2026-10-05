@@ -18,6 +18,7 @@ import {
   UnlinkIcon,
   Zap,
 } from "lucide-react";
+import { Greeting } from "./Greeting";
 
 export default function DashboardShell() {
   const [metricValue, setMetricValue] = useState<Dashboard>({
@@ -26,7 +27,7 @@ export default function DashboardShell() {
       totalSubjects: 0,
       activeMilestones: 0,
       completedDailies: 0,
-      streak: 0,
+      xpToday: 0,
     },
   });
   useEffect(() => {
@@ -43,7 +44,7 @@ export default function DashboardShell() {
         <div className="flex flex-col">
           <h1 className="header-text">Dashboard</h1>
           <p className="subheading-text">
-            Plan, prioritize and accomplish your tasks with ease.
+            <Greeting />
           </p>
         </div>
 
@@ -58,31 +59,33 @@ export default function DashboardShell() {
         <MetricCard
           label="Total Subjects"
           value={metricValue.metrics.totalSubjects}
-          hint="_"
+          text="Add your first Subject"
           isActive={metricValue.metrics.totalSubjects > 0}
-        />
-        <MetricCard
-          label="Completed Milestone Daily's"
-          value={metricValue.metrics.completedDailies}
-          hint="_"
-          isActive={metricValue.metrics.completedDailies > 0}
         />
         <MetricCard
           label="Active Milestones"
           value={metricValue.metrics.activeMilestones}
-          hint="_"
+          text="Create your first Milestone"
           isActive={metricValue.metrics.activeMilestones > 0}
         />
         <MetricCard
-          label="Streak"
-          value={metricValue.metrics.streak}
-          hint="_"
-          isActive={metricValue.metrics.streak >= 3}
+          label="Dailies Completed"
+          value={metricValue.metrics.completedDailies}
+          text="Create your first Milestone Daily"
+          isActive={metricValue.metrics.completedDailies > 0}
+        />
+
+        <MetricCard
+          label="Today's XP"
+          value={metricValue.metrics.xpToday}
+          text="Get to work"
+          isActive={metricValue.metrics.xpToday > 0}
         />
       </section>
 
       <section className="grid grid-cols-4 gap-4 my-8">
-        <Widget title="Subjects Due Soon" icon={BookOpen}>
+
+        <Widget title="Subjects" icon={BookOpen}>
           <SubjectWidget />
         </Widget>
 
@@ -93,9 +96,11 @@ export default function DashboardShell() {
         <Widget title="XP & Rank" icon={Zap}>
           <XpRankWidget />
         </Widget>
+
         <Widget title="Weakness" icon={UnlinkIcon}>
           <WeaknessWidget />
         </Widget>
+
       </section>
 
       <section className="grid grid-cols-4 gap-4 my-8">

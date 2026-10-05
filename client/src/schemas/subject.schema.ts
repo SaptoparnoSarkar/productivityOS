@@ -1,6 +1,5 @@
 import * as z from "zod";
 
-// Base shape — no refine, stays ZodObject
 export const createSubjectSchema = z.object({
   type: z.enum(["completable", "ongoing"]),
   title: z
@@ -8,7 +7,7 @@ export const createSubjectSchema = z.object({
     .trim()
     .min(1, { message: "Title is required" })
     .max(100, { message: "Title cannot exceed 100 characters" }),
-  description: z.string().nullish(),
+  description: z.string().max(200).optional(),
   has_pomodoro: z.boolean().optional(),
   due_date: z.string().date().nullish(),
 });
