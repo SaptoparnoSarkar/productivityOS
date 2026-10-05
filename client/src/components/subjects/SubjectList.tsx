@@ -44,13 +44,16 @@ export function SubjectList() {
 
   //Render states in order:
   if (loading) return <div>Loading...</div>;
+
   if (error) return <div>Error: {error}</div>;
+
   if (!subjects || subjects.length === 0)
     return (
       <div className="text-white">
         No Subjects Created Yet. Create One to start tracking your progress.
       </div>
     );
+
 
   return (
     <div className="flex flex-col gap-1 ml-14 mt-2 mr-12 mb-12">

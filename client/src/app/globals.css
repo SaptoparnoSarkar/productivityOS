@@ -285,19 +285,7 @@
     }
   }
 
-  /* SUBJECTS */
-
-  /* Global Form except AUTH */
-  .form-page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    max-height: 100vh;
-    position: relative;
-    overflow: hidden;
-    scrollbar-color: black;
-    /* background: linear-gradient(135deg, #fafafa 0%, #f4f4f5 50%, #fafafa 100%); */
-  }
+  /* FORM */
 
   .form {
     position: relative;
@@ -305,9 +293,9 @@
     max-width: 540px;
     min-width: 440px;
     margin: 0 auto;
-    padding: 48px 40px 40px;
-    border-radius: 16px;
-    background: var(--app-surface);
+    padding: 40px 40px 40px;
+    border-radius: 12px;
+    background: #1A1A22;
     color: var(--app-text);
     border: 1px solid var(--surface-border);
     box-shadow:
@@ -327,19 +315,17 @@
   }
 
   .form-title {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 600;
-    line-height: 1.3;
-    letter-spacing: -0.02em;
-    color: var(--app-text);
+    color: white;
+    margin-bottom: -8px;
   }
 
   .form-subtitle {
     margin-top: 6px;
     font-size: 14px;
     font-weight: 400;
-    line-height: 1.5;
-    color: var(--app-text-dim);
+    color: rgba(255, 255, 255, 0.6);
   }
 
   .fields {
@@ -501,7 +487,7 @@
     align-items: stretch;
     gap: 8px;
     padding: 20px 8px;
-    background: var(--app-surface);
+    background: rgba(0, 0, 0, 0.3);
     border-right: 1px solid rgba(255, 255, 255, 0.06);
     transition: width 0.2s ease;
   }
@@ -715,3 +701,5 @@
     display: none;
   }
 }
+
+/* FORM CUSTOM CSS */
