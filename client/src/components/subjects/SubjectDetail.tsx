@@ -45,7 +45,7 @@ export default function SubjectDetailPage() {
 
   //Submit
   const [completing, setCompleting] = useState(false);
-  const [completeError, setCompleteError] = useState<String>("");
+  const [completeError, setCompleteError] = useState<string>("");
 
   useEffect(() => {
     if (Number.isNaN(id)) {
@@ -230,9 +230,9 @@ export default function SubjectDetailPage() {
                 className={cn(
                   "h-2 rounded-full",
                   subject.stats.total > 0 &&
-                    (subject.stats.done / subject.stats.total === 1
-                      ? "bg-green-500"
-                      : "bg-purple-500"),
+                  (subject.stats.done / subject.stats.total === 1
+                    ? "bg-green-500"
+                    : "bg-purple-500"),
                 )}
                 style={{
                   width: `${(subject.stats.done / subject.stats.total) * 100}%`,

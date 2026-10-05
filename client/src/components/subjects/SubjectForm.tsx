@@ -235,11 +235,11 @@ export default function SubjectForm(props: Props) {
 
         <button
           type="submit"
-          className="subject-submit-btn"
+          className="submit-btn"
           disabled={form.formState.isSubmitting}
         >
           {form.formState.isSubmitting ? (
-            <span className="subject-btn-loading">
+            <span className="btn-loading">
               <Spinner />
               {mode === "create"
                 ? "Creating Subject..."

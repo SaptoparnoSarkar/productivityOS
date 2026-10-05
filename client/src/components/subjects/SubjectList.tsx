@@ -2,7 +2,6 @@
 
 import { listSubjects } from "@/lib/api/subjects";
 import { Subject } from "@/types/subject";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SubjectCard } from "./SubjectCard";
 import { GhostCard } from "./GhostCard";
@@ -16,7 +15,7 @@ export function SubjectList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [filter, setFilter] = useState<Filter>("all");
-  const router = useRouter();
+
 
   useEffect(() => {
     setError("");
@@ -44,16 +43,7 @@ export function SubjectList() {
 
   //Render states in order:
   if (loading) return <div>Loading...</div>;
-
   if (error) return <div>Error: {error}</div>;
-
-  if (!subjects || subjects.length === 0)
-    return (
-      <div className="text-white">
-        No Subjects Created Yet. Create One to start tracking your progress.
-      </div>
-    );
-
 
   return (
     <div className="flex flex-col gap-1 ml-14 mt-2 mr-12 mb-12">
@@ -64,20 +54,21 @@ export function SubjectList() {
             Master your subjects with dedicated focus and organized progress
             tracking.
           </p>
+
           <p className="text-slate-400 mt-2 text-lg">
             Total: {subjects.length}, Ongoing:{" "}
             {subjects.filter((s) => s.status === "pending").length} Completed:{" "}
             {subjects.filter((s) => s.status === "completed").length}
           </p>
         </div>
-        <div>
+        {/* <div>
           <button
-            className="w-42 h-[79px] p-3 bg-black text-white mb-10 text-lg font-bold cursor-pointer rounded-2xl hover:bg-purple-600 transition-all duration-200"
+            className="w-36 p-3 pr-14 bg-black/60 backdrop-blur-md text-white text-md font-bold cursor-pointer rounded-2xl hover:bg-white/80 transition-all duration-200 whitespace-nowrap"
             onClick={() => router.push("/dashboard/subjects/new")}
           >
             + New Subject
           </button>
-        </div>
+        </div> */}
       </div>
 
       <div className="flex gap-2 mb-4 mt-10">
@@ -96,11 +87,12 @@ export function SubjectList() {
           </button>
         ))}
       </div>
-
+      {subjects.length === 0 && <p className="text-slate-400 font-bold my-1">No subjects yet. Create your first one below.</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 gap-y-4">
         {visible.map((s) => (
           <SubjectCard key={s.id} subject={s} />
         ))}
+
         <GhostCard />
       </div>
     </div>
