@@ -19,7 +19,7 @@ type Props =
 export function CounterForm(props: Props) {
     const { onSubmit, mode } = props;
 
-    const form = useForm<z.input<typeof schema>, any, z.output<typeof schema>>({
+    const form = useForm<z.input<typeof schema>, unknown, z.output<typeof schema>>({
         resolver: zodResolver(schema),
         defaultValues: mode === 'edit' ? props.defaultValues : { target_value: 100, unit: '' },
     });

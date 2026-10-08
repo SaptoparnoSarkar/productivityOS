@@ -36,29 +36,28 @@ export default function SubjectDetailPage() {
   //Subject
   const [subject, setSubject] = useState<SubjectDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>("");
+  const [subjectError, setSubjectError] = useState<string>("");
 
   //Delete
   const [deleting, setDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string>("");
   const router = useRouter();
 
   //Submit
   const [completing, setCompleting] = useState(false);
-  const [completeError, setCompleteError] = useState<String>("");
 
   useEffect(() => {
     if (Number.isNaN(id)) {
-      setError("Invalid subject ID");
+      setSubjectError("Invalid subject ID");
       setLoading(false);
       return;
     }
+
     async function fetchSubject() {
       try {
         const data = await getSubject(id);
         setSubject(data);
       } catch (err) {
-        setError(
+        setSubjectError(
           err instanceof Error
             ? err.message
             : "An error occurred. Please try again",
@@ -75,13 +74,12 @@ export default function SubjectDetailPage() {
     if (!window.confirm("Are you sure?")) return;
 
     setDeleting(true);
-    setDeleteError("");
 
     try {
       await deleteSubject(id);
       router.push("/dashboard/subjects");
     } catch (error) {
-      setDeleteError(
+      toast.error(
         error instanceof Error
           ? error.message
           : "An error occurred while deleting.",
@@ -91,10 +89,11 @@ export default function SubjectDetailPage() {
     }
   }
 
+  const canComplete = subject?.subject.status === "pending" && subject.stats.total > 0 && subject.stats.done === subject.stats.total;
+
   //Submit Handler
   async function completeSubject() {
     setCompleting(true);
-    setCompleteError("");
     try {
       await markSubjectComplete(id);
       await promoteSubject(id);
@@ -109,23 +108,21 @@ export default function SubjectDetailPage() {
   }
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error : {error}</div>;
+  if (subjectError) return <div>Error : {subjectError}</div>;
   if (!subject) return <div>Subject not found.</div>;
 
   const dateLabel = formatDate(subject.subject);
-  const isDisabled = subject.stats.total < 1;
   return (
     <main className="flex flex-col gap-6 max-w-5xl mx-auto py-8">
       <div>
         <Link
-          className="text-white/50 text-xl hover:text-white transition duration-200 "
           href={"/dashboard/subjects"}
         >
-          ← Back to Subjects
+          <p className="text-white/50 text-md font-bold hover:text-white transition duration-200 w-fit">← Back to Subjects</p>
         </Link>
       </div>
 
-      <section className="detail-card border-2 border-purple-500">
+      <section className="detail-card border border-white/15">
         <div className="flex justify-between items-center">
           {/* left: Logo + TEXT */}
           <div className="flex gap-3">
@@ -150,7 +147,7 @@ export default function SubjectDetailPage() {
           <div className="flex gap-1.5 mb-15">
             <Link
               href={`${id}/edit`}
-              className="text-blue-700 bg-gray-700/30 rounded-lg p-3 flex gap-1 justify-center hover:bg-gray-600 transition duration-200"
+              className="text-blue-700 bg-gray-700/30 rounded-lg p-3 flex gap-1 justify-center hover:bg-gray-600/40 transition duration-200"
             >
               <Edit2 />
             </Link>
@@ -158,7 +155,7 @@ export default function SubjectDetailPage() {
               type="button"
               onClick={handleDelete}
               disabled={deleting}
-              className="text-red-600 bg-gray-700/30 rounded-lg p-3 flex gap-1 justify-center cursor-pointer hover:bg-gray-600 transition duration-200"
+              className="text-red-600 bg-gray-700/30 rounded-lg p-3 flex gap-1 justify-center cursor-pointer hover:bg-gray-600/40 transition duration-200"
             >
               {deleting ? <Loader /> : <Trash2 />}
             </button>
@@ -230,9 +227,9 @@ export default function SubjectDetailPage() {
                 className={cn(
                   "h-2 rounded-full",
                   subject.stats.total > 0 &&
-                    (subject.stats.done / subject.stats.total === 1
-                      ? "bg-green-500"
-                      : "bg-purple-500"),
+                  (subject.stats.done / subject.stats.total === 1
+                    ? "bg-green-500"
+                    : "bg-purple-500"),
                 )}
                 style={{
                   width: `${(subject.stats.done / subject.stats.total) * 100}%`,
@@ -245,16 +242,16 @@ export default function SubjectDetailPage() {
           <div className="flex flex-col">
             <button
               type="button"
-              disabled={subject.stats.total < 1}
+              disabled={!canComplete || completing}
               onClick={() => completeSubject()}
               className={cn(
-                "rounded-2xl px-6 py-4 font-bold text-md cursor-pointer transition-all flex gap-2 items-center",
-                subject.stats.total < 1
-                  ? "bg-gray-600 text-slate-400"
-                  : "bg-green-500 text-white hover:bg-green-600",
+                "rounded-2xl px-6 py-4 font-bold text-md transition-all flex gap-2 items-center",
+                !canComplete
+                  ? "bg-gray-600 text-slate-400 cursor-not-allowed"
+                  : "bg-green-500 text-white hover:bg-green-600 cursor-pointer",
               )}
             >
-              {isDisabled ? (
+              {!canComplete ? (
                 <>
                   <LockKeyhole className="h-6 w-6" />
                   <span>Complete Subject</span>
@@ -262,11 +259,10 @@ export default function SubjectDetailPage() {
               ) : (
                 <>
                   <LockOpen className="h-6 w-6" />
-                  <span>Complete Subject</span>
+                  <span>{completing ? "Completing..." : "Complete Subject"}</span>
                 </>
               )}
             </button>
-            <span className="text-red-500">{error}</span>
           </div>
         </div>
       </section>
@@ -291,15 +287,12 @@ export default function SubjectDetailPage() {
             <Link
               href={`/dashboard/subjects/${id}/milestones/new`}
               className={cn(
-                "border border-purple-500 rounded-[10] py-3 px-4.5 text-purple-500 hover:bg-gray-600 transition-colors duration-200 flex items-center gap-2",
+                "border border-slate-50/20 rounded-[10] py-2 px-2.5 text-slate-400 hover:bg-gray-600/10 hover:text-white transition-colors duration-200 flex items-center gap-2",
                 subject.subject.status === "completed" && "hidden",
               )}
             >
-              <span className="text-purple-500 text-4xl pr-2">
-                {" "}
-                {<PlusIcon />}{" "}
-              </span>
-              Create New Milestone
+              <PlusIcon size={20} />
+              <span>Add New Milestone</span>
             </Link>
           </div>
         </div>

@@ -38,17 +38,7 @@ export default function EditMilestonePage() {
     fetchMilestone();
   }, [subjectId, milestoneId]);
 
-  async function handleSubmit(data: UpdateMilestoneInput) {
-    setFormError("");
-    try {
-      await updateMilestone(subjectId, milestoneId, data);
-      router.push(`/dashboard/subjects/${subjectId}/milestones/${milestoneId}`);
-    } catch (error) {
-      setFormError(
-        error instanceof Error ? error.message : "Failed to update milestone",
-      );
-    }
-  }
+
 
   if (loading) return <div>Loading...</div>;
   if (formError) return <div>Error: {formError}</div>;
@@ -58,8 +48,9 @@ export default function EditMilestonePage() {
     <div>
       <MilestoneForm
         mode="edit"
+        subjectId={subjectId}
         milestone={milestone}
-        onSubmit={handleSubmit}
+        onSuccess={() => router.push(`/dashboard/subjects/${subjectId}/milestones/${milestoneId}`)}
       />
     </div>
   );

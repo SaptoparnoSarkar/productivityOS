@@ -18,7 +18,7 @@ export default function PomodoroSidePanel({
 }: PomodoroSidePanelProps) {
   return (
     <div className="flex flex-col gap-6">
-      <div className=" border p-6 rounded-2xl bg-gray-500/20 flex flex-col gap-4 ">
+      <div className=" border p-6 rounded-2xl bg-white/5 flex flex-col gap-4 ">
         <h1 className="text-slate-400">PRESETS</h1>
         <PresetPicker
           value={displayedPreset}
@@ -26,7 +26,7 @@ export default function PomodoroSidePanel({
           disabled={!!session}
         />
       </div>
-      <div className="border p-6 rounded-2xl bg-gray-500/20 flex flex-col gap-4">
+      <div className="border p-6 rounded-2xl bg-white/5 flex flex-col gap-4">
         <h1 className="text-slate-400">SESSION XP</h1>
         <p className="text-white text-5xl font-bold flex items-center justify-center">
           {PRESETS.find((p) => p.seconds === displayedPreset)?.xp}

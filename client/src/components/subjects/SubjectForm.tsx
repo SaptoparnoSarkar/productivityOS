@@ -39,7 +39,7 @@ export default function SubjectForm(props: Props) {
         title: "",
         has_pomodoro: false,
         description: "",
-        due_date: null
+        due_date: undefined
       };
 
   const schema = props.mode === "edit" ? updateSubjectSchema : createSubjectSchema;
@@ -71,8 +71,6 @@ export default function SubjectForm(props: Props) {
       }
     }
   }
-
-
 
   return (
     <div className="form">

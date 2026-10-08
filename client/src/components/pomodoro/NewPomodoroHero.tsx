@@ -331,27 +331,27 @@ export default function NewPomodoroHero() {
 
       <section className="mt-10 grid gap-5 lg:grid-cols-14 mx-auto w-[1800px]">
 
-        <div className="lg:col-span-3 border p-6 rounded-2xl bg-gray-500/20 flex flex-col gap-4 justify-center items-center">
+        <div className="lg:col-span-3 border p-6 rounded-2xl bg-white/5 flex flex-col gap-4 justify-center items-center">
           <h1 className="text-slate-300">TODAY FOCUS</h1>
           <p className="font-semibold text-6xl text-white">{formatFocusTime(summary?.todayTotalHours.total_seconds ?? 0)}</p>
         </div>
 
-        <div className="lg:col-span-3 border p-6 rounded-2xl bg-gray-500/20 flex flex-col gap-4 justify-center items-center">
+        <div className="lg:col-span-3 border p-6 rounded-2xl bg-white/5 flex flex-col gap-4 justify-center items-center">
           <h1 className="text-slate-300">SESSIONS TODAY</h1>
           <p className="font-semibold text-6xl text-white">{summary?.todayTotalHours.total_sessions ?? 0}</p>
         </div>
 
-        <div className="lg:col-span-3 border p-6 rounded-2xl bg-gray-500/20 flex flex-col gap-4 justify-center items-center">
+        <div className="lg:col-span-3 border p-6 rounded-2xl bg-white/5 flex flex-col gap-4 justify-center items-center">
           <h1 className="text-slate-300">TOTAL FOCUS (ACTUAL)</h1>
           <p className="font-semibold text-6xl text-white">
             {formatFocusTime(summary?.subjectHours?.reduce((acc, hour) => acc + hour.total_seconds, 0) ?? 0)}
           </p>
         </div>
 
-        <div className="lg:col-span-5 border p-6 rounded-2xl bg-gray-500/20 flex flex-col gap-4">
+        <div className="lg:col-span-5 border p-6 rounded-2xl bg-white/5 flex flex-col gap-4">
           <h1 className="text-slate-300">RECENT SESSIONS</h1>
           {summary?.recents.length === 0 ? (
-            <p>No finished sessions yet.</p>
+            <p className="text-white">No finished sessions yet.</p>
           ) : (
             summary?.recents.map((recent) => (
               <div key={recent.id} className="flex justify-between">

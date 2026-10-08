@@ -2,7 +2,6 @@
 
 import { listSubjects } from "@/lib/api/subjects";
 import { Subject } from "@/types/subject";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SubjectCard } from "./SubjectCard";
 import { GhostCard } from "./GhostCard";
@@ -16,7 +15,6 @@ export function SubjectList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [filter, setFilter] = useState<Filter>("all");
-  const router = useRouter();
 
   useEffect(() => {
     setError("");
@@ -71,12 +69,12 @@ export function SubjectList() {
           </p>
         </div>
         <div>
-          <button
+          {/* <button
             className="w-42 h-[79px] p-3 bg-black text-white mb-10 text-lg font-bold cursor-pointer rounded-2xl hover:bg-purple-600 transition-all duration-200"
             onClick={() => router.push("/dashboard/subjects/new")}
           >
             + New Subject
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -101,8 +99,8 @@ export function SubjectList() {
         {visible.map((s) => (
           <SubjectCard key={s.id} subject={s} />
         ))}
-        <GhostCard />
+        {(filter === "all" || filter === "pending") && <GhostCard />}
       </div>
     </div>
   );
-}
+} 

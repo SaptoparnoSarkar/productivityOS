@@ -5,7 +5,7 @@ const baseMilestoneFields = z.object({
         message: "Type must be either 'counter' or 'checklist'",
     }),
     title: z.string().trim().min(1, { message: "Title is required" }).max(100),
-    description: z.string().max(2000).nullish(),
+    description: z.string().max(2000).optional(),
     daily_minimum: z.coerce.number().int().positive().optional(),
     daily_minimum_unit: z.string().optional(),
     weekly_minimum: z.coerce.number().int().min(1).max(7).optional(),

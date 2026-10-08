@@ -1,6 +1,6 @@
-import { PomodoroSessionWire, PresetSeconds, Verdict } from "@/types/pomodoro";
+import { PomodoroSessionWire, Verdict } from "@/types/pomodoro";
 import TimerRingHalf from "./TimerRingHalf";
-import { calculatePauseBudget, formatMMSS } from "@/lib/pomodoro/pomodoro";
+import { formatMMSS } from "@/lib/pomodoro/pomodoro";
 import { Subject } from "@/types/subject";
 import { SubjectPicker } from "./SubjectPicker";
 import { cn } from "@/lib/utils";
@@ -36,7 +36,6 @@ export function PomodoroTimerCard({
   verdict,
   remainingTime,
   canPause,
-  pausedBudget,
   pausedDurationRemaining,
   onSubjectChange,
   onStart,

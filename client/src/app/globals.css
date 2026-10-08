@@ -404,7 +404,7 @@
   .detail-card {
     display: flex;
     flex-direction: column;
-    background: rgb(17 24 39);
+    background: rgb(255 255 255 / 0.05);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 20px;
     padding: 18px;
@@ -415,8 +415,9 @@
 
   .detail-logo {
     padding: 15px;
-    background: var(--app-accent);
+    background: #9333ea;
     border-radius: 8px;
+    box-shadow: 0 0 20px rgba(147, 51, 234, 0.4);
     flex-shrink: 0;
   }
 
@@ -576,32 +577,6 @@
     cursor: pointer;
   }
 
-  /*  DASHBOARD - Metric Cards  */
-
-  .metric-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    padding: 0 24px 24px;
-  }
-
-
-  .metric-card-active {
-    background: var(--app-accent);
-    box-shadow: 0 0 24px var(--app-accent-glow);
-    color: #fff;
-    border-color: transparent;
-  }
-
-  .metric-label {
-    font-size: 13px;
-    opacity: 0.8;
-  }
-
-  .metric-hint {
-    font-size: 12px;
-    opacity: 0.7;
-  }
 
   /*  DASHBOARD - Widget Card */
 
@@ -617,7 +592,7 @@
     border-radius: 20px;
     overflow: hidden;
     position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.05);
 
     &:before,
     &:after {

@@ -44,7 +44,7 @@ export function MilestoneList({ subjectId }: Prop) {
         <div className="flex flex-col items-center justify-center p-5">
           <p className="text-white/60">No Milestones Yet.</p>
           <Link
-            className="text-purple-400 hover:text-purple-600 duration-200"
+            className="text-purple-500 hover:font-bold transition duration-200 "
             href={`/dashboard/subjects/${subjectId}/milestones/new`}
           >
             Click here to create your first milestone.

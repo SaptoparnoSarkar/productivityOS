@@ -11,7 +11,7 @@ export function SubjectCard({ subject }: { subject: Subject }) {
       className="text-white block h-full"
       href={`/dashboard/subjects/${subject.id}`}
     >
-      <div className="flex flex-col relative bg-gray-900 p-4.5 border border-gray-700 rounded-2xl hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-300 hover:-translate-y-1 active:translate-y-0 h-75 ">
+      <div className="flex flex-col relative bg-white/5 p-4.5 border border-white/15 rounded-2xl hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-300 hover:-translate-y-1 active:translate-y-0 h-75 ">
         <div className="flex justify-between items-center min-w-0">
           <h3 className="text-[30px] font-bold text-white truncate ">
             {subject.title}

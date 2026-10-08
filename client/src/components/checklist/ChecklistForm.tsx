@@ -18,7 +18,7 @@ type Props = {
 export function ChecklistForm({ onSubmit }: Props) {
   const form = useForm<
     z.input<typeof createChecklistItemsSchema>,
-    any,
+    unknown,
     z.output<typeof createChecklistItemsSchema>
   >({
     resolver: zodResolver(createChecklistItemsSchema),

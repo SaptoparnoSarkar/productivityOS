@@ -18,9 +18,10 @@ export function SubjectListView({ subjects }: { subjects: Subject[] }) {
         <li key={s.id} className="subject-widget__links">
           <Link
             href={`/dashboard/subjects/${s.id}`}
-            className="flex justify-between w-[350px]"
+            className="flex justify-between w-full"
           >
-            <p>{s.title}</p> <p> {s.due_date?.slice(0, 10)}</p>
+            <p>{s.title}</p>
+            <p className="whitespace-nowrap mr-8">{s.due_date?.slice(0, 10)}</p>
           </Link>
         </li>
       ))}

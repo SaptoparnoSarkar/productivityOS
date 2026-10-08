@@ -5,68 +5,82 @@ import { CustomInputs } from "../ui/CustomInputs";
 import Spinner from "../ui/spinner";
 import { useForm } from "react-hook-form";
 import {
+  CreateMilestoneInput,
   createMilestoneSchema,
+  UpdateMilestoneInput,
   updateMilestoneSchema,
 } from "@/schemas/milestone.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Milestone } from "@/types/milestone";
 import z from "zod";
+import { createMilestone, updateMilestone } from "@/lib/api/milestones";
+import { useState } from "react";
 
-// Both modes use the SAME callback name: onSubmit.
-// Parent decides what onSubmit DOES (POST vs PATCH + redirect).
+
 type Props =
-  | {
-      mode: "create";
-      onSubmit: (
-        values: z.infer<typeof createMilestoneSchema>,
-      ) => void | Promise<void>;
-    }
-  | {
-      mode: "edit";
-      milestone: Milestone;
-      onSubmit: (
-        values: z.infer<typeof updateMilestoneSchema>,
-      ) => void | Promise<void>;
-    };
+  | { mode: "create"; subjectId: number; onSuccess: (data: Milestone) => void; }
+  | { mode: "edit"; subjectId: number, milestone: Milestone; onSuccess: (data: Milestone) => void };
 
 export default function MilestoneForm(props: Props) {
-  const isEdit = props.mode === "edit";
-  const schema = isEdit ? updateMilestoneSchema : createMilestoneSchema;
+  const { mode, onSuccess } = props;
+  const subjectId = props.subjectId;
+  const schema = mode === "edit" ? updateMilestoneSchema : createMilestoneSchema;
 
-  const defaultValues = isEdit
+  const [formError, setFormError] = useState<string>("")
+
+  const defaultValues = mode === "edit"
     ? {
-        title: props.milestone.title,
-        description: props.milestone.description,
-        daily_minimum: props.milestone.daily_minimum,
-        daily_minimum_unit: props.milestone.daily_minimum_unit,
-        weekly_minimum: props.milestone.weekly_minimum,
-      }
+      title: props.milestone.title,
+      description: props.milestone.description ?? undefined,
+      daily_minimum: props.milestone.daily_minimum ?? undefined,
+      daily_minimum_unit: props.milestone.daily_minimum_unit ?? undefined,
+      weekly_minimum: props.milestone.weekly_minimum ?? undefined,
+    }
     : {
-        type: "counter",
-        title: "",
-        description: "",
-        weekly_minimum: undefined,
-        daily_minimum: undefined,
-        daily_minimum_unit: "",
-      };
+      type: "counter",
+      title: "",
+      description: "",
+      weekly_minimum: "",
+      daily_minimum: "",
+      daily_minimum_unit: "",
+    };
 
   type FormInput = z.input<typeof schema>;
   type FormOutput = z.output<typeof schema>;
 
-  const form = useForm<FormInput, any, FormOutput>({
+  const form = useForm<FormInput, unknown, FormOutput>({
     resolver: zodResolver(schema),
-    defaultValues: defaultValues as any, // union of defaults; cast is acceptable here
+    defaultValues,
   });
+
+
+  async function onSubmit(data: FormOutput) {
+    setFormError("")
+    try {
+      if (mode === "create") {
+        const milestone = await createMilestone(subjectId, data as CreateMilestoneInput)
+        onSuccess(milestone);
+      } else {
+        const milestone = await updateMilestone(subjectId, props.milestone.id, data as UpdateMilestoneInput)
+        onSuccess(milestone);
+      }
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : "An error occurred. Please try again.")
+    }
+  }
+
+
 
   return (
     <div className="form">
       <div className="form-header">
-        <h1 className="form-title">New Milestone</h1>
+        <h1 className="form-title">{mode === "create" ? "Create Milestone" : "Edit Milestone"}</h1>
         <p className="form-subtitle">
-          Create a milestone to track your progress.
+          {mode === "create" ? "Create a milestone to track your progress." : "Edit your milestone."}
         </p>
       </div>
-      <form onSubmit={form.handleSubmit(props.onSubmit as any)}>
+
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
           <div className="fields">
             <CustomInputs
@@ -104,14 +118,14 @@ export default function MilestoneForm(props: Props) {
             />
 
             {/* Type is chosen ONCE at create. Never editable. */}
-            {!isEdit && (
+            {mode === "create" && (
               <fieldset>
                 <legend>Type</legend>
                 <label>
                   <input
                     type="radio"
                     value="counter"
-                    {...form.register("type" as any)}
+                    {...form.register("type")}
                   />
                   Counter
                 </label>
@@ -119,12 +133,13 @@ export default function MilestoneForm(props: Props) {
                   <input
                     type="radio"
                     value="checklist"
-                    {...form.register("type" as any)}
+                    {...form.register("type")}
                   />
                   Checklist
                 </label>
               </fieldset>
             )}
+            {formError && <p className="form-error">{formError}</p>}
           </div>
         </FieldGroup>
 
@@ -138,7 +153,7 @@ export default function MilestoneForm(props: Props) {
               <Spinner />
               Saving...
             </span>
-          ) : isEdit ? (
+          ) : mode === "edit" ? (
             "Save"
           ) : (
             "Next"

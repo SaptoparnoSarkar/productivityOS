@@ -20,6 +20,6 @@ function getServerSnapshot() {
 export function Greeting() {
     const greeting = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
     return (
-        <p>{greeting ?? "Hey There!"}</p>
+        <>{greeting ?? "Hey There!"}</>
     )
 }

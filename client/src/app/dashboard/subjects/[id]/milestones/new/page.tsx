@@ -9,12 +9,7 @@ import MilestoneForm from "@/components/milestones/MilestoneForm";
 import { setChecklistTarget } from "@/lib/api/checklist";
 import { createChecklistItem } from "@/lib/api/checklistItems";
 import { createCounter } from "@/lib/api/counters";
-import { createMilestone } from "@/lib/api/milestones";
-import {
-  ChecklistFormOutput,
-  ChecklistFormValues,
-} from "@/schemas/checklist.schema";
-import { CreateMilestoneInput } from "@/schemas/milestone.schema";
+import { ChecklistFormOutput } from "@/schemas/checklist.schema";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -32,21 +27,7 @@ export default function NewMilestonePage() {
     type: "counter" | "checklist";
   } | null>(null);
 
-  //Handles first stage form submission. Creates the milestone
-  async function handleMilestoneSubmit(data: CreateMilestoneInput) {
-    setFormError("");
 
-    try {
-      const milestone = await createMilestone(subjectId, data);
-      setCreatedMilestone({ id: milestone.id, type: milestone.type });
-    } catch (error) {
-      if (error instanceof Error) {
-        setFormError(error.message);
-      } else {
-        setFormError("An error occurred. Please try again.");
-      }
-    }
-  }
   //Handles second stage form submission for checklist milestones.
   async function handleChecklistSubmit(values: ChecklistFormOutput) {
     if (!createdMilestone) return;
@@ -85,12 +66,12 @@ export default function NewMilestonePage() {
   }
 
   return (
-    <div>
+    <main className="mt-10">
       {formError && <p className="form-error">{formError}</p>}
 
       {createdMilestone === null ? (
         //If no milestone is created yet, render the milestone form.
-        <MilestoneForm mode="create" onSubmit={handleMilestoneSubmit} />
+        <MilestoneForm mode="create" subjectId={subjectId} onSuccess={setCreatedMilestone} />
       ) : createdMilestone.type === "checklist" ? (
         //If the milestone type is a checklist, render the checklist form.
         <ChecklistForm onSubmit={handleChecklistSubmit} />
@@ -98,6 +79,6 @@ export default function NewMilestonePage() {
         //If the milestone type is a counter, render the counter form.
         <CounterForm mode="create" onSubmit={handleCounterSubmit} />
       )}
-    </div>
+    </main>
   );
 }
