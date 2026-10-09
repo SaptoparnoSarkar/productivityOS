@@ -120,14 +120,14 @@ export default function SubjectForm(props: Props) {
                       <FieldLabel htmlFor={field.name}>
                         Description <span className="text-slate-400">(optional)</span>
                       </FieldLabel>
-                      <InputGroup className="border border-zinc-700 transition-colors bg-zinc-900 focus-within:border-purple-500 focus-within:ring-2 focus-within:ring-purple-500/30">
+                      <InputGroup className="border border-zinc-700 transition-colors bg-zinc-900 focus-within:border-purple-500 focus-within:ring-2 focus-within:ring-purple-500/10">
                         <InputGroupTextarea
                           {...field}
                           id={field.name}
                           aria-invalid={fieldState.invalid}
                           placeholder="Enter Description"
                           rows={6}
-                          className="min-h-24 resize-none p-4  "
+                          className="min-h-24 resize-none p-4"
                           maxLength={200}
                         />
                         <InputGroupAddon align="block-end" className="p-3">
@@ -154,7 +154,7 @@ export default function SubjectForm(props: Props) {
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field orientation="vertical" data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor={field.name}>Type</FieldLabel>
+                      <FieldLabel htmlFor={field.name}>Type<span className="text-red-500">*</span></FieldLabel>
 
                       <Select name={field.name} value={field.value} onValueChange={field.onChange}>
                         <SelectTrigger
@@ -186,7 +186,7 @@ export default function SubjectForm(props: Props) {
                   render={({ field, fieldState }) => (
                     <Field orientation="horizontal" data-invalid={fieldState.invalid}>
 
-                      <FieldLabel htmlFor={field.name}>Enable Pomodoro</FieldLabel>
+                      <FieldLabel htmlFor={field.name}>Enable Pomodoro<span className="text-slate-400">(optional)</span></FieldLabel>
 
                       <Switch
                         id={field.name}
@@ -196,6 +196,7 @@ export default function SubjectForm(props: Props) {
                         onCheckedChange={field.onChange}
                         className="cursor-pointer"
                       />
+
 
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />
@@ -233,11 +234,11 @@ export default function SubjectForm(props: Props) {
 
         <button
           type="submit"
-          className="subject-submit-btn"
+          className="submit-btn"
           disabled={form.formState.isSubmitting}
         >
           {form.formState.isSubmitting ? (
-            <span className="subject-btn-loading">
+            <span className="submit-btn-loading">
               <Spinner />
               {mode === "create"
                 ? "Creating Subject..."

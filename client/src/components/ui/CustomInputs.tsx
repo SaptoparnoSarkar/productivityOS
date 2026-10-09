@@ -27,6 +27,7 @@ export function CustomInputs<T extends FieldValues>({
           <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
           <Input
             {...field}
+            value={(field.value as string | number | readonly string[] | undefined) ?? ""}
             id={field.name}
             type={type}
             aria-invalid={fieldState.invalid}

@@ -1,9 +1,8 @@
 "use client";
 
-import { FieldGroup } from "../ui/field";
-import { CustomInputs } from "../ui/CustomInputs";
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "../ui/field";
 import Spinner from "../ui/spinner";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import {
   CreateMilestoneInput,
   createMilestoneSchema,
@@ -15,6 +14,10 @@ import { Milestone } from "@/types/milestone";
 import z from "zod";
 import { createMilestone, updateMilestone } from "@/lib/api/milestones";
 import { useState } from "react";
+import { Input } from "../ui/input";
+import { InputGroup, InputGroupAddon, InputGroupText, InputGroupTextarea } from "../ui/input-group";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Label } from "../ui/label";
 
 
 type Props =
@@ -83,73 +86,183 @@ export default function MilestoneForm(props: Props) {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
           <div className="fields">
-            <CustomInputs
-              control={form.control}
-              name="title"
-              label="Title"
-              placeholder="e.g DDIA book, Grokking SD course"
-            />
-            <CustomInputs
-              control={form.control}
-              name="description"
-              label="Description"
-            />
-            <div className="grid grid-cols-[2fr_1fr] gap-3">
-              <CustomInputs
+            <>
+              <Controller
+                name="title"
                 control={form.control}
-                name="daily_minimum"
-                type="number"
-                label="Daily Minimum For XP"
-                placeholder="Enter daily minimum"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Milestone Title<span className="text-red-500">*</span> </FieldLabel>
+                    <Input
+                      {...field}
+                      id={field.name}
+                      aria-invalid={fieldState.invalid}
+                      placeholder='e.g DDIA book, Grokking SD course'
+                      className="p-4 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-white"
+                    />
+                    {fieldState.invalid && (
+                      <p className="form-error">{fieldState.error?.message}</p>
+                    )}
+                  </Field>
+                )}
               />
-              <CustomInputs
+
+              <Controller
+                name="description"
                 control={form.control}
-                name="daily_minimum_unit"
-                label="Unit"
-                placeholder="e.g: Chapters"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Description <span className="text-slate-400">(optional)</span></FieldLabel>
+                    <InputGroup className="border border-zinc-700 transition-colors bg-zinc-900 focus-within:border-purple-500 focus-within:ring-2 focus-within:ring-purple-500/10">
+                      <InputGroupTextarea
+                        {...field}
+                        id={field.name}
+                        aria-invalid={fieldState.invalid}
+                        placeholder='Enter description'
+                        rows={6}
+                        maxLength={2000}
+                        className="min-h-24 resize-none p-4"
+                      />
+                      <InputGroupAddon align="block-end" className="p-3">
+                        <InputGroupText className={`tabular-nums text-xs transition-colors ${(field.value?.length || 0) >= 2000 ?
+                          'text-red-400 font-medium' :
+                          (field.value?.length || 0) >= 1800
+                            ? "text-amber-400"
+                            : "text-slate-400"
+                          }  `}>
+                          {field.value?.length || 0} / 2000
+                        </InputGroupText>
+                      </InputGroupAddon>
+                    </InputGroup>
+
+                    {fieldState.invalid && (
+                      <p className="form-error">{fieldState.error?.message}</p>
+                    )}
+
+                  </Field>
+                )}
               />
-            </div>
-            <CustomInputs
-              control={form.control}
-              name="weekly_minimum"
-              type="number"
-              label="Weekly Minimum For XP"
-              placeholder="e.g: 3"
-            />
+
+
+              <div className="grid grid-cols-[2fr_1fr] gap-3">
+                <Controller
+                  name="daily_minimum"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Daily Minimum <span className="text-slate-400">(optional)</span></FieldLabel>
+                      <Input
+                        {...field}
+                        value={(field.value as number | undefined) ?? ""}
+                        id={field.name}
+                        aria-invalid={fieldState.invalid}
+                        placeholder="3"
+                        type="number"
+                        className="p-4 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-white"
+                      />
+
+                      <FieldDescription className="text-zinc-400">Recommended. Set to gain daily xp.</FieldDescription>
+
+                      {fieldState.invalid && (
+                        <p className="form-error">{fieldState.error?.message}</p>
+                      )}
+
+                    </Field>
+                  )}
+                />
+                <Controller
+                  name="daily_minimum_unit"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Unit <span className="text-slate-400">(optional)</span></FieldLabel>
+                      <Input
+                        {...field}
+                        id={field.name}
+                        aria-invalid={fieldState.invalid}
+                        placeholder="e.g: Chapters, Pages"
+                        className="p-4 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-white"
+                      />
+
+                      {fieldState.invalid && (
+                        <p className="form-error">{fieldState.error?.message}</p>
+                      )}
+
+                    </Field>
+                  )}
+                />
+              </div>
+
+              <Controller
+                name="weekly_minimum"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Weekly Minimum <span className="text-slate-400">(optional)</span></FieldLabel>
+                    <Input
+                      {...field}
+                      value={(field.value as number | undefined) ?? ""}
+                      id={field.name}
+                      aria-invalid={fieldState.invalid}
+                      placeholder="5"
+                      type="number"
+                      className="p-4 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-white"
+                    />
+
+                    <FieldDescription className="text-zinc-400">Recommended. Set to gain weekly xp.</FieldDescription>
+
+                    {fieldState.invalid && (
+                      <p className="form-error">{fieldState.error?.message}</p>
+                    )}
+
+                  </Field>
+                )}
+              />
+
+            </>
 
             {/* Type is chosen ONCE at create. Never editable. */}
             {mode === "create" && (
-              <fieldset>
-                <legend>Type</legend>
-                <label>
-                  <input
-                    type="radio"
-                    value="counter"
-                    {...form.register("type")}
-                  />
-                  Counter
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    value="checklist"
-                    {...form.register("type")}
-                  />
-                  Checklist
-                </label>
-              </fieldset>
+              <Controller
+                name="type"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Milestone Type <span className="text-red-500">*</span></FieldLabel>
+                    <RadioGroup name={field.name} value={field.value} onValueChange={field.onChange} onBlur={field.onBlur}>
+                      <div className="flex items-center gap-2">
+                        <RadioGroupItem value="counter" id="option-1" />
+                        <Label htmlFor="option-1" className="m-1">Counter</Label>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <RadioGroupItem value="checklist" id="option-2" />
+                        <Label htmlFor="option-2" className="m-1">Checklist</Label>
+                      </div>
+                    </RadioGroup>
+
+                    {fieldState.invalid && (
+                      <p className="form-error">{fieldState.error?.message}</p>
+                    )}
+
+                  </Field>
+
+                )}
+              />
             )}
-            {formError && <p className="form-error">{formError}</p>}
+
           </div>
         </FieldGroup>
 
+        {formError && <p className="form-error">{formError}</p>}
+
         <button
           type="submit"
-          className="subject-submit-btn"
+          className="submit-btn"
           disabled={form.formState.isSubmitting}
         >
           {form.formState.isSubmitting ? (
-            <span className="subject-btn-loading">
+            <span className="submit-btn-loading">
               <Spinner />
               Saving...
             </span>

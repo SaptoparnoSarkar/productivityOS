@@ -4,7 +4,7 @@ import { Subject } from "@/types/subject";
 import { Calendar, Timer, TimerOff } from "lucide-react";
 import Link from "next/link";
 
-export function SubjectCard({ subject }: { subject: Subject }) {
+export function SubjectCard({ subject, variant }: { subject: Subject; variant?: "center" | "side" | string }) {
   const dateLabel = formatDate(subject);
   return (
     <Link
