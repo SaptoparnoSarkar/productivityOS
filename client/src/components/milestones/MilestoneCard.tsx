@@ -20,7 +20,7 @@ export default function MilestoneCard({
       className={cn(
         "flex flex-col h-60 p-4 rounded-xl border relative ",
         milestone.is_active
-          ? "opacity-100 shadow-lg shadow-purple-500/10 ring-1 ring-purple-400 bg-gray-900"
+          ? "opacity-100 shadow-lg shadow-purple-500/10 ring-1 ring-purple-400 bg-white/5"
           : "border border-slate-600 grayscale opacity-60 hover:opacity-100 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-150 hover:grayscale-25",
       )}
     >

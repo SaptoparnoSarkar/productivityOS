@@ -55,7 +55,7 @@ export function MilestoneList({ subjectId }: Prop) {
           {milestone?.map((m) => (
             <li
               key={m.id}
-              className="text-white hover:text-purple-600 duration-200 cursor-pointer"
+              className="text-white hover:text-purple-400 duration-200 cursor-pointer"
             >
               <Link
                 href={`/dashboard/subjects/${subjectId}/milestones/${m.id}`}
@@ -72,11 +72,11 @@ export function MilestoneList({ subjectId }: Prop) {
                         "text-sm pr-3 pl-2 py-0.5 rounded-xl font-bold flex items-center",
                         m.is_active
                           ? "bg-green-500/30 text-green-500"
-                          : "bg-red-500",
+                          : "bg-red-500/40 text-red-500",
                       )}
                     >
                       <span className="text-xl">•</span>
-                      {m.is_active ? "Active" : "Activate to unlock XP"}
+                      {m.is_active ? "Active" : "Activate to earn XP"}
                     </span>
                   </div>
                   <div className="flex items-center">
