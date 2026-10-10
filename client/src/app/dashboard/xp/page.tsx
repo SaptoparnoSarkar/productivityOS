@@ -73,13 +73,13 @@ export default function XpLogPage() {
   ) {
     const halfWindow = Math.floor(windowSize / 2);
     let start = Math.max(1, currentPage - halfWindow);
-    let end = Math.min(totalPages, start + windowSize - 1);
+    const end = Math.min(totalPages, start + windowSize - 1);
 
     if (end - start + 1 < windowSize) {
       start = Math.max(1, end - windowSize + 1);
     }
 
-    let pages = [];
+    const pages = [];
 
     for (let i = start; i <= end; i++) {
       pages.push(i);
