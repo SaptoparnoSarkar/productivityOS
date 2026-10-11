@@ -1,28 +1,29 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import z from "zod";
 import { Field, FieldGroup, FieldLabel } from "../ui/field";
-import { CustomInputs } from "../ui/CustomInputs";
 import Spinner from "../ui/spinner";
 import { Input } from "../ui/input";
+import { createCounterSchema, CounterSchemaInput, CounterSchemaOutput } from "@/schemas/counter.schema";
 
-const schema = z.object({
-    target_value: z.coerce.number().int().positive({ message: "Target must be a positive number" }),
-    unit: z.string().trim().min(1, { message: 'Unit is required' })
-})
-
-export type CounterFormValues = z.output<typeof schema>;
 
 type Props =
-    | { mode: 'create'; onSubmit: (v: CounterFormValues) => void | Promise<void> }
-    | { mode: 'edit'; defaultValues: CounterFormValues; onSubmit: (v: CounterFormValues) => void | Promise<void> };
+    | { mode: 'create'; onSubmit: (values: CounterSchemaOutput) => void | Promise<void> }
+    | {
+        mode: 'edit';
+        defaultValues: CounterSchemaOutput;
+        onSubmit: (values: CounterSchemaOutput) => void | Promise<void>;
+    };
 
 export function CounterForm(props: Props) {
     const { onSubmit, mode } = props;
 
-    const form = useForm<z.input<typeof schema>, unknown, z.output<typeof schema>>({
-        resolver: zodResolver(schema),
-        defaultValues: mode === 'edit' ? props.defaultValues : { target_value: 100, unit: '' },
+    const initialValues = mode === 'edit' ? (props.defaultValues) : undefined;
+
+    const form = useForm<CounterSchemaInput, unknown, CounterSchemaOutput>({
+        resolver: zodResolver(createCounterSchema),
+        defaultValues: initialValues
+            ? { target_value: initialValues.target_value, unit: initialValues.unit }
+            : { target_value: 100, unit: '' },
     });
 
 

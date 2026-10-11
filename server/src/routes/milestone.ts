@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import {
   createMilestone,
+  createMilestoneWithSetup,
   deleteMilestone,
   getAllMilestones,
   getMilestone,
@@ -15,6 +16,7 @@ import {
   setActiveSchema,
   updateMilestoneSchema,
 } from "../schemas/milestone.schema.js";
+import { milestoneCreationSchema } from "../schemas/milestoneCreation.schema.js";
 
 export async function milestoneRoutes(fastify: FastifyInstance) {
   //Create Milestones    POST/api/subjects/:subjectId/milestones
@@ -27,12 +29,12 @@ export async function milestoneRoutes(fastify: FastifyInstance) {
         throw new ValidationError("Invalid Subject ID");
       }
 
-      const result = createMilestoneSchema.safeParse(request.body);
+      const result = milestoneCreationSchema.safeParse(request.body);
       if (!result.success) {
         return reply.status(400).send({ message: result.error.message });
       }
 
-      const milestone = await createMilestone(
+      const milestone = await createMilestoneWithSetup(
         subjectId,
         request.userId,
         result.data,

@@ -1,3 +1,4 @@
+import type { PoolClient } from "pg";
 import { pool } from "../../config/db.js";
 import type {
   CreateCounterInput,
@@ -9,8 +10,9 @@ export async function dbCreateCounter(
   milestoneId: number,
   userId: number,
   input: CreateCounterInput,
+  db: PoolClient,
 ) {
-  const result = await pool.query(
+  const result = await db.query(
     `
     INSERT INTO milestone_counters (milestone_id, target_value, unit)
     SELECT m.id, $2, $3

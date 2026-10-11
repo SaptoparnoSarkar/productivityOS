@@ -4,12 +4,11 @@ import Spinner from "../ui/spinner";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "../ui/field";
-import { CustomInputs } from "../ui/CustomInputs";
 import {
-  createChecklistItemsSchema,
+  ChecklistFormInput,
   ChecklistFormOutput,
+  checklistFormSchema,
 } from "@/schemas/checklist.schema";
-import z from "zod";
 import { Input } from "../ui/input";
 
 type Props = {
@@ -17,15 +16,11 @@ type Props = {
 };
 
 export function ChecklistForm({ onSubmit }: Props) {
-  const form = useForm<
-    z.input<typeof createChecklistItemsSchema>,
-    unknown,
-    z.output<typeof createChecklistItemsSchema>
-  >({
-    resolver: zodResolver(createChecklistItemsSchema),
+  const form = useForm<ChecklistFormInput, unknown, ChecklistFormOutput>({
+    resolver: zodResolver(checklistFormSchema),
     defaultValues: {
       label: "",
-      target_count: 1,
+      target_count: 10,
     },
   });
 

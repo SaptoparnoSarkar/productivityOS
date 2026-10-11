@@ -1,4 +1,6 @@
 import * as z from "zod";
+import { createCounterSchema } from "./counter.schema";
+import { createChecklistItemsSchema, createChecklistTargetSchema } from "./checklist.schema";
 
 const baseMilestoneFields = z.object({
     type: z.enum(["counter", "checklist"], {
@@ -41,3 +43,22 @@ export const updateMilestoneSchema = baseMilestoneFields
     );
 
 export type UpdateMilestoneInput = z.infer<typeof updateMilestoneSchema>;
+
+const counterCreationSchema = z.object({
+    milestone: z.intersection(
+        createMilestoneSchema,
+        z.object({ type: z.literal('counter') })
+    ),
+    setup: createCounterSchema
+})
+
+const checklistCreationSchema = z.object({
+    milestone: z.intersection(
+        createMilestoneSchema,
+        z.object({ type: z.literal('checklist') })
+    ),
+    setup: createChecklistTargetSchema.extend(createChecklistItemsSchema.shape)
+})
+
+export const milestoneCreationSchema = z.union([counterCreationSchema, checklistCreationSchema])
+export type MilestoneCreationInput = z.infer<typeof milestoneCreationSchema>

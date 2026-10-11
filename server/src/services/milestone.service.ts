@@ -1,3 +1,7 @@
+import { pool } from "../config/db.js";
+import { dbSetChecklistTarget } from "../db/queries/checklist.queries.js";
+import { dbCreateChecklistItem } from "../db/queries/checklistItems.queries.js";
+import { dbCreateCounter } from "../db/queries/counters.queries.js";
 import {
   dbCreateMilestone,
   dbDeleteMilestone,
@@ -12,6 +16,7 @@ import type {
   CreateMilestoneInput,
   UpdateMilestoneInput,
 } from "../schemas/milestone.schema.js";
+import type { MilestoneCreationInput } from "../schemas/milestoneCreation.schema.js";
 import {
   ConflictError,
   NotFoundError,
@@ -130,4 +135,42 @@ export async function getAllMilestones(userId: number) {
     throw new NotFoundError("No milestones founds.");
   }
   return milestones;
+}
+
+// Its job is to coordinate the existing query functions using one shared transaction client
+export async function createMilestoneWithSetup(subjectId: number, userId: number, input: MilestoneCreationInput) {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const milestone = await dbCreateMilestone(subjectId, userId, input.milestone, client);
+    if (!milestone) {
+      throw new NotFoundError("Subject not found or inaccessible");
+    }
+    const milestoneId = milestone.id;
+
+    const setup = input.setup;
+
+    if ("target_count" in setup) {
+      // Only checklist shape has target_count property
+      const checklistTarget = await dbSetChecklistTarget(milestoneId, userId, setup.target_count, client)
+      const checklistItem = await dbCreateChecklistItem(milestoneId, userId, setup.label, client)
+      if (!checklistTarget || !checklistItem) {
+        throw new NotFoundError("Failed to create checklist setup");
+      }
+    } else {
+      const counter = await dbCreateCounter(milestoneId, userId, setup, client)
+      if (!counter) {
+        throw new NotFoundError("Failed to create counter setup");
+      }
+    }
+
+    await client.query("COMMIT");
+    return milestone;
+
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
 }
