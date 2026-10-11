@@ -1,3 +1,4 @@
+import type { PoolClient } from "pg";
 import { pool } from "../../config/db.js";
 import type {
   CreateMilestoneInput,
@@ -12,8 +13,9 @@ export async function dbCreateMilestone(
   subjectId: number,
   userId: number,
   input: CreateMilestoneInput,
+  db: PoolClient | typeof pool = pool,
 ) {
-  const result = await pool.query(
+  const result = await db.query(
     `INSERT INTO milestones (subject_id, type, title, description, daily_minimum, daily_minimum_unit, weekly_minimum) 
         SELECT $1, $2, $3, $4, $5, $6, $7
         FROM subjects s WHERE s.id = $1 AND s.user_id = $8

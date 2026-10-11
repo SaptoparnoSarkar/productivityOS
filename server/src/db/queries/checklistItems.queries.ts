@@ -1,13 +1,16 @@
+import type { PoolClient } from "pg";
 import { pool } from "../../config/db.js";
-import type { UpdateChecklistItemsInput } from "../../schemas/checklistItem.schema.js";
+import type { CreateChecklistItemsInput, UpdateChecklistItemsInput } from "../../schemas/checklistItem.schema.js";
+
 
 //Create Checklist Items
 export async function dbCreateChecklistItem(
   milestoneId: number,
-  label: string,
   userId: number,
+  label: string,
+  db: PoolClient,
 ) {
-  const result = await pool.query(
+  const result = await db.query(
     `INSERT INTO milestone_checklist_items (milestone_id, label, is_done) 
       SELECT $1, $2, false 
       FROM milestones m 

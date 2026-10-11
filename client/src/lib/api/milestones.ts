@@ -1,5 +1,6 @@
 //unwrapper of envelope
 
+import { MilestoneCreationInput } from "@/schemas/milestone.schema";
 import { apiClient } from "../apiClient";
 import {
   CreateMilestoneInput,
@@ -26,7 +27,7 @@ export async function getMilestone(milestoneId: number): Promise<Milestone> {
 
 export async function createMilestone(
   subjectId: number,
-  input: CreateMilestoneInput,
+  input: MilestoneCreationInput,
 ): Promise<Milestone> {
   const response = await apiClient<{ message: string; milestone: Milestone }>(
     `/api/subjects/${subjectId}/milestones`,

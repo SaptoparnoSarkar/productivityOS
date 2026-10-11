@@ -12,7 +12,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Milestone } from "@/types/milestone";
 import z from "zod";
-import { createMilestone, updateMilestone } from "@/lib/api/milestones";
+import { updateMilestone } from "@/lib/api/milestones";
 import { useState } from "react";
 import { Input } from "../ui/input";
 import { InputGroup, InputGroupAddon, InputGroupText, InputGroupTextarea } from "../ui/input-group";
@@ -21,11 +21,11 @@ import { Label } from "../ui/label";
 
 
 type Props =
-  | { mode: "create"; subjectId: number; onSuccess: (data: Milestone) => void; }
+  | { mode: "create"; subjectId: number; onNext: (data: CreateMilestoneInput) => void; }
   | { mode: "edit"; subjectId: number, milestone: Milestone; onSuccess: (data: Milestone) => void };
 
 export default function MilestoneForm(props: Props) {
-  const { mode, onSuccess } = props;
+  const { mode } = props;
   const subjectId = props.subjectId;
   const schema = mode === "edit" ? updateMilestoneSchema : createMilestoneSchema;
 
@@ -61,11 +61,10 @@ export default function MilestoneForm(props: Props) {
     setFormError("")
     try {
       if (mode === "create") {
-        const milestone = await createMilestone(subjectId, data as CreateMilestoneInput)
-        onSuccess(milestone);
+        props.onNext(createMilestoneSchema.parse(data));
       } else {
         const milestone = await updateMilestone(subjectId, props.milestone.id, data as UpdateMilestoneInput)
-        onSuccess(milestone);
+        props.onSuccess(milestone);
       }
     } catch (error) {
       setFormError(error instanceof Error ? error.message : "An error occurred. Please try again.")

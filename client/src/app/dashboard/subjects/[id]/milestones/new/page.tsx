@@ -3,13 +3,12 @@
 import { ChecklistForm } from "@/components/checklist/ChecklistForm";
 import {
   CounterForm,
-  CounterFormValues,
 } from "@/components/counter/CounterForm";
 import MilestoneForm from "@/components/milestones/MilestoneForm";
-import { setChecklistTarget } from "@/lib/api/checklist";
-import { createChecklistItem } from "@/lib/api/checklistItems";
-import { createCounter } from "@/lib/api/counters";
+import { createMilestone } from "@/lib/api/milestones";
 import { ChecklistFormOutput } from "@/schemas/checklist.schema";
+import { CounterSchemaOutput } from "@/schemas/counter.schema";
+import { CreateMilestoneInput, milestoneCreationSchema } from "@/schemas/milestone.schema";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -21,25 +20,23 @@ export default function NewMilestonePage() {
 
   const router = useRouter();
 
+  const [milestoneDraft, setMilestoneDraft] = useState<CreateMilestoneInput | null>(null);
+
   const [formError, setFormError] = useState<string>("");
-  const [createdMilestone, setCreatedMilestone] = useState<{
-    id: number;
-    type: "counter" | "checklist";
-  } | null>(null);
+
 
 
   //Handles second stage form submission for checklist milestones.
   async function handleChecklistSubmit(values: ChecklistFormOutput) {
-    if (!createdMilestone) return;
+    if (!milestoneDraft || milestoneDraft.type !== "checklist") return;
+    setFormError("");
     try {
-      // TODO Transaction
-      await setChecklistTarget(createdMilestone.id, {
-        target_count: values.target_count,
-      });
-      await createChecklistItem(createdMilestone.id, { label: values.label });
-      router.push(
-        `/dashboard/subjects/${subjectId}/milestones/${createdMilestone.id}`,
-      );
+      const payload = milestoneCreationSchema.parse({
+        milestone: milestoneDraft,
+        setup: values
+      })
+      const milestone = await createMilestone(subjectId, payload)
+      router.push(`/dashboard/subjects/${subjectId}/milestones/${milestone.id}`)
     } catch (error) {
       if (error instanceof Error) {
         setFormError(error.message);
@@ -49,13 +46,16 @@ export default function NewMilestonePage() {
     }
   }
   //Handles second stage form submission for counter milestones.
-  async function handleCounterSubmit(values: CounterFormValues) {
-    if (!createdMilestone) return;
+  async function handleCounterSubmit(values: CounterSchemaOutput) {
+    if (!milestoneDraft || milestoneDraft.type !== "counter") return;
+    setFormError("");
     try {
-      await createCounter(createdMilestone.id, values);
-      router.push(
-        `/dashboard/subjects/${subjectId}/milestones/${createdMilestone.id}`,
-      );
+      const payload = milestoneCreationSchema.parse({
+        milestone: milestoneDraft,
+        setup: values
+      })
+      const milestone = await createMilestone(subjectId, payload)
+      router.push(`/dashboard/subjects/${subjectId}/milestones/${milestone.id}`)
     } catch (error) {
       if (error instanceof Error) {
         setFormError(error.message);
@@ -69,10 +69,10 @@ export default function NewMilestonePage() {
     <main className="mt-10">
       {formError && <p className="form-error">{formError}</p>}
 
-      {createdMilestone === null ? (
+      {milestoneDraft === null ? (
         //If no milestone is created yet, render the milestone form.
-        <MilestoneForm mode="create" subjectId={subjectId} onSuccess={setCreatedMilestone} />
-      ) : createdMilestone.type === "checklist" ? (
+        <MilestoneForm mode="create" subjectId={subjectId} onNext={setMilestoneDraft} />
+      ) : milestoneDraft.type === "checklist" ? (
         //If the milestone type is a checklist, render the checklist form.
         <ChecklistForm onSubmit={handleChecklistSubmit} />
       ) : (
