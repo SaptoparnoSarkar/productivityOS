@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ChecklistItemsList from "../checklist/ChecklistItemsList";
 import CounterDisplay from "../counter/CounterDisplay";
+import Link from "next/link";
 
 export default function MilestoneDetail() {
   const params = useParams();
@@ -67,21 +68,32 @@ export default function MilestoneDetail() {
   if (!milestone) return <p>Milestone not found.</p>;
 
   return (
-    <div className="text-white">
-      <h1>{milestone.title}</h1>
-      <p>Type: {milestone.type}</p>
-      <p>
-        {milestone.type === "checklist" ? (
-          <ChecklistItemsList milestoneId={milestoneId} />
-        ) : (
-          <CounterDisplay milestoneId={milestoneId} />
-        )}
-      </p>
+    <main className="flex flex-col gap-6 max-w-6xl mx-auto py-8">
+      <section className="detail-card ">
 
-      <button onClick={handleDelete} disabled={deleting}>
-        {deleting ? "Deleting..." : "Delete"}
-      </button>
-      {deleteError && <p className="form-error">{deleteError}</p>}
-    </div>
+        <Link href={`/dashboard/subjects/${subjectId}`} className="text-white/50 text-sm font-bold hover:text-white transition duration-200">← Back</Link>
+
+        <div className="my-2 flex justify-between items-center">
+          <h1 className="text-white text-3xl font-bold cursor-default">{milestone.title}</h1>
+          <span className="p-1 border bg-purple-400/30 rounded-lg text-xs text-purple-400 cursor-default font-bold ">{milestone.type.toUpperCase()}</span>
+        </div>
+        <p className="text-sm text-white/60 font-semibold">{milestone.description ? milestone.description : "No Description"}</p>
+
+        <div className="flex flex-col gap-6 max-w-7xl mt-10 ">
+          {milestone.type === "checklist" ? (
+            <ChecklistItemsList milestoneId={milestoneId} />
+          ) : (
+            <CounterDisplay milestoneId={milestoneId} />
+          )}
+        </div>
+
+        <div className="w-full mt-5 text-right">
+          <hr className="border-gray-500/30" />
+          <button onClick={handleDelete} disabled={deleting} className="text-red-500/60 hover:text-red-500 transition duration-200 cursor-pointer mt-4 font-bold text-sm ">{deleting ? "Deleting..." : "Delete Milestone"}</button>
+          {deleteError && <p className="form-error">{deleteError}</p>}
+        </div>
+
+      </section>
+    </main>
   );
 }

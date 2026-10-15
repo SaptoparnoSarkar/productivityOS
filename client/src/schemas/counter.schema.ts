@@ -2,7 +2,7 @@ import z from "zod";
 
 export const createCounterSchema = z.object({
     target_value: z.coerce.number().int().positive({ message: "Target must be a positive number" }),
-    unit: z.string().trim().min(1, { message: 'Unit is required' })
+    unit: z.string().trim().min(1, { message: 'Unit is required' }).max(1000, { message: "Unit is too long" })
 })
 
 export type CounterSchemaInput = z.input<typeof createCounterSchema>;

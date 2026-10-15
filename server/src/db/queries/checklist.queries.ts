@@ -1,13 +1,12 @@
 import type { PoolClient } from "pg";
 import { pool } from "../../config/db.js";
-import type { CreateChecklistTargetInput } from "../../schemas/checklist.schema.js";
 
 // Upsert Checklist Target (Handles first set and edit later in one query)
 export async function dbSetChecklistTarget(
     milestoneId: number,
     userId: number,
     targetCount: number,
-    db: PoolClient,
+    db: PoolClient | typeof pool = pool,
 ) {
     const result = await db.query(
         `INSERT INTO milestone_checklists (milestone_id, target_count)

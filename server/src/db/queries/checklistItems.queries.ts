@@ -8,7 +8,7 @@ export async function dbCreateChecklistItem(
   milestoneId: number,
   userId: number,
   label: string,
-  db: PoolClient,
+  db: PoolClient | typeof pool = pool,
 ) {
   const result = await db.query(
     `INSERT INTO milestone_checklist_items (milestone_id, label, is_done) 

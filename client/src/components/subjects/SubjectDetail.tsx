@@ -113,7 +113,7 @@ export default function SubjectDetailPage() {
 
   const dateLabel = formatDate(subject.subject);
   return (
-    <main className="flex flex-col gap-6 max-w-5xl mx-auto py-8">
+    <main className="flex flex-col gap-6 max-w-7xl mx-auto py-8">
       <div>
         <Link
           href={"/dashboard/subjects"}

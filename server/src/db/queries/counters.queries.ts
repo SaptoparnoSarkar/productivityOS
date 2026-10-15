@@ -10,7 +10,7 @@ export async function dbCreateCounter(
   milestoneId: number,
   userId: number,
   input: CreateCounterInput,
-  db: PoolClient,
+  db: PoolClient | typeof pool = pool,
 ) {
   const result = await db.query(
     `
