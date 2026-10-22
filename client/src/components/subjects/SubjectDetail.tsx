@@ -217,7 +217,7 @@ export default function SubjectDetailPage() {
               <p>Progress</p>{" "}
               <p>
                 {subject.stats.done / subject.stats.total
-                  ? (subject.stats.done / subject.stats.total) * 100
+                  ? Math.floor((subject.stats.done / subject.stats.total) * 100)
                   : 0}
                 %
               </p>
@@ -298,7 +298,7 @@ export default function SubjectDetailPage() {
         </div>
 
         <div className="flex flex-col mt-4 w-full justify-center">
-          <h3 className="text-white font-bold text-lg mb-3">Milestones List</h3>
+          <h3 className="text-white font-bold text-lg mb-3">Milestones List ({subject.stats.total})</h3>
           <MilestoneList subjectId={id} />
         </div>
       </section>

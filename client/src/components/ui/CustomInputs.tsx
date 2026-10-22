@@ -34,7 +34,7 @@ export function CustomInputs<T extends FieldValues>({
             placeholder={placeholder}
             autoComplete={autocomplete}
             disabled={disabled}
-            style={{ padding: "15px" }}
+            style={{ padding: "20px" }}
             inputMode={inputMode}
             min={min}
             max={max}

@@ -9,9 +9,9 @@ import {
   createCounter,
   getCounter,
   incrementCounter,
-  resetCounter,
   updateCounter,
 } from "../services/counter.service.js";
+import { formatZodError } from "../utils/zod.utils.js";
 
 export async function counterRoutes(fastify: FastifyInstance) {
   //Create Counter POST   /api/milestones/:milestoneId/counter
@@ -26,7 +26,7 @@ export async function counterRoutes(fastify: FastifyInstance) {
 
       const result = createCounterSchema.safeParse(request.body);
       if (!result.success) {
-        throw new ValidationError(result.error.message);
+        throw new ValidationError(formatZodError(result.error));
       }
 
       const counter = await createCounter(
@@ -68,7 +68,7 @@ export async function counterRoutes(fastify: FastifyInstance) {
 
       const result = updateCounterSchema.safeParse(request.body);
       if (!result.success) {
-        throw new ValidationError(result.error.message);
+        throw new ValidationError(formatZodError(result.error));
       }
 
       const counter = await updateCounter(
@@ -93,7 +93,7 @@ export async function counterRoutes(fastify: FastifyInstance) {
       }
       const result = incrementCounterSchema.safeParse(request.body);
       if (!result.success) {
-        throw new ValidationError(result.error.message);
+        throw new ValidationError(formatZodError(result.error));
       }
 
       const increment = await incrementCounter(
@@ -107,19 +107,19 @@ export async function counterRoutes(fastify: FastifyInstance) {
     },
   );
 
-  //Reset Counter POST /api/milestones/:milestoneId/counter
-  fastify.post<{ Params: { milestoneId: string } }>(
-    "/api/milestones/:milestoneId/counter/reset",
-    async (request, reply) => {
-      const milestoneId = Number(request.params.milestoneId);
-      if (isNaN(milestoneId)) throw new ValidationError("Invalid Milestone");
+  // //Reset Counter POST /api/milestones/:milestoneId/counter
+  // fastify.post<{ Params: { milestoneId: string } }>(
+  //   "/api/milestones/:milestoneId/counter/reset",
+  //   async (request, reply) => {
+  //     const milestoneId = Number(request.params.milestoneId);
+  //     if (isNaN(milestoneId)) throw new ValidationError("Invalid Milestone");
 
-      const counter = await resetCounter(milestoneId, request.userId);
-      return reply
-        .status(200)
-        .send({ message: "Counter Reset Successfully", counter });
-    },
-  );
+  //     const counter = await resetCounter(milestoneId, request.userId);
+  //     return reply
+  //       .status(200)
+  //       .send({ message: "Counter Reset Successfully", counter });
+  //   },
+  // );
 }
 
 //To do: Use throw everywhere for errors. Don't use reply.send directly

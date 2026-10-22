@@ -25,8 +25,8 @@ export async function createChecklistItem(
 ) {
   const checklist = await dbCreateChecklistItem(
     milestoneId,
-    input.label,
     userId,
+    input.label
   );
   if (!checklist) {
     throw new NotFoundError("Milestone Not Found");

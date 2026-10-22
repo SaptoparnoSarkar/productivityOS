@@ -13,6 +13,7 @@ import {
   updateSubject,
 } from "../services/subject.service.js";
 import { ValidationError } from "../utils/errors.js";
+import { formatZodError } from "../utils/zod.utils.js";
 
 export async function subjectRoutes(fastify: FastifyInstance) {
   //Create Subject    POST /api/subjects
@@ -20,7 +21,7 @@ export async function subjectRoutes(fastify: FastifyInstance) {
     // validate
     const result = createSubjectSchema.safeParse(request.body);
     if (!result.success) {
-      return reply.status(400).send({ message: result.error.message });
+      return reply.status(400).send({ message: formatZodError(result.error) });
     }
 
     // call service, handle errors
@@ -69,7 +70,7 @@ export async function subjectRoutes(fastify: FastifyInstance) {
       //validate body with updateSubjectSchema
       const result = updateSubjectSchema.safeParse(request.body);
       if (!result.success) {
-        return reply.status(400).send({ message: result.error.message });
+        return reply.status(400).send({ message: formatZodError(result.error) });
       }
 
       //call services

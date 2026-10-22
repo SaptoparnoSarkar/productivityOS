@@ -105,7 +105,7 @@ export default function SubjectForm(props: Props) {
                         className="p-4 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-white"
                       />
                       {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
+                        <FieldError className="text-red-500" errors={[fieldState.error]} />
                       )}
 
                     </Field>
@@ -127,7 +127,7 @@ export default function SubjectForm(props: Props) {
                           aria-invalid={fieldState.invalid}
                           placeholder="Enter Description"
                           rows={6}
-                          className="min-h-24 resize-none p-4"
+                          className="min-h-24 resize-none p-4 text-white"
                           maxLength={200}
                         />
                         <InputGroupAddon align="block-end" className="p-3">
@@ -143,7 +143,7 @@ export default function SubjectForm(props: Props) {
                       </InputGroup>
 
                       {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
+                        <FieldError className="text-red-500" errors={[fieldState.error]} />
                       )}
                     </Field>
                   )}
@@ -174,7 +174,7 @@ export default function SubjectForm(props: Props) {
                       <FieldDescription className="text-zinc-400">Completable subjects can be marked done.</FieldDescription>
 
                       {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
+                        <FieldError className="text-red-500" errors={[fieldState.error]} />
                       )}
                     </Field>
                   )}
@@ -199,7 +199,7 @@ export default function SubjectForm(props: Props) {
 
 
                       {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
+                        <FieldError className="text-red-500" errors={[fieldState.error]} />
                       )}
 
                     </Field>
@@ -221,7 +221,7 @@ export default function SubjectForm(props: Props) {
 
                   />
                   {form.formState.errors.due_date && (
-                    <FieldError errors={[form.formState.errors.due_date]} />
+                    <FieldError className="text-red-500" errors={[form.formState.errors.due_date]} />
                   )}
                 </Field>
 

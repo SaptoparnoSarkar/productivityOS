@@ -17,6 +17,7 @@ import {
   updateWeakness,
 } from "../services/weakness.service.js";
 import { NotFoundError } from "../utils/errors.js";
+import { formatZodError } from "../utils/zod.utils.js";
 
 export async function weaknessRoutes(fastify: FastifyInstance) {
   // Create Weakness
@@ -24,7 +25,7 @@ export async function weaknessRoutes(fastify: FastifyInstance) {
     const userId = request.userId;
     const result = createWeaknessSchema.safeParse(request.body);
     if (!result.success) {
-      return reply.status(400).send({ message: result.error.message });
+      return reply.status(400).send({ message: formatZodError(result.error) });
     }
 
     const data = await createWeakness(userId, result.data);
@@ -41,13 +42,9 @@ export async function weaknessRoutes(fastify: FastifyInstance) {
       const userId = request.userId;
       const result = weaknessQuerySchema.safeParse(request.query);
       if (!result.success) {
-        return reply.status(400).send({ message: result.error.message });
+        return reply.status(400).send({ message: formatZodError(result.error) });
       }
-      const data = await getWeaknesses(
-        userId,
-        result.data.status,
-        result.data.limit,
-      );
+      const data = await getWeaknesses(userId, result.data.status);
       return reply.send({
         message: "Weaknesses Fetched Successfully",
         data,
@@ -81,7 +78,7 @@ export async function weaknessRoutes(fastify: FastifyInstance) {
       }
       const result = updateWeaknessSchema.safeParse(request.body);
       if (!result.success) {
-        return reply.status(400).send({ message: result.error.message });
+        return reply.status(400).send({ message: formatZodError(result.error) });
       }
 
       const data = await updateWeakness(weaknessId, userId, result.data);
@@ -118,7 +115,7 @@ export async function weaknessRoutes(fastify: FastifyInstance) {
       }
       const result = createWeaknessNoteSchema.safeParse(request.body);
       if (!result.success) {
-        return reply.status(400).send({ message: result.error.message });
+        return reply.status(400).send({ message: formatZodError(result.error) });
       }
       const data = await addWeaknessNote(weaknessId, userId, result.data);
       return reply.status(201).send({

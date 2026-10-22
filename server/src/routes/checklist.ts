@@ -2,6 +2,7 @@ import type { FastifyInstance } from "fastify";
 import { ValidationError } from "../utils/errors.js";
 import { getChecklistTarget, setChecklistTarget } from "../services/checklist.service.js";
 import { createChecklistTargetSchema } from "../schemas/checklist.schema.js";
+import { formatZodError } from "../utils/zod.utils.js";
 
 
 export async function checklistRoutes(fastify: FastifyInstance) {
@@ -19,7 +20,7 @@ export async function checklistRoutes(fastify: FastifyInstance) {
 
             const result = createChecklistTargetSchema.safeParse(request.body);
             if (!result.success) {
-                throw new ValidationError(result.error.message);
+                throw new ValidationError(formatZodError(result.error));
             }
 
             const checklistTarget = await setChecklistTarget(milestoneId, userId, result.data);

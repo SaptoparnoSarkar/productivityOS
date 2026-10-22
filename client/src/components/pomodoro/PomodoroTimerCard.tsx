@@ -79,7 +79,7 @@ export function PomodoroTimerCard({
 
           {session?.status === "active" && verdict === "running" && (
             <button
-              className="mt-5 rounded-full bg-purple-500 px-8 py-3 text-white transition hover:bg-purple-400 disabled:cursor-not-allowed disabled:opacity-40"
+              className="mt-5 rounded-full bg-green-500/40 px-8 py-3 text-white transition hover:bg-green-500 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
               onClick={onPause}
               disabled={isMutating || !canPause}
             >
@@ -89,7 +89,7 @@ export function PomodoroTimerCard({
 
           {session?.status === "paused" && (
             <button
-              className="mt-5 rounded-full bg-purple-500 px-8 py-3 text-white transition hover:bg-purple-400 disabled:cursor-not-allowed disabled:opacity-40"
+              className="mt-5 rounded-full bg-green-500/40 px-8 py-3 text-white transition hover:bg-green-500 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
               onClick={onResume}
               disabled={isMutating}
             >

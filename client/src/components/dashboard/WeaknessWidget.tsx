@@ -12,7 +12,7 @@ export default function WeaknessWidget() {
   useEffect(() => {
     async function fetchWeakness() {
       try {
-        const data = await listWeaknesses("active", 5);
+        const data = await listWeaknesses("active");
         setWeakness(data);
       } catch (error) {
         setError(

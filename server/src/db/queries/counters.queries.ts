@@ -103,18 +103,18 @@ export async function dbIncrementCounter(
   return result.rows[0] ?? null;
 }
 
-//Reset Counter
-export async function dbResetCounter(milestoneId: number, userId: number) {
-  const result = await pool.query(
-    `UPDATE milestone_counters mc
-     SET current_value = 0
-     FROM milestones m
-     JOIN subjects s ON m.subject_id = s.id
-     WHERE mc.milestone_id = m.id
-      AND mc.milestone_id = $1
-      AND s.user_id = $2
-     RETURNING mc.*`,
-    [milestoneId, userId],
-  );
-  return result.rows[0] ?? null;
-}
+// //Reset Counter
+// export async function dbResetCounter(milestoneId: number, userId: number) {
+//   const result = await pool.query(
+//     `UPDATE milestone_counters mc
+//      SET current_value = 0
+//      FROM milestones m
+//      JOIN subjects s ON m.subject_id = s.id
+//      WHERE mc.milestone_id = m.id
+//       AND mc.milestone_id = $1
+//       AND s.user_id = $2
+//      RETURNING mc.*`,
+//     [milestoneId, userId],
+//   );
+//   return result.rows[0] ?? null;
+// }

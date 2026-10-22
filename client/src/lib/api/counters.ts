@@ -40,12 +40,3 @@ export async function incrementCounter(
     })
     return response.increment;
 }
-
-export async function resetCounter(
-    milestoneId: number
-): Promise<Counter> {
-    const response = await apiClient<{ message: string, counter: Counter }>(`/api/milestones/${milestoneId}/counter/reset`, {
-        method: 'POST',
-    })
-    return response.counter;
-}

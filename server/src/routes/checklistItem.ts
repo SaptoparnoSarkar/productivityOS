@@ -10,6 +10,7 @@ import {
   listChecklists,
   updateChecklistItem,
 } from "../services/checklistItem.service.js";
+import { formatZodError } from "../utils/zod.utils.js";
 
 export async function checklistItemRoutes(fastify: FastifyInstance) {
   //Create Checklist POST   /api/milestones/:milestoneId/checklist-items
@@ -24,7 +25,7 @@ export async function checklistItemRoutes(fastify: FastifyInstance) {
 
       const result = createChecklistItemsSchema.safeParse(request.body);
       if (!result.success) {
-        return reply.status(400).send({ message: result.error.message });
+        return reply.status(400).send({ message: formatZodError(result.error) });
       }
 
       const checklist = await createChecklistItem(
@@ -82,7 +83,7 @@ export async function checklistItemRoutes(fastify: FastifyInstance) {
       const result = updateChecklistItemsSchema.safeParse(body);
 
       if (!result.success) {
-        return reply.status(400).send({ message: result.error.message });
+        return reply.status(400).send({ message: formatZodError(result.error) });
       }
 
       const updated = await updateChecklistItem(

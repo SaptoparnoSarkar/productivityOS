@@ -32,9 +32,8 @@ export async function createWeakness(
 export async function getWeaknesses(
   userId: number,
   status?: "active" | "resolved",
-  limit?: number,
 ) {
-  return await dbGetWeaknesses(userId, status, limit);
+  return await dbGetWeaknesses(userId, status, 5);
 }
 
 export async function getWeaknessById(weaknessId: number, userId: number) {

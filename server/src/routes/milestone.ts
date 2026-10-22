@@ -17,6 +17,7 @@ import {
   updateMilestoneSchema,
 } from "../schemas/milestone.schema.js";
 import { milestoneCreationSchema } from "../schemas/milestoneCreation.schema.js";
+import { formatZodError } from "../utils/zod.utils.js";
 
 export async function milestoneRoutes(fastify: FastifyInstance) {
   //Create Milestones    POST/api/subjects/:subjectId/milestones
@@ -31,7 +32,7 @@ export async function milestoneRoutes(fastify: FastifyInstance) {
 
       const result = milestoneCreationSchema.safeParse(request.body);
       if (!result.success) {
-        return reply.status(400).send({ message: result.error.message });
+        return reply.status(400).send({ message: formatZodError(result.error) });
       }
 
       const milestone = await createMilestoneWithSetup(
@@ -91,7 +92,7 @@ export async function milestoneRoutes(fastify: FastifyInstance) {
 
       const result = updateMilestoneSchema.safeParse(request.body);
       if (!result.success) {
-        return reply.status(400).send({ message: result.error.message });
+        return reply.status(400).send({ message: formatZodError(result.error) });
       }
 
       const updated = await updateMilestone(
@@ -144,7 +145,7 @@ export async function milestoneRoutes(fastify: FastifyInstance) {
       // Parse
       const result = setActiveSchema.safeParse(request.body);
       if (!result.success) {
-        throw new ValidationError(result.error.message);
+        throw new ValidationError(formatZodError(result.error));
       }
 
       const milestone = await setMilestoneActive(
