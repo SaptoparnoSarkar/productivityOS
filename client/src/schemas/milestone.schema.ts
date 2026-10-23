@@ -8,9 +8,18 @@ const baseMilestoneFields = z.object({
     }),
     title: z.string().trim().min(1, { message: "Title is required" }).max(100),
     description: z.string().max(2000).optional(),
-    daily_minimum: z.coerce.number().int().positive({ message: "Must be at least 1" }).optional(),
-    daily_minimum_unit: z.string().optional(),
-    weekly_minimum: z.coerce.number().int().min(1, { message: "" }).max(7, { message: "Cannot be more than 7" }).optional(),
+    daily_minimum: z.union([z.literal(""), z.coerce.number().int().min(1, { message: "Cannot be less than 1" }).max(50, { message: "Cannot be more than 50" })]).optional()
+        .transform((val) => {
+            return val === "" ? undefined : val
+        }),
+    daily_minimum_unit: z.union([z.literal(""), z.string().max(50, { message: "Unit cannot be more than 50 characters" })]).optional()
+        .transform((val) => {
+            return val === "" ? undefined : val
+        }),
+    weekly_minimum: z.union([z.literal(""), z.coerce.number().int().min(1, { message: "Cannot be less than 1" }).max(7, { message: "Cannot be more than 7" })]).optional()
+        .transform((val) => {
+            return val === "" ? undefined : val
+        }),
 })
 
 //Refine applied seperately for create and update

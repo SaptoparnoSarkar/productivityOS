@@ -31,7 +31,7 @@ import { promoteSubject } from "@/lib/api/showcase";
 
 export default function SubjectDetailPage() {
   const params = useParams();
-  const id = Number(params.id);
+  const id = Number(params.subjectId);
 
   //Subject
   const [subject, setSubject] = useState<SubjectDetail | null>(null);
@@ -276,7 +276,10 @@ export default function SubjectDetailPage() {
               <Target className="detail-logo" size={60} />
             </span>
             <div className="flex flex-col gap-1">
-              <h2 className="detail-title">Milestones</h2>
+              <div className="flex items-center gap-1">
+                <h2 className="detail-title">Milestones</h2>
+                <span className="text-white/70 text-sm font-bold mt-1"> ({subject.stats.total})</span>
+              </div>
               <p className="text-white/60">
                 Use milestones to track your progress.
               </p>
@@ -298,7 +301,6 @@ export default function SubjectDetailPage() {
         </div>
 
         <div className="flex flex-col mt-4 w-full justify-center">
-          <h3 className="text-white font-bold text-lg mb-3">Milestones List ({subject.stats.total})</h3>
           <MilestoneList subjectId={id} />
         </div>
       </section>

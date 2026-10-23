@@ -8,8 +8,7 @@ import { useEffect, useState } from "react";
 
 export default function EditSubjectPage() {
   const params = useParams();
-  const id = Number(params.id);
-
+  const id = Number(params.subjectId);
   const router = useRouter();
 
   const [subject, setSubject] = useState<Subject | null>(null);

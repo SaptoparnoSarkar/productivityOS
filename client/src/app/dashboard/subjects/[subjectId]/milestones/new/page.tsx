@@ -16,7 +16,7 @@ import { useState } from "react";
 
 export default function NewMilestonePage() {
   const params = useParams();
-  const subjectId = Number(params.id);
+  const subjectId = Number(params.subjectId);
 
   const router = useRouter();
 

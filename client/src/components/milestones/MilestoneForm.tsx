@@ -43,8 +43,8 @@ export default function MilestoneForm(props: Props) {
       type: "counter",
       title: "",
       description: "",
-      weekly_minimum: "",
-      daily_minimum: "",
+      weekly_minimum: undefined,
+      daily_minimum: undefined,
       daily_minimum_unit: "",
     };
 
@@ -70,7 +70,6 @@ export default function MilestoneForm(props: Props) {
       setFormError(error instanceof Error ? error.message : "An error occurred. Please try again.")
     }
   }
-
 
 
   return (
@@ -253,7 +252,7 @@ export default function MilestoneForm(props: Props) {
           </div>
         </FieldGroup>
 
-        {formError && <p className="form-error">{formError}</p>}
+
 
         <button
           type="submit"
@@ -271,6 +270,7 @@ export default function MilestoneForm(props: Props) {
             "Next"
           )}
         </button>
+        {formError && <p className="form-error">{formError}</p>}
       </form>
     </div>
   );

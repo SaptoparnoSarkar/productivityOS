@@ -105,7 +105,8 @@ export async function incrementCounter(
     );
 
     // 7. Daily's XP fires once
-    if (row.progress >= currentCounter.daily_minimum) {
+    const hasDailyGoal = currentCounter.daily_minimum != null;
+    if (hasDailyGoal && row.progress >= currentCounter.daily_minimum) {
       const newlyCompleted = await dbMarkDailyDone(userId, milestoneId);
 
       // Only the winning request receives a row and awards daily xp.

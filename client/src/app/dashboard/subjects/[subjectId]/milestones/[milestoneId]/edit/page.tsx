@@ -1,7 +1,6 @@
 "use client";
 import MilestoneForm from "@/components/milestones/MilestoneForm";
-import { getMilestone, updateMilestone } from "@/lib/api/milestones";
-import { UpdateMilestoneInput } from "@/schemas/milestone.schema";
+import { getMilestone } from "@/lib/api/milestones";
 import { Milestone } from "@/types/milestone";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -14,11 +13,11 @@ export default function EditMilestonePage() {
 
   const [milestone, setMilestone] = useState<Milestone | null>(null);
   const [loading, setLoading] = useState(true);
-  const [formError, setFormError] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     if (Number.isNaN(subjectId) || Number.isNaN(milestoneId)) {
-      setFormError("Invalid Subject ID or Milestone ID");
+      setError("Invalid Subject ID or Milestone ID");
       setLoading(false);
       return;
     }
@@ -28,7 +27,7 @@ export default function EditMilestonePage() {
         const data = await getMilestone(milestoneId);
         setMilestone(data);
       } catch (error) {
-        setFormError(
+        setError(
           error instanceof Error ? error.message : "Failed to load milestone",
         );
       } finally {
@@ -41,7 +40,7 @@ export default function EditMilestonePage() {
 
 
   if (loading) return <div>Loading...</div>;
-  if (formError) return <div>Error: {formError}</div>;
+  if (error) return <div className="render-error">Error: {error}</div>;
   if (!milestone) return <div>Milestone not found</div>;
 
   return (
@@ -55,3 +54,4 @@ export default function EditMilestonePage() {
     </div>
   );
 }
+
