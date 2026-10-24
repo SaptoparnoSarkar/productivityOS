@@ -3,19 +3,21 @@
 import { createWeakness } from "@/lib/api/weakness";
 import {
   CreateWeaknessInput,
+  CreateWeaknessOutput,
   createWeaknessSchema,
 } from "@/schemas/weakness.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import z from "zod";
-import { FieldGroup } from "../ui/field";
+import { Controller, useForm } from "react-hook-form";
+import { Field, FieldGroup, FieldLabel } from "../ui/field";
 import { CustomInputs } from "../ui/CustomInputs";
 import { Subject } from "@/types/subject";
 import { listSubjects } from "@/lib/api/subjects";
 import { useRouter } from "next/navigation";
 import Spinner from "../ui/spinner";
 import CustomSelect from "../ui/CustomSelect";
+import { Input } from "../ui/input";
+import { InputGroup, InputGroupAddon, InputGroupText, InputGroupTextarea } from "../ui/input-group";
 
 export default function WeaknessForm() {
   const router = useRouter();
@@ -44,18 +46,14 @@ export default function WeaknessForm() {
   }, []);
 
   const defaultValues = {
-    subject_id: null,
     title: "",
     description: "",
+    subject_id: null,
   };
 
-  const schema = createWeaknessSchema;
 
-  type FromInput = z.input<typeof schema>;
-  type FromOutput = z.output<typeof schema>;
-
-  const form = useForm<FromInput, any, FromOutput>({
-    resolver: zodResolver(schema),
+  const form = useForm<CreateWeaknessInput, unknown, CreateWeaknessOutput>({
+    resolver: zodResolver(createWeaknessSchema),
     defaultValues,
   });
 
@@ -88,32 +86,103 @@ export default function WeaknessForm() {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
           <div className="fields">
-            <CustomInputs
-              control={form.control}
+            <Controller
               name="title"
-              label="Title"
-              placeholder="Enter weakness title"
-            />
-            <CustomInputs
               control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>Weakness Title<span className="text-red-500">*</span></FieldLabel>
+                  <Input
+                    {...field}
+                    id={field.name}
+                    aria-invalid={fieldState.invalid}
+                    placeholder="LLMS, AI, Time Management, etc"
+                    className="p-4 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-white"
+                  />
+                  {fieldState.invalid && (
+                    <p className="form-error">{fieldState.error?.message}</p>
+                  )}
+                </Field>
+              )}
+            />
+
+            <Controller
               name="description"
-              label="Description"
-              placeholder="Enter weakness description"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>Description <span className="text-slate-400">(optional)</span></FieldLabel>
+                  <InputGroup className="border border-zinc-700 transition-colors bg-zinc-900 focus-within:border-purple-500 focus-within:ring-2 focus-within:ring-purple-500/10">
+                    <InputGroupTextarea
+                      {...field}
+                      id={field.name}
+                      aria-invalid={fieldState.invalid}
+                      placeholder='Enter description'
+                      rows={6}
+                      maxLength={2000}
+                      className="min-h-24 resize-none p-4"
+                    />
+                    <InputGroupAddon align="block-end" className="p-3">
+                      <InputGroupText className={`tabular-nums text-xs transition-colors ${(field.value?.length || 0) >= 2000 ?
+                        'text-red-400 font-medium' :
+                        (field.value?.length || 0) >= 1800
+                          ? "text-amber-400"
+                          : "text-slate-400"
+                        }  `}>
+                        {field.value?.length || 0} / 2000
+                      </InputGroupText>
+                    </InputGroupAddon>
+                  </InputGroup>
+
+                  {fieldState.invalid && (
+                    <p className="form-error">{fieldState.error?.message}</p>
+                  )}
+
+                </Field>
+              )}
             />
-            <CustomSelect
-              register={form.register}
+
+            <Controller
               name="subject_id"
-              label="Subject"
-              subjects={subjects}
-              placeholder="Select Subject"
-              error={error}
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Subject<span className="text-slate-400">(optional)</span></FieldLabel>
+                  <select
+                    {...field}
+                    id={field.name}
+                    aria-invalid={fieldState.invalid}
+                    value={field.value ?? ""}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                    className="p-2 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-white cursor-pointer"
+                  >
+                    <option className=" text-gray-500 border-purple-500" value={""} disabled hidden>
+                      Select Subject
+                    </option>
+                    {subjects.map((subject) => {
+                      if (subject.status === "pending") {
+                        return (
+                          <option key={subject.id} value={subject.id}>
+                            {subject.title}
+                          </option>
+                        )
+                      }
+                    })}
+                  </select>
+                  {fieldState.invalid && (
+                    <p className="form-error">{fieldState.error?.message}</p>
+                  )}
+                </Field>
+              )}
             />
+
+
           </div>
         </FieldGroup>
         {formError && <p className="text-red-500">{formError}</p>}
         <button
           type="submit"
-          className="subject-submit-btn"
+          className="submit-btn"
           disabled={form.formState.isSubmitting}
         >
           {form.formState.isSubmitting ? (

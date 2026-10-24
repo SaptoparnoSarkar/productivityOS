@@ -8,8 +8,7 @@ import { useEffect, useState } from "react";
 
 export default function EditSubjectPage() {
   const params = useParams();
-  const id = Number(params.id);
-
+  const id = Number(params.subjectId);
   const router = useRouter();
 
   const [subject, setSubject] = useState<Subject | null>(null);
@@ -42,7 +41,7 @@ export default function EditSubjectPage() {
   if (!subject) return <div>Subject not found.</div>;
 
   return (
-    <main>
+    <main className="flex justify-center h-[80vh] items-center">
       <SubjectForm
         mode="edit"
         subject={subject}

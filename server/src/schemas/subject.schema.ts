@@ -8,9 +8,9 @@ export const createSubjectSchema = z.object({
     .trim()
     .min(1, { message: "Title is required" })
     .max(100, { message: "Title cannot exceed 100 characters" }),
-  description: z.string().optional(),
+  description: z.string().max(200).optional(),
   has_pomodoro: z.boolean().optional(),
-  due_date: z.string().date().nullish(),
+  due_date: z.string().date().nullish()
 });
 
 export type CreateSubjectInput = z.infer<typeof createSubjectSchema>;

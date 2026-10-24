@@ -1,10 +1,9 @@
 'use client';
 
-import { getCounter, incrementCounter, resetCounter, updateCounter } from "@/lib/api/counters";
+import { getCounter, incrementCounter, updateCounter } from "@/lib/api/counters";
 import { Counter } from "@/types/counter";
 import { useCallback, useEffect, useState } from "react";
 import { Progress } from "../ui/progress";
-import { RotateCcw } from "lucide-react";
 
 type Props = {
     milestoneId: number;
@@ -49,15 +48,17 @@ export default function CounterDisplay({ milestoneId }: Props) {
         }
     }
 
-    async function handleReset() {
-        if (!confirm('Reset counter to 0 ?')) return;
+    async function handleDecrement() {
+        if (!counter) return;
+        setInputError("");
         try {
-            await resetCounter(milestoneId);
+            await incrementCounter(milestoneId, { delta: -1 })
             await loadCounter()
         } catch (error) {
-            setInputError(error instanceof Error ? error.message : 'Failed to reset counter')
+            setInputError(error instanceof Error ? error.message : 'Failed to update counter')
         }
     }
+
 
     async function handleSave() {
         try {
@@ -90,7 +91,10 @@ export default function CounterDisplay({ milestoneId }: Props) {
                         <input type="text" defaultValue={counter.unit} onChange={(e) => setUnitInput(e.target.value)} className="w-40 p-1 border border-zinc-700 rounded-lg focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-zinc-100 cursor-pointer" />
                         <button type="button" onClick={handleSave} className="bg-blue-500/80 p-1 px-2 border border-zinc-700 rounded-lg hover:bg-blue-500 transition duration-200 cursor-pointer text-zinc-100">Save</button>
                         <button type="button" onClick={() => setIsEditing(false)} className="bg-zinc-700/30 p-1 px-2 border border-zinc-700 rounded-lg hover:bg-zinc-600/40 transition duration-200 cursor-pointer text-zinc-100">Cancel</button>
+                        {inputError && <div className="text-red-500 absolute top-10">{inputError}</div>}
                     </div>
+
+
                 </div>
             )}
             <div className="flex justify-between">
@@ -105,10 +109,11 @@ export default function CounterDisplay({ milestoneId }: Props) {
             <div className="mt-4"><Progress value={progressPercent} className="w-full" /></div>
 
             <div className="flex gap-4 mt-4">
-                <button type="button" onClick={handleIncrement} disabled={counter.current_value >= counter.target_value} className="bg-blue-500 px-4 py-2 rounded-lg hover:bg-blue-400 transition duration-200 cursor-pointer text-white">+1</button>
-                <button type="button" onClick={handleReset} className="bg-gray-400/10 border border-slate-500/40 px-4 py-2 rounded-lg hover:bg-gray-400/20 transition duration-200 cursor-pointer text-white flex items-center gap-2"> <RotateCcw size={20} /> Reset</button>
+                <button type="button" onClick={handleDecrement} disabled={counter.current_value <= 0} className="bg-gray-400/10 border border-slate-500/40 px-4 py-2 rounded-lg hover:bg-gray-400/20 transition duration-200 cursor-pointer text-white flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">-1</button>
+                <button type="button" onClick={handleIncrement} disabled={counter.current_value >= counter.target_value} className="bg-blue-500 px-4 py-2 rounded-lg hover:bg-blue-400 transition duration-200 cursor-pointer text-white disabled:opacity-50 disabled:cursor-not-allowed">+1</button>
+
             </div>
-            {inputError && <p className="text-red-500 text-sm">{inputError}</p>}
+
 
         </section>
     )

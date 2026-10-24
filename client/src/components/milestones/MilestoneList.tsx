@@ -55,30 +55,28 @@ export function MilestoneList({ subjectId }: Prop) {
           {milestone?.map((m) => (
             <li
               key={m.id}
-              className="text-white hover:text-purple-400 duration-200 cursor-pointer"
+              className="text-white"
             >
               <Link
                 href={`/dashboard/subjects/${subjectId}/milestones/${m.id}`}
               >
-                <div className="flex justify-between border border-slate-50/20 p-4 rounded-lg mb-1">
+                <div className="flex justify-between border border-slate-50/20 p-4 rounded-lg mb-3 hover:border-purple-300 hover:text-purple-400 transition duration-300 cursor-pointer">
                   <div className="flex gap-3 items-center">
-                    <span></span>
                     <h3 className="text-xl">{m.title}</h3>
-                    <span className="bg-gray-500/30 text-white/20 px-2 py-0.5 rounded-2xl">
+                    <span className={cn(
+                      "bg-gray-500/30 text-white/20 px-2 py-0.5 rounded-2xl",
+                      m.is_active == true && "bg-green-500/40 text-green-500"
+                    )}>
                       {m.type}
                     </span>
-                    <span
-                      className={cn(
-                        "text-sm pr-3 pl-2 py-0.5 rounded-xl font-bold flex items-center",
-                        m.is_active
-                          ? "bg-green-500/30 text-green-500"
-                          : "bg-red-500/40 text-red-500",
-                      )}
-                    >
-                      <span className="text-xl">•</span>
-                      {m.is_active ? "Active" : "Activate to earn XP"}
-                    </span>
+                    {m.is_active !== true && (
+                      <div className="text-sm pr-3 pl-2 py-0.5 rounded-xl font-bold flex items-center bg-red-500/40 text-red-500">
+                        <span className="text-xl">•</span>
+                        Activate to earn XP
+                      </div>
+                    )}
                   </div>
+
                   <div className="flex items-center">
                     <div className="h-2 w-[160px] bg-gray-600 rounded-full">
                       <div

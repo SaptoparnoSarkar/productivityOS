@@ -5,5 +5,6 @@ export const createCounterSchema = z.object({
     unit: z.string().trim().min(1, { message: 'Unit is required' }).max(1000, { message: "Unit is too long" })
 })
 
+
 export type CounterSchemaInput = z.input<typeof createCounterSchema>;
 export type CounterSchemaOutput = z.output<typeof createCounterSchema>;

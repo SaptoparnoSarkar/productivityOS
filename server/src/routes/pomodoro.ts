@@ -11,6 +11,7 @@ import {
   startSession,
 } from "../services/pomodoro.service.js";
 import { startSessionSchema } from "../schemas/pomodoro.schema.js";
+import { formatZodError } from "../utils/zod.utils.js";
 
 export async function pomodoroRoutes(fastify: FastifyInstance) {
   // active session
@@ -26,7 +27,7 @@ export async function pomodoroRoutes(fastify: FastifyInstance) {
     const userId = request.userId;
     const result = startSessionSchema.safeParse(request.body);
     if (!result.success) {
-      return reply.status(400).send({ message: result.error.message });
+      return reply.status(400).send({ message: formatZodError(result.error) });
     }
     const data = await startSession(userId, result.data);
     return reply

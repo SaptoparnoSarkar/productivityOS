@@ -16,7 +16,7 @@ import { useState } from "react";
 
 export default function NewMilestonePage() {
   const params = useParams();
-  const subjectId = Number(params.id);
+  const subjectId = Number(params.subjectId);
 
   const router = useRouter();
 
@@ -66,7 +66,7 @@ export default function NewMilestonePage() {
   }
 
   return (
-    <main className="mt-10">
+    <main className="flex justify-center h-[80vh] items-center">
       {formError && <p className="form-error">{formError}</p>}
 
       {milestoneDraft === null ? (

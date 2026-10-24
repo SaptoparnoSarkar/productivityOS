@@ -17,13 +17,14 @@ import {
   ACCESS_TOKEN_OPTIONS,
   REFRESH_TOKEN_OPTIONS,
 } from "../utils/auth.utils.js";
+import { formatZodError } from "../utils/zod.utils.js";
 
 export async function authRoutes(fastify: FastifyInstance) {
   //Sign-up  /auth/signup
   fastify.post("/auth/signup", async (request, reply) => {
     const result = signupSchema.safeParse(request.body);
     if (!result.success) {
-      return reply.status(400).send({ message: result.error.message });
+      return reply.status(400).send({ message: formatZodError(result.error) });
     }
     const response = await signupUser(result.data.email, result.data.password);
     return reply.status(201).send(response);
@@ -33,7 +34,7 @@ export async function authRoutes(fastify: FastifyInstance) {
   fastify.post("/auth/verify-email", async (request, reply) => {
     const result = verifyEmailSchema.safeParse(request.body);
     if (!result.success) {
-      return reply.status(400).send({ message: result.error.message });
+      return reply.status(400).send({ message: formatZodError(result.error) });
     }
     const response = await verifyEmail(result.data.email, result.data.code);
 
@@ -51,7 +52,7 @@ export async function authRoutes(fastify: FastifyInstance) {
   fastify.post("/auth/resend-code", async (request, reply) => {
     const result = resendCodeSchema.safeParse(request.body);
     if (!result.success) {
-      return reply.status(400).send({ message: result.error.message });
+      return reply.status(400).send({ message: formatZodError(result.error) });
     }
     const response = await resendVerificationCode(result.data.email);
     return reply.status(200).send({ message: response.message });
@@ -61,7 +62,7 @@ export async function authRoutes(fastify: FastifyInstance) {
   fastify.post("/auth/signin", async (request, reply) => {
     const result = signinSchema.safeParse(request.body);
     if (!result.success) {
-      return reply.status(400).send({ message: result.error.message });
+      return reply.status(400).send({ message: formatZodError(result.error) });
     }
 
     const response = await loginUser(result.data.email, result.data.password);

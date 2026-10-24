@@ -87,149 +87,206 @@ export default function SubjectForm(props: Props) {
 
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
-          <div className="fields">
-            {mode === "create" && (
-              <>
-                <Controller
-                  name="title"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor={field.name}>Subject Title <span className="text-red-500">*</span></FieldLabel>
-                      <Input
+
+          {mode === "create" ? (
+            <div className="fields">
+
+              <Controller
+                name="title"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Subject Title <span className="text-red-500">*</span></FieldLabel>
+                    <Input
+                      {...field}
+                      id={field.name}
+                      aria-invalid={fieldState.invalid}
+                      placeholder="e.g. System Design"
+                      autoComplete="off"
+                      className="p-4 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-white"
+                    />
+                    {fieldState.invalid && (
+                      <FieldError className="text-red-500" errors={[fieldState.error]} />
+                    )}
+
+                  </Field>
+                )}
+              />
+
+              <Controller
+                name="description"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>
+                      Description <span className="text-slate-400">(optional)</span>
+                    </FieldLabel>
+                    <InputGroup className="border border-zinc-700 transition-colors bg-zinc-900 focus-within:border-purple-500 focus-within:ring-2 focus-within:ring-purple-500/10">
+                      <InputGroupTextarea
                         {...field}
                         id={field.name}
                         aria-invalid={fieldState.invalid}
-                        placeholder="e.g. System Design"
-                        autoComplete="off"
-                        className="p-4 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-white"
+                        placeholder="Enter Description"
+                        rows={6}
+                        className="min-h-24 resize-none p-4 text-white"
+                        maxLength={200}
                       />
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
+                      <InputGroupAddon align="block-end" className="p-3">
+                        <InputGroupText className={`tabular-nums text-xs transition-colors ${(field.value?.length || 0) >= 200
+                          ? 'text-red-400 font-medium'
+                          : (field.value?.length || 0) >= 180
+                            ? 'text-amber-400'
+                            : 'text-zinc-400'
+                          }`}>
+                          {field.value?.length || 0}/200 characters
+                        </InputGroupText>
+                      </InputGroupAddon>
+                    </InputGroup>
 
-                    </Field>
-                  )}
-                />
+                    {fieldState.invalid && (
+                      <FieldError className="text-red-500" errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
 
-                <Controller
-                  name="description"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor={field.name}>
-                        Description <span className="text-slate-400">(optional)</span>
-                      </FieldLabel>
-                      <InputGroup className="border border-zinc-700 transition-colors bg-zinc-900 focus-within:border-purple-500 focus-within:ring-2 focus-within:ring-purple-500/10">
-                        <InputGroupTextarea
-                          {...field}
-                          id={field.name}
-                          aria-invalid={fieldState.invalid}
-                          placeholder="Enter Description"
-                          rows={6}
-                          className="min-h-24 resize-none p-4"
-                          maxLength={200}
-                        />
-                        <InputGroupAddon align="block-end" className="p-3">
-                          <InputGroupText className={`tabular-nums text-xs transition-colors ${(field.value?.length || 0) >= 200
-                            ? 'text-red-400 font-medium'
-                            : (field.value?.length || 0) >= 180
-                              ? 'text-amber-400'
-                              : 'text-zinc-400'
-                            }`}>
-                            {field.value?.length || 0}/200 characters
-                          </InputGroupText>
-                        </InputGroupAddon>
-                      </InputGroup>
+              <Controller
+                name="type"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field orientation="vertical" data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Type<span className="text-red-500">*</span></FieldLabel>
 
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  )}
-                />
-
-                <Controller
-                  name="type"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field orientation="vertical" data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor={field.name}>Type<span className="text-red-500">*</span></FieldLabel>
-
-                      <Select name={field.name} value={field.value} onValueChange={field.onChange}>
-                        <SelectTrigger
-                          id={field.name}
-                          aria-invalid={fieldState.invalid}
-                          onBlur={field.onBlur}
-                          ref={field.ref}
-                          className="w-full p-4 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-zinc-100 cursor-pointer"
-                        >
-                          <SelectValue placeholder="Select Type" />
-                        </SelectTrigger>
-                        <SelectContent position="popper" className="bg-gray-300">
-                          <SelectItem value="completable">Completable</SelectItem>
-                          <SelectItem value="ongoing">Ongoing</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FieldDescription className="text-zinc-400">Completable subjects can be marked done.</FieldDescription>
-
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  )}
-                />
-
-                <Controller
-                  name="has_pomodoro"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field orientation="horizontal" data-invalid={fieldState.invalid}>
-
-                      <FieldLabel htmlFor={field.name}>Enable Pomodoro<span className="text-slate-400">(optional)</span></FieldLabel>
-
-                      <Switch
+                    <Select name={field.name} value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger
                         id={field.name}
-                        name="Pomodoro"
                         aria-invalid={fieldState.invalid}
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        className="cursor-pointer"
-                      />
+                        onBlur={field.onBlur}
+                        ref={field.ref}
+                        className="w-full p-4 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-zinc-100 cursor-pointer"
+                      >
+                        <SelectValue placeholder="Select Type" />
+                      </SelectTrigger>
+                      <SelectContent position="popper" className="bg-gray-300">
+                        <SelectItem value="completable">Completable</SelectItem>
+                        <SelectItem value="ongoing">Ongoing</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FieldDescription className="text-zinc-400">Completable subjects can be marked done.</FieldDescription>
+
+                    {fieldState.invalid && (
+                      <FieldError className="text-red-500" errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+
+              <Controller
+                name="has_pomodoro"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field orientation="horizontal" data-invalid={fieldState.invalid}>
+
+                    <FieldLabel htmlFor={field.name}>Enable Pomodoro<span className="text-slate-400">(optional)</span></FieldLabel>
+
+                    <Switch
+                      id={field.name}
+                      name="Pomodoro"
+                      aria-invalid={fieldState.invalid}
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      className="cursor-pointer"
+                    />
 
 
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
+                    {fieldState.invalid && (
+                      <FieldError className="text-red-500" errors={[fieldState.error]} />
+                    )}
 
-                    </Field>
-                  )}
+                  </Field>
+                )}
+              />
+
+              <Field
+                data-invalid={!!form.formState.errors.due_date}
+              >
+                <FieldLabel htmlFor="due_date">Due Date <span className="text-slate-400">(optional)</span></FieldLabel>
+                <Input
+                  type="date"
+                  id="due_date"
+                  {...form.register("due_date")}
+                  style={{ colorScheme: "dark" }}
+                  className="w-full p-4 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-zinc-100 cursor-pointer"
+                  aria-invalid={!!form.formState.errors.due_date}
+                  min={new Date(new Date().setHours(0, 0, 0, 0) + (1000 * 60 * 60 * 24)).toISOString().split("T")[0]}
+
                 />
+                {form.formState.errors.due_date && (
+                  <FieldError className="text-red-500" errors={[form.formState.errors.due_date]} />
+                )}
+              </Field>
 
-                <Field
-                  data-invalid={!!form.formState.errors.due_date}
-                >
-                  <FieldLabel htmlFor="due_date">Due Date <span className="text-slate-400">(optional)</span></FieldLabel>
-                  <Input
-                    type="date"
-                    id="due_date"
-                    {...form.register("due_date")}
-                    style={{ colorScheme: "dark" }}
-                    className="w-full p-4 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-zinc-100 cursor-pointer"
-                    aria-invalid={!!form.formState.errors.due_date}
-                    min={new Date(new Date().setHours(0, 0, 0, 0) + (1000 * 60 * 60 * 24)).toISOString().split("T")[0]}
+            </div>
+          ) : (
+            <div className="fields">
+              <Controller
+                name="description"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>
+                      Description <span className="text-slate-400">(optional)</span>
+                    </FieldLabel>
+                    <InputGroup className="border border-zinc-700 transition-colors bg-zinc-900 focus-within:border-purple-500 focus-within:ring-2 focus-within:ring-purple-500/10">
+                      <InputGroupTextarea
+                        {...field}
+                        id={field.name}
+                        aria-invalid={fieldState.invalid}
+                        placeholder="Enter Description"
+                        rows={6}
+                        className="min-h-24 resize-none p-4 text-white"
+                        maxLength={200}
+                      />
+                      <InputGroupAddon align="block-end" className="p-3">
+                        <InputGroupText className={`tabular-nums text-xs transition-colors ${(field.value?.length || 0) >= 200
+                          ? 'text-red-400 font-medium'
+                          : (field.value?.length || 0) >= 180
+                            ? 'text-amber-400'
+                            : 'text-zinc-400'
+                          }`}>
+                          {field.value?.length || 0}/200 characters
+                        </InputGroupText>
+                      </InputGroupAddon>
+                    </InputGroup>
 
-                  />
-                  {form.formState.errors.due_date && (
-                    <FieldError errors={[form.formState.errors.due_date]} />
-                  )}
-                </Field>
+                    {fieldState.invalid && (
+                      <FieldError className="text-red-500" errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
 
-              </>
-            )}
-          </div>
+              <Field
+                data-invalid={!!form.formState.errors.due_date}
+              >
+                <FieldLabel htmlFor="due_date">Due Date <span className="text-slate-400">(optional)</span></FieldLabel>
+                <Input
+                  type="date"
+                  id="due_date"
+                  {...form.register("due_date")}
+                  style={{ colorScheme: "dark" }}
+                  className="w-full p-4 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-zinc-100 cursor-pointer"
+                  aria-invalid={!!form.formState.errors.due_date}
+                  min={new Date(new Date().setHours(0, 0, 0, 0) + (1000 * 60 * 60 * 24)).toISOString().split("T")[0]}
+
+                />
+                {form.formState.errors.due_date && (
+                  <FieldError className="text-red-500" errors={[form.formState.errors.due_date]} />
+                )}
+              </Field>
+            </div>
+          )}
         </FieldGroup>
-
         {formError && <p className="form-error">{formError}</p>}
 
         <button

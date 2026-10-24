@@ -25,8 +25,8 @@ export async function createChecklistItem(
 ) {
   const checklist = await dbCreateChecklistItem(
     milestoneId,
-    input.label,
     userId,
+    input.label
   );
   if (!checklist) {
     throw new NotFoundError("Milestone Not Found");
@@ -103,7 +103,8 @@ export async function updateChecklistItem(
     );
 
     //This is for daily minimum xp reward fires once.
-    if (row.progress >= milestone.daily_minimum) {
+    const hasDailyGoal = currentChecklist.daily_minimum != null;
+    if (hasDailyGoal && row.progress >= currentChecklist.daily_minimum) {
       const newlyCompleted = await dbMarkDailyDone(userId, milestoneId);
 
       //only the request that flips FALSE to TRUE awards daily XP.
@@ -117,6 +118,7 @@ export async function updateChecklistItem(
         );
       }
     }
+
   }
   return updatedChecklist;
 }

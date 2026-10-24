@@ -1,7 +1,6 @@
 import z from "zod";
 
 export const createWeaknessSchema = z.object({
-  subject_id: z.coerce.number().int().positive().nullable().optional(),
   title: z
     .string()
     .min(1, { message: "Title is required" })
@@ -9,9 +8,10 @@ export const createWeaknessSchema = z.object({
   description: z
     .string()
     .max(300, { message: "Cannot exceed more than 300 characters" }),
+  subject_id: z.number().positive().nullish(),
 });
-
 export type CreateWeaknessInput = z.infer<typeof createWeaknessSchema>;
+export type CreateWeaknessOutput = z.infer<typeof createWeaknessSchema>;
 
 export const updateWeaknessSchema = z
   .object({
@@ -22,11 +22,9 @@ export const updateWeaknessSchema = z
   .refine((data) => Object.keys(data).length > 0, {
     message: "At least one field must be provided",
   });
-
 export type UpdateWeaknessInput = z.infer<typeof updateWeaknessSchema>;
 
 export const createWeaknessNoteSchema = z.object({
   content: z.string().trim().min(1, { message: "Note content is required" }),
 });
-
 export type CreateWeaknessNoteInput = z.infer<typeof createWeaknessNoteSchema>;

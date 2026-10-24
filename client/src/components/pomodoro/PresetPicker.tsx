@@ -37,9 +37,9 @@ export function PresetPicker({ value, onChange, disabled = false }: Props) {
           onClick={() => onChange(p.seconds)}
           disabled={disabled}
           className={cn(
-            " py-2 px-4 rounded-2xl transition duration-75 border border-gray-600 text-white disabled:cursor-not-allowed cursor-pointer mr-2",
+            " py-2 px-4 rounded-2xl transition duration-75 border border-white/40 text-white disabled:cursor-not-allowed cursor-pointer mr-2",
             p.seconds === value
-              ? "bg-purple-500 text-white"
+              ? "bg-[linear-gradient(135deg,_rgb(230,_195,_138),_rgb(212,_122,_122))] border-[#e6c38a]/85 text-black font-semibold"
               : "bg-transparent hover:scale-105 hover:bg-gray-600",
           )}
         >

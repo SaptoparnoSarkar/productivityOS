@@ -20,11 +20,9 @@ export async function createWeakness(
 
 export async function listWeaknesses(
   status?: "active" | "resolved",
-  limit?: number,
 ): Promise<Weakness[]> {
   const params = new URLSearchParams();
   if (status) params.set("status", status);
-  if (limit !== undefined) params.set("limit", String(limit));
   const query = params.toString() ? `?${params.toString()}` : "";
 
   const response = await apiClient<Envelope<Weakness[]>>(

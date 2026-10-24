@@ -24,7 +24,7 @@ export function SubjectPicker({
         Select Subject
       </option>
       {subjects.map((s) => {
-        if (s.status === "pending") {
+        if (s.status === "pending" && s.has_pomodoro === true) {
           return (
             <option className="bg-gray-900 text-white" key={s.id} value={s.id}>
               {s.title}

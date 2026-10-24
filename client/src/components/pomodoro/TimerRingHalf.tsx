@@ -29,14 +29,14 @@ export default function TimerRingHalf({ remaining, total, label, verdict }: Time
                 <path
                     d="M 40 145 A 110 110 0 0 1 260 145"
                     fill="none"
-                    stroke="rgba(168, 85, 247, 0.22)"
+                    stroke="rgba(101, 252, 116, 0.22)"
                     strokeWidth="12"
                     strokeLinecap="round"
                 />
                 <path
                     d="M 40 145 A 110 110 0 0 1 260 145"
                     fill="none"
-                    stroke="#a855f7"
+                    stroke="#00ff1a"
                     strokeWidth="12"
                     strokeLinecap="round"
                     strokeDasharray={ARC_LENGTH}

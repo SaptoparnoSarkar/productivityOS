@@ -11,7 +11,7 @@ import Link from "next/link";
 export default function MilestoneDetail() {
   const params = useParams();
   const milestoneId = Number(params.milestoneId);
-  const subjectId = Number(params.id);
+  const subjectId = Number(params.subjectId);
 
   //States
   const [milestone, setMilestone] = useState<Milestone | null>(null);
@@ -64,7 +64,7 @@ export default function MilestoneDetail() {
   }
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  if (error) return <p className="render-error">{error}</p>;
   if (!milestone) return <p>Milestone not found.</p>;
 
   return (
@@ -89,6 +89,7 @@ export default function MilestoneDetail() {
 
         <div className="w-full mt-5 text-right">
           <hr className="border-gray-500/30" />
+          <Link href={`/dashboard/subjects/${subjectId}/milestones/${milestoneId}/edit`} className="text-white/70 hover:text-white transition duration-200 cursor-pointer mt-4 font-bold text-sm mr-5">Edit Milestone</Link>
           <button onClick={handleDelete} disabled={deleting} className="text-red-500/60 hover:text-red-500 transition duration-200 cursor-pointer mt-4 font-bold text-sm ">{deleting ? "Deleting..." : "Delete Milestone"}</button>
           {deleteError && <p className="form-error">{deleteError}</p>}
         </div>

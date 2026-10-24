@@ -2,7 +2,6 @@ import {
   dbCreateCounter,
   dbGetCounterByMilestoneId,
   dbIncrementCounter,
-  dbResetCounter,
   dbUpdateCounter,
 } from "../db/queries/counters.queries.js";
 import {
@@ -106,7 +105,8 @@ export async function incrementCounter(
     );
 
     // 7. Daily's XP fires once
-    if (row.progress >= currentCounter.daily_minimum) {
+    const hasDailyGoal = currentCounter.daily_minimum != null;
+    if (hasDailyGoal && row.progress >= currentCounter.daily_minimum) {
       const newlyCompleted = await dbMarkDailyDone(userId, milestoneId);
 
       // Only the winning request receives a row and awards daily xp.
@@ -132,11 +132,11 @@ export async function incrementCounter(
   // Wrap in a db transaction so all writes succeed together or all roll back.
 }
 
-//reset counter
-export async function resetCounter(milestoneId: number, userId: number) {
-  const reset = await dbResetCounter(milestoneId, userId);
-  if (!reset) {
-    throw new NotFoundError("Counter not found");
-  }
-  return reset;
-}
+// //reset counter
+// export async function resetCounter(milestoneId: number, userId: number) {
+//   const reset = await dbResetCounter(milestoneId, userId);
+//   if (!reset) {
+//     throw new NotFoundError("Counter not found");
+//   }
+//   return reset;
+// }

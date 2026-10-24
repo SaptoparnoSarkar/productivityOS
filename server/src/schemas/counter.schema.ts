@@ -1,17 +1,16 @@
 import * as z from "zod";
 
 export const createCounterSchema = z.object({
-  target_value: z.number().int().positive().max(1_000_000, { message: "Target must be a positive number" }),
+  target_value: z.number().int().positive({ message: "Target must be a positive number" }).max(1_000_000),
   unit: z.string().trim().min(1, { message: "Unit is required" }).max(1000),
 });
 
 export type CreateCounterInput = z.infer<typeof createCounterSchema>;
 
-export const updateCounterSchema = createCounterSchema
-  .partial()
-  .refine((data) => Object.keys(data).length > 0, {
-    message: "Provide at least one field to update",
-  });
+export const updateCounterSchema = z.object({
+  target_value: z.number().int().positive({ message: "Target must be a positive number" }).max(1_000_000),
+  unit: z.string().trim().min(1, { message: 'Unit is required' }).max(1000, { message: "Unit is too long" })
+})
 
 export type UpdateCounterInput = z.infer<typeof updateCounterSchema>;
 

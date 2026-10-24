@@ -699,4 +699,14 @@
   }
 }
 
-/* FORM CUSTOM CSS */
+/* Render Error */
+.render-error {
+  color: red;
+  height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  padding: 8px;
+  border-radius: 8px;
+}

@@ -53,6 +53,15 @@ export default function ChecklistItemsList({ milestoneId }: Props) {
     loadItems();
   }, [loadItems]);
 
+  // useEffect(() => {
+  //   if (inputError) {
+  //     const timer = setTimeout(() => {
+  //       setInputError("");
+  //     }, 3000);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [inputError]);
+
   //For toggling the checkbox
   async function handleToggle(item: ChecklistItem) {
     try {
@@ -143,7 +152,10 @@ export default function ChecklistItemsList({ milestoneId }: Props) {
             <button type="button" onClick={handleSaveTarget} className="bg-blue-500/80 p-1 px-2 border border-zinc-700 rounded-lg hover:bg-blue-500 transition duration-200 cursor-pointer text-zinc-100">Save</button>
             <button type="button" onClick={() => setEditingTarget(false)} className="bg-zinc-700/30 p-1 px-2 border border-zinc-700 rounded-lg hover:bg-zinc-600/40 transition duration-200 cursor-pointer text-zinc-100">Cancel</button>
 
+            {inputError && <div className="text-red-500 absolute top-10">{inputError}</div>}
+
           </div>
+
         </div>
       )}
       <div className="flex flex-col">
@@ -163,65 +175,63 @@ export default function ChecklistItemsList({ milestoneId }: Props) {
         <ul>
           {items.map((item) => (
             <li key={item.id}>
+              <hr className="border-gray-500/30 mt-4" />
               {editingId === item.id ? (
                 //EDIT MODE
-                <>
-                  <input
+                <div className="flex gap-2 mt-4">
+                  <input className="w-[85%] p-2 border rounded-lg border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-white"
                     value={editLabel}
                     onChange={(e) => setEditLabel(e.target.value)}
                   />
+
                   <button
                     type="button"
                     onClick={() => handleSaveLabel(item.id)}
+                    className="bg-blue-500/80 text-white px-2 pr-3 py-1 rounded-lg hover:bg-blue-500 transition duration-200 cursor-pointer"
                   >
                     Save
                   </button>
-                  <button type="button" onClick={() => setEditingId(null)}>
+                  <button type="button" onClick={() => setEditingId(null)} className="bg-zinc-700/30 p-1 px-2 border border-zinc-700 rounded-lg hover:bg-zinc-600/40 transition duration-200 cursor-pointer text-zinc-100">
                     Cancel
                   </button>
-                </>
+                </div>
               ) : (
                 //NORMAL MODE
-                <>
-                  <hr className="border-gray-500/30 mt-4" />
-                  <div className="flex gap-2 mt-4 justify-between">
-                    <div className="flex gap-4">
-                      <input
-                        type="checkbox"
-                        checked={item.is_done}
-                        onChange={() => handleToggle(item)}
-                        className="cursor-pointer"
-                      />
-                      <span className={cn("text-md", item.is_done && "line-through text-white/40")}>{item.label}</span>
-                    </div>
-                    <div className="flex gap-4">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEditingId(item.id);
-                          setEditLabel(item.label);
-                        }}
-                        className="cursor-pointer text-slate-500 hover:text-white transition duration-200"
-                      >
-                        <Pencil size={20} />
-                      </button>
-                      <button type="button" onClick={() => handleDelete(item.id)} className="cursor-pointer text-slate-500 hover:text-red-500 transition duration-200">
-                        <Trash size={20} />
-                      </button>
-                    </div>
+                <div className="flex gap-2 mt-4 justify-between">
+                  <div className="flex gap-4">
+                    <input
+                      type="checkbox"
+                      checked={item.is_done}
+                      onChange={() => handleToggle(item)}
+                      className="cursor-pointer"
+                    />
+                    <span className={cn("text-md", item.is_done && "line-through text-white/40")}>{item.label}</span>
                   </div>
-
-                  <form onSubmit={handleAdd} className="flex gap-2 mt-4">
-                    <input type="text" value={newLabel} onChange={(e) => setNewLabel(e.target.value)} placeholder="Add item..." disabled={adding} className="w-[92%] p-2 border rounded-lg border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-white" />
-                    <button type="submit" disabled={adding || newLabel.trim() === ""} className="bg-blue-500/80 text-white px-2 pr-3 py-1 rounded-lg hover:bg-blue-500 transition duration-200 cursor-pointer">
-                      {adding ? "Adding..." : "+ Add"}
+                  <div className="flex gap-4">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingId(item.id);
+                        setEditLabel(item.label);
+                      }}
+                      className="cursor-pointer text-slate-500 hover:text-white transition duration-200"
+                    >
+                      <Pencil size={20} />
                     </button>
-                  </form>
-                  {inputError && <div className="text-red-500">{inputError}</div>}
-                </>
+                    <button type="button" onClick={() => handleDelete(item.id)} className="cursor-pointer text-slate-500 hover:text-red-500 transition duration-200">
+                      <Trash size={20} />
+                    </button>
+                  </div>
+                </div>
               )}
             </li>
           ))}
+          <form onSubmit={handleAdd} className="flex gap-2 mt-4">
+            <input type="text" value={newLabel} onChange={(e) => setNewLabel(e.target.value)} placeholder="Add item..." disabled={adding} className="w-[92%] p-2 border rounded-lg border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-white" />
+            <button type="submit" disabled={adding || newLabel.trim() === ""} className="bg-blue-500/80 text-white px-2 pr-3 py-1 rounded-lg hover:bg-blue-500 transition duration-200 cursor-pointer">
+              {adding ? "Adding..." : "+ Add"}
+            </button>
+          </form>
         </ul>
       )}
     </section>
