@@ -44,7 +44,7 @@ export default function EditMilestonePage() {
   if (!milestone) return <div>Milestone not found</div>;
 
   return (
-    <div>
+    <div className="flex justify-center h-[80vh] items-center">
       <MilestoneForm
         mode="edit"
         subjectId={subjectId}

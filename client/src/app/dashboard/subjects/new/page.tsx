@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 export default function SubjectCreatePage() {
   const router = useRouter();
   return (
-    <main className="mt-10 ">
+    <main className="flex justify-center h-[80vh] items-center">
       <SubjectForm mode="create" onSuccess={() => router.push("/dashboard/subjects")} />
     </main>
   );

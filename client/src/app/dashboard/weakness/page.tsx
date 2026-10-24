@@ -57,9 +57,7 @@ export default function WeaknessPage() {
         <div className="flex flex-col items-center border-2 border-dashed w-200 h-100 border-gray-700 bg-white/5  ">
           <div className="mt-16">
             <div className="relative inline-flex items-center justify-center">
-              {/* Background Shield */}
               <Shield className="text-blue-500 w-20 h-20 " strokeWidth={1.5} />
-              {/* Foreground Target */}
               <Target className="text-red-500 w-8 h-8 absolute" strokeWidth={2.5} />
             </div>
           </div>
@@ -72,7 +70,7 @@ export default function WeaknessPage() {
               Track topics that hold you back
             </p>
             <p className="text-white/70">
-              Acknoledge it, then start working on it.
+              Acknowledge it, then start working on it.
             </p>
           </div>
 

@@ -41,7 +41,7 @@ export default function EditSubjectPage() {
   if (!subject) return <div>Subject not found.</div>;
 
   return (
-    <main>
+    <main className="flex justify-center h-[80vh] items-center">
       <SubjectForm
         mode="edit"
         subject={subject}
