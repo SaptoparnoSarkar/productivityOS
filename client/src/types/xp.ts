@@ -37,7 +37,8 @@ export type XpLogResponse = {
     page: number;
     limit: number;
     totalCount: number;
+    totalXp: number;
+    totalXpToday: number;
     totalPages: number;
-    multiplier_applied: boolean;
   };
 };

@@ -5,9 +5,13 @@ import { listWeaknesses } from "@/lib/api/weakness";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Shield, Target } from "lucide-react";
+import WeaknessCard from "@/components/weakness/WeaknessCard";
+import { Subject } from "@/types/subject";
+import { listSubjects } from "@/lib/api/subjects";
 
 export default function WeaknessPage() {
   const [items, setItems] = useState<Weakness[] | null>(null);
+  const [subjects, setSubjects] = useState<Subject[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
@@ -26,8 +30,10 @@ export default function WeaknessPage() {
     async function load() {
       setError("");
       try {
-        const data = await listWeaknesses(status);
-        setItems(data);
+        const weakness = await listWeaknesses(status);
+        const subject = await listSubjects();
+        setSubjects(subject);
+        setItems(weakness);
       } catch (error) {
         setError(
           error instanceof Error ? error.message : "Something went wrong.",
@@ -122,19 +128,14 @@ export default function WeaknessPage() {
           Resolved
         </Link>
       </div>
-      <ul>
-        {items.map((item) => (
-          <li
-            key={item.id}
-            className="border rounded-md p-4 m-2 hover:bg-purple-500/50 cursor-pointer"
-          >
-            <Link key={item.id} href={`/dashboard/weakness/${item.id}`}>
-              <p className="font-bold text-white">{item.title}</p>
-              <p className="text-slate-500">{item.status}</p>
-            </Link>
-          </li>
+
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 gap-y-4">
+        {items.map((s) => (
+          <WeaknessCard key={s.id} items={s} subjects={subjects ?? []} />
         ))}
-      </ul>
+      </div>
+
     </div>
   );
 }

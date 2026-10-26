@@ -8,6 +8,7 @@ import {
   dbGetTotalXp,
   dbGetXpEvents,
   dbCountXpEvents,
+  dbGetTodayXp,
 } from "../db/queries/xp.queries.js";
 import { getRankForXp, getRankProgress } from "./rank.service.js";
 import { getStreakCount } from "./streak.service.js";
@@ -72,6 +73,8 @@ export async function getXpLog(userId: number, page: number, limit: number) {
   const offset = (page - 1) * limit;
   const events = await dbGetXpEvents(userId, limit, offset);
   const totalCount = await dbCountXpEvents(userId);
+  const totalXp = await dbGetTotalXp(userId);
+  const totalXpToday = await dbGetTodayXp(userId);
   const totalPages = Math.ceil(totalCount / limit);
 
   return {
@@ -79,6 +82,8 @@ export async function getXpLog(userId: number, page: number, limit: number) {
     page,
     limit,
     totalCount,
+    totalXp,
+    totalXpToday,
     totalPages,
   };
 }

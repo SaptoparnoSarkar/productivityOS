@@ -9,14 +9,14 @@ export async function dbInsertXpEvent(
   milestoneId: number,
   multiplierApplied: boolean,
 ) {
-  const today = new Date().toISOString().split("T")[0]!;
+  const localToday = new Date().toLocaleDateString('en-CA');
   // Why ON CONFLICT? This is to prevent double counting.
   if (type === "daily_completion") {
     await pool.query(
       `INSERT INTO xp_events (user_id, subject_id, milestone_id, type, amount, multiplier_applied, awarded_date)
             VALUES($1,$2,$3,$4,$5,$6,$7)
             ON CONFLICT (user_id, milestone_id, type, awarded_date) DO NOTHING`,
-      [userId, subjectId, milestoneId, type, amount, multiplierApplied, today],
+      [userId, subjectId, milestoneId, type, amount, multiplierApplied, localToday],
     );
     return;
   } else {
@@ -46,7 +46,7 @@ export async function dbGetXpEvents(
 ) {
   const result = await pool.query(
     `
-        SELECT e.id, e.amount, e.multiplier_applied, e.type, m.title AS milestone_title, e.created_at FROM xp_events e
+        SELECT e.id, e.amount, e.multiplier_applied, e.type, m.title AS milestone_title, e.created_at, COUNT(*) OVER() AS total_events FROM xp_events e
         LEFT JOIN milestones m ON m.id = e.milestone_id
         WHERE e.user_id = $1
         ORDER BY e.created_at DESC, e.id DESC
@@ -69,7 +69,11 @@ export async function dbCountXpEvents(userId: number) {
 
 export async function dbGetTodayXp(userId: number) {
   const result = await pool.query(
-    `SELECT COALESCE(SUM(amount),0) AS total FROM xp_events WHERE user_id = $1 AND DATE(awarded_date) = CURRENT_DATE`, [userId]
+    `SELECT COALESCE(SUM(e.amount),0)::int AS total 
+    FROM xp_events e 
+    JOIN users u ON u.id = e.user_id
+    WHERE e.user_id = $1 
+    AND (e.created_at AT TIME ZONE u.timezone)::date = (CURRENT_TIMESTAMP AT TIME ZONE u.timezone)::date`, [userId]
   )
   return Number(result.rows[0].total);
 }

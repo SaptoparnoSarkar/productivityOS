@@ -4,6 +4,7 @@ import { getCounter, incrementCounter, updateCounter } from "@/lib/api/counters"
 import { Counter } from "@/types/counter";
 import { useCallback, useEffect, useState } from "react";
 import { Progress } from "../ui/progress";
+import { toast } from "sonner";
 
 type Props = {
     milestoneId: number;
@@ -44,18 +45,17 @@ export default function CounterDisplay({ milestoneId }: Props) {
             await incrementCounter(milestoneId, { delta: 1 })
             await loadCounter();
         } catch (error) {
-            setInputError(error instanceof Error ? error.message : 'Failed to update counter')
+            toast.error(error instanceof Error ? error.message : 'Failed to update counter')
         }
     }
 
     async function handleDecrement() {
         if (!counter) return;
-        setInputError("");
         try {
             await incrementCounter(milestoneId, { delta: -1 })
             await loadCounter()
         } catch (error) {
-            setInputError(error instanceof Error ? error.message : 'Failed to update counter')
+            toast.error(error instanceof Error ? error.message : 'Failed to update counter')
         }
     }
 
@@ -114,6 +114,7 @@ export default function CounterDisplay({ milestoneId }: Props) {
 
             </div>
 
+            {error && <div className="form-error">{error}</div>}
 
         </section>
     )
