@@ -7,6 +7,7 @@ import {
   dbGetWeaknessById,
   dbGetWeaknesses,
   dbGetWeaknessNotes,
+  dbResolveWeakness,
   dbUpdateWeakness,
 } from "../db/queries/weakness.queries.js";
 import type {
@@ -54,6 +55,17 @@ export async function updateWeakness(
     throw new NotFoundError("Weakness Not Found");
   }
   return updated;
+}
+
+export async function resolveWeakness(
+  weaknessId: number,
+  userId: number
+) {
+  const resolved = await dbResolveWeakness(weaknessId, userId);
+  if (!resolved) {
+    throw new NotFoundError("Weakness Not Found");
+  }
+  return resolved;
 }
 
 export async function deleteWeakness(weaknessId: number, userId: number) {

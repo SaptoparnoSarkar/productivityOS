@@ -8,7 +8,7 @@ export const weaknessQuerySchema = z.object({
 export type weaknessQueryType = z.infer<typeof weaknessQuerySchema>;
 
 export const createWeaknessSchema = z.object({
-  subject_id: z.number().int().positive().nullable().optional(),
+  subject_id: z.number().int().positive().nullable(),
   title: z
     .string()
     .min(1, { message: "Title is required" })
@@ -20,12 +20,10 @@ export const createWeaknessSchema = z.object({
 
 export type CreateWeaknessInput = z.infer<typeof createWeaknessSchema>;
 
-export const updateWeaknessSchema = z
-  .object({
-    title: z.string().min(1).max(100).optional(),
-    description: z.string().max(300).optional(),
-    status: z.enum(["active", "resolved"]).optional(),
-  })
+export const updateWeaknessSchema = z.object({
+  title: z.string().min(1).max(100).optional(),
+  description: z.string().max(300).optional(),
+})
   .refine((data) => Object.keys(data).length > 0, {
     message: "At least one field must be provided",
   });

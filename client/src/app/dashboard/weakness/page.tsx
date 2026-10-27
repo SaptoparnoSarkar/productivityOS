@@ -8,6 +8,7 @@ import { Shield, Target } from "lucide-react";
 import WeaknessCard from "@/components/weakness/WeaknessCard";
 import { Subject } from "@/types/subject";
 import { listSubjects } from "@/lib/api/subjects";
+import { GhostCard } from "@/components/weakness/GhostCard";
 
 export default function WeaknessPage() {
   const [items, setItems] = useState<Weakness[] | null>(null);
@@ -103,12 +104,15 @@ export default function WeaknessPage() {
             Write down about your weaknessess you wanna work on.
           </p>
         </div>
-        <button
-          className="w-42 p-3 bg-black text-white mb-10 text-lg font-bold cursor-pointer rounded-2xl hover:bg-purple-600 transition-all duration-200"
-          onClick={() => router.push("/dashboard/weakness/new")}
-        >
-          New Weakness
-        </button>
+
+        <div>
+          <button
+            className="w-fit py-2 px-4  bg-black/80 text-white text-md font-semibold cursor-pointer rounded-md hover:bg-blue-500/70 transition-all duration-200 whitespace-nowrap"
+            onClick={() => router.push("/dashboard/weakness/new")}
+          >
+            + New Weakness
+          </button>
+        </div>
       </div>
 
       <div className="flex gap-4 mt-10 ">
@@ -130,10 +134,11 @@ export default function WeaknessPage() {
       </div>
 
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 gap-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 gap-y-4 mt-10">
         {items.map((s) => (
           <WeaknessCard key={s.id} items={s} subjects={subjects ?? []} />
         ))}
+        <GhostCard />
       </div>
 
     </div>
