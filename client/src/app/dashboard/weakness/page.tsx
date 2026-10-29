@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Weakness } from "@/types/weakness";
 import { listWeaknesses } from "@/lib/api/weakness";
 import Link from "next/link";
@@ -26,25 +26,27 @@ export default function WeaknessPage() {
       ? statusParam
       : undefined;
 
-  useEffect(() => {
+
+  const load = useCallback(async () => {
     setLoading(true);
-    async function load() {
-      setError("");
-      try {
-        const weakness = await listWeaknesses(status);
-        const subject = await listSubjects();
-        setSubjects(subject);
-        setItems(weakness);
-      } catch (error) {
-        setError(
-          error instanceof Error ? error.message : "Something went wrong.",
-        );
-      } finally {
-        setLoading(false);
-      }
+    try {
+      const weakness = await listWeaknesses(status);
+      const subject = await listSubjects();
+      setSubjects(subject);
+      setItems(weakness);
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Something went wrong.",
+      );
+    } finally {
+      setLoading(false);
     }
+  }, [status])
+
+  useEffect(() => {
     load();
-  }, [status]);
+  }, [load]);
+
 
   if (loading) return <div>Loading</div>;
   if (error) return <div className="text-red-500">{error}</div>;
@@ -136,7 +138,7 @@ export default function WeaknessPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 gap-y-4 mt-10">
         {items.map((s) => (
-          <WeaknessCard key={s.id} items={s} subjects={subjects ?? []} />
+          <WeaknessCard key={s.id} items={s} subjects={subjects ?? []} onChange={load} />
         ))}
         <GhostCard />
       </div>

@@ -79,8 +79,8 @@ export async function createWeaknessNote(
 
 export async function listWeaknessNotes(
   weaknessId: number,
-): Promise<WeaknessNote> {
-  const response = await apiClient<Envelope<WeaknessNote>>(
+): Promise<WeaknessNote[]> {
+  const response = await apiClient<Envelope<WeaknessNote[]>>(
     `/api/weakness/${weaknessId}/notes`,
   );
   return response.data;
