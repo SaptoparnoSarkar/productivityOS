@@ -154,7 +154,7 @@ export async function dbCompleteSubjectWithXp(
 //Intention: single read that tells the service if a subject is eligible for completion.
 export async function dbGetMilestoneStats(subjectId: number, userId: number) {
   const result = await pool.query(
-    `SELECT COUNT(*) AS total,
+    `SELECT COUNT(*)::int AS total,
             COUNT(*) FILTER (
               WHERE(m.type = 'counter' AND mc.current_value >= mc.target_value)
                 OR (m.type = 'checklist' AND k.items > 0 AND k.ticked = k.items)

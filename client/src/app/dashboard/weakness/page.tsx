@@ -1,13 +1,18 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Weakness } from "@/types/weakness";
 import { listWeaknesses } from "@/lib/api/weakness";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Shield, Target } from "lucide-react";
+import WeaknessCard from "@/components/weakness/WeaknessCard";
+import { Subject } from "@/types/subject";
+import { listSubjects } from "@/lib/api/subjects";
+import { GhostCard } from "@/components/weakness/GhostCard";
 
 export default function WeaknessPage() {
   const [items, setItems] = useState<Weakness[] | null>(null);
+  const [subjects, setSubjects] = useState<Subject[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
@@ -21,23 +26,27 @@ export default function WeaknessPage() {
       ? statusParam
       : undefined;
 
-  useEffect(() => {
+
+  const load = useCallback(async () => {
     setLoading(true);
-    async function load() {
-      setError("");
-      try {
-        const data = await listWeaknesses(status);
-        setItems(data);
-      } catch (error) {
-        setError(
-          error instanceof Error ? error.message : "Something went wrong.",
-        );
-      } finally {
-        setLoading(false);
-      }
+    try {
+      const weakness = await listWeaknesses(status);
+      const subject = await listSubjects();
+      setSubjects(subject);
+      setItems(weakness);
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Something went wrong.",
+      );
+    } finally {
+      setLoading(false);
     }
+  }, [status])
+
+  useEffect(() => {
     load();
-  }, [status]);
+  }, [load]);
+
 
   if (loading) return <div>Loading</div>;
   if (error) return <div className="text-red-500">{error}</div>;
@@ -97,12 +106,15 @@ export default function WeaknessPage() {
             Write down about your weaknessess you wanna work on.
           </p>
         </div>
-        <button
-          className="w-42 p-3 bg-black text-white mb-10 text-lg font-bold cursor-pointer rounded-2xl hover:bg-purple-600 transition-all duration-200"
-          onClick={() => router.push("/dashboard/weakness/new")}
-        >
-          New Weakness
-        </button>
+
+        <div>
+          <button
+            className="w-fit py-2 px-4  bg-black/80 text-white text-md font-semibold cursor-pointer rounded-md hover:bg-blue-500/70 transition-all duration-200 whitespace-nowrap"
+            onClick={() => router.push("/dashboard/weakness/new")}
+          >
+            + New Weakness
+          </button>
+        </div>
       </div>
 
       <div className="flex gap-4 mt-10 ">
@@ -122,19 +134,15 @@ export default function WeaknessPage() {
           Resolved
         </Link>
       </div>
-      <ul>
-        {items.map((item) => (
-          <li
-            key={item.id}
-            className="border rounded-md p-4 m-2 hover:bg-purple-500/50 cursor-pointer"
-          >
-            <Link key={item.id} href={`/dashboard/weakness/${item.id}`}>
-              <p className="font-bold text-white">{item.title}</p>
-              <p className="text-slate-500">{item.status}</p>
-            </Link>
-          </li>
+
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 gap-y-4 mt-10">
+        {items.map((s) => (
+          <WeaknessCard key={s.id} items={s} subjects={subjects ?? []} onChange={load} />
         ))}
-      </ul>
+        <GhostCard />
+      </div>
+
     </div>
   );
 }

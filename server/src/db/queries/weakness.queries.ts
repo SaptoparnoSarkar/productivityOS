@@ -57,22 +57,25 @@ export async function dbUpdateWeakness(
     fields.push(`description = $${paramIndex++}`);
     values.push(input.description);
   }
-  if (input.status !== undefined) {
-    fields.push(`status = $${paramIndex++}`);
-    fields.push(
-      `resolved_at = ${input.status === "resolved" ? "NOW()" : "NULL"}`,
-    );
-    values.push(input.status);
-  }
 
   if (fields.length === 0) return null;
   fields.push(`updated_at = NOW()`);
   values.push(weaknessId);
   values.push(userId);
+
   const result = await pool.query(
-    `UPDATE weakness_items SET ${fields.join(",")} WHERE id = $${paramIndex++} AND user_id = $${paramIndex++} RETURNING *
-        `,
+    `UPDATE weakness_items SET ${fields.join(",")} 
+    WHERE id = $${paramIndex++} 
+    AND user_id = $${paramIndex++} RETURNING *`,
     values,
+  );
+  return result.rows[0] || null;
+}
+
+export async function dbResolveWeakness(weaknessId: number, userId: number) {
+  const result = await pool.query(
+    `UPDATE weakness_items SET status = 'resolved', resolved_at = NOW() WHERE id = $1 AND user_id = $2 RETURNING*`,
+    [weaknessId, userId],
   );
   return result.rows[0] || null;
 }
@@ -93,13 +96,13 @@ export async function dbCreateWeaknessNote(
   input: CreateWeaknessNoteInput,
 ) {
   const result = await pool.query(
-    `INSERT INTO weakness_notes (weakness_item_id,content)
-    SELECT wi.id, $2
-    FROM weakness_items wi
-    WHERE wi.user_id = $3 AND wi.id = $1
-    RETURNING *
+    `INSERT INTO weakness_notes (weakness_item_id, content)
+      SELECT wi.id, $1            
+      FROM weakness_items wi
+      WHERE wi.id = $3 AND wi.user_id = $2
+      RETURNING *
     `,
-    [weaknessId, input, userId],
+    [input.content, userId, weaknessId]
   );
   return result.rows[0] || null;
 }

@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 
 export default function XpBody() {
   const [data, setData] = useState<XpSummaryResponse | null>(null);
-  const [totalHours, setTotalHours] = useState<TotalSubjectHours | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
@@ -16,9 +15,9 @@ export default function XpBody() {
     async function fetchData() {
       try {
         const data = await getXpSummary();
-        const total = await fetchTotalSubjectHours();
+
         setData(data);
-        setTotalHours(total);
+
       } catch (error) {
         setError(
           error instanceof Error ? error.message : "Faild to load Xp data",
@@ -33,7 +32,7 @@ export default function XpBody() {
   if (loading) return <div> Loading..</div>;
   if (error) return <div> Error..</div>;
   if (!data) return null;
-  if (!totalHours) return null;
+
 
   const { totalXp, rank, progress } = data.summary;
 
@@ -103,15 +102,6 @@ export default function XpBody() {
             );
           })}
         </div>
-      </div>
-      <div className="border border-slate-700 w-85 p-6 rounded-2xl">
-        <h1 className="text-slate-400">TOTAL FOCUS HOURS</h1>
-        <p className="text-white text-3xl">
-          {(totalHours.total_seconds / 360).toFixed(1)} hours
-        </p>
-        <p className="text-slate-400 text-sm">
-          all subjects combined • {totalHours.total_sessions} pomodoro sessions
-        </p>
       </div>
     </div>
   );

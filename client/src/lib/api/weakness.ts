@@ -31,24 +31,33 @@ export async function listWeaknesses(
   return response.data;
 }
 
-export async function getWeaknessById(id: number): Promise<Weakness> {
-  const response = await apiClient<Envelope<Weakness>>(`/api/weakness/${id}`);
+export async function getWeaknessById(weaknessId: number): Promise<Weakness> {
+  const response = await apiClient<Envelope<Weakness>>(`/api/weakness/${weaknessId}`);
   return response.data;
 }
 
 export async function updateWeakness(
-  id: number,
+  weaknessId: number,
   input: UpdateWeaknessInput,
 ): Promise<Weakness> {
-  const response = await apiClient<Envelope<Weakness>>(`/api/weakness/${id}`, {
+  const response = await apiClient<Envelope<Weakness>>(`/api/weakness/${weaknessId}`, {
     method: "PATCH",
     body: JSON.stringify(input),
   });
   return response.data;
 }
 
-export async function deleteWeakness(id: number): Promise<{ message: string }> {
-  const response = await apiClient<{ message: string }>(`/api/weakness/${id}`, {
+export async function resolveWeakness(
+  weaknessId: number
+): Promise<Weakness> {
+  const response = await apiClient<Envelope<Weakness>>(`/api/weakness/${weaknessId}/resolve`, {
+    method: "PATCH",
+  });
+  return response.data;
+}
+
+export async function deleteWeakness(weaknessId: number): Promise<{ message: string }> {
+  const response = await apiClient<{ message: string }>(`/api/weakness/${weaknessId}`, {
     method: "DELETE",
   });
   return response;
@@ -70,8 +79,8 @@ export async function createWeaknessNote(
 
 export async function listWeaknessNotes(
   weaknessId: number,
-): Promise<WeaknessNote> {
-  const response = await apiClient<Envelope<WeaknessNote>>(
+): Promise<WeaknessNote[]> {
+  const response = await apiClient<Envelope<WeaknessNote[]>>(
     `/api/weakness/${weaknessId}/notes`,
   );
   return response.data;

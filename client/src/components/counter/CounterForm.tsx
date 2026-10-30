@@ -7,7 +7,7 @@ import { createCounterSchema, CounterSchemaInput, CounterSchemaOutput } from "@/
 
 
 type Props =
-    | { mode: 'create'; onSubmit: (values: CounterSchemaOutput) => void | Promise<void> }
+    | { mode: 'create'; onSubmit: (values: CounterSchemaOutput) => void | Promise<void>; unit?: string }
     | {
         mode: 'edit';
         defaultValues: CounterSchemaOutput;
@@ -23,7 +23,7 @@ export function CounterForm(props: Props) {
         resolver: zodResolver(createCounterSchema),
         defaultValues: initialValues
             ? { target_value: initialValues.target_value, unit: initialValues.unit }
-            : { target_value: 100, unit: '' },
+            : { target_value: 100, unit: props.mode === 'create' ? props.unit : "" },
     });
 
 
@@ -72,6 +72,7 @@ export function CounterForm(props: Props) {
                                             aria-invalid={fieldState.invalid}
                                             placeholder="e.g pages, problems, hours"
                                             autoComplete="off"
+                                            disabled={props.mode === "create"}
                                             className="p-4 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-white"
                                         />
                                         {fieldState.invalid && (

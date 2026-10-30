@@ -9,7 +9,7 @@ export default function ShowcasePage() {
           Show off your hard work and inspire others.
         </p>
       </div>
-      <div className="flex flex-col justify-center items-center pt-10">
+      <div>
         <ShowcaseHero />
       </div>
     </div>

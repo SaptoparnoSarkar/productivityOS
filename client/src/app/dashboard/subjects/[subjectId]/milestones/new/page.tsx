@@ -77,7 +77,7 @@ export default function NewMilestonePage() {
         <ChecklistForm onSubmit={handleChecklistSubmit} />
       ) : (
         //If the milestone type is a counter, render the counter form.
-        <CounterForm mode="create" onSubmit={handleCounterSubmit} />
+        <CounterForm mode="create" onSubmit={handleCounterSubmit} unit={milestoneDraft.daily_minimum_unit || ""} />
       )}
     </main>
   );

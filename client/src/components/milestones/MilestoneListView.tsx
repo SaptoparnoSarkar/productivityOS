@@ -15,7 +15,7 @@ export function MilestoneListView({ milestones }: Props) {
       </div>
     );
   return (
-    <ul className="flex flex-col gap-4 mt-2">
+    <ul className="flex flex-col gap-4 mt-2 whitespace-nowrap">
       {milestones.map((m) => (
         <li
           key={m.id}
@@ -23,7 +23,7 @@ export function MilestoneListView({ milestones }: Props) {
         >
           <Link
             href={`/dashboard/subjects/${m.subject_id}/milestones/${m.id}`}
-            className="flex justify-between w-[350px]"
+            className="flex justify-between w-full"
           >
             <p>{m.title}</p>
             <p className="text-muted-foreground">{m.type}</p>
@@ -33,3 +33,5 @@ export function MilestoneListView({ milestones }: Props) {
     </ul>
   );
 }
+
+

@@ -29,7 +29,11 @@ export const createMilestoneSchema = baseMilestoneFields.refine(
         const hasUnit = data.daily_minimum_unit !== undefined;
         return hasMin === hasUnit;
     },
-    { message: "daily_minimum and daily_minimum_unit must be provided together" },
+    {
+        message: "daily_minimum and daily_minimum_unit must be provided together",
+        path: ["daily_minimum_unit"],
+    },
+
 )
 
 export type CreateMilestoneInput = z.infer<typeof createMilestoneSchema>;

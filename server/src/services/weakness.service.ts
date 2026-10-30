@@ -7,6 +7,7 @@ import {
   dbGetWeaknessById,
   dbGetWeaknesses,
   dbGetWeaknessNotes,
+  dbResolveWeakness,
   dbUpdateWeakness,
 } from "../db/queries/weakness.queries.js";
 import type {
@@ -14,7 +15,7 @@ import type {
   CreateWeaknessNoteInput,
   UpdateWeaknessInput,
 } from "../schemas/weakness.schema.js";
-import { NotFoundError } from "../utils/errors.js";
+import { ConflictError, NotFoundError, ValidationError } from "../utils/errors.js";
 
 export async function createWeakness(
   userId: number,
@@ -56,6 +57,27 @@ export async function updateWeakness(
   return updated;
 }
 
+export async function resolveWeakness(
+  weaknessId: number,
+  userId: number
+) {
+  const weakness = await dbGetWeaknessById(weaknessId, userId);
+  if (!weakness) {
+    throw new NotFoundError("Weakness Not Found");
+  }
+  if (weakness.status === "resolved") {
+    throw new ValidationError("Weakness already resolved");
+  }
+
+  const weaknessNote = await dbGetWeaknessNotes(weaknessId, userId);
+  if (weaknessNote.length < 1) {
+    throw new ConflictError("Need atleast one note to resolve weakness");
+  }
+
+  const resolved = await dbResolveWeakness(weaknessId, userId);
+  return resolved;
+}
+
 export async function deleteWeakness(weaknessId: number, userId: number) {
   const deleted = await dbDeleteWeakness(weaknessId, userId);
   if (!deleted) {
@@ -77,12 +99,18 @@ export async function addWeaknessNote(
 }
 
 export async function getWeaknessNotes(weaknessId: number, userId: number) {
-  await getWeaknessById(weaknessId, userId);
-  await dbGetWeaknessNotes(weaknessId, userId);
+  const weakness = await getWeaknessById(weaknessId, userId);
+  if (!weakness) {
+    throw new NotFoundError("Weakness Not Found");
+  }
+  return await dbGetWeaknessNotes(weaknessId, userId);
 }
 
 export async function deleteWeaknessNotes(weaknessId: number, userId: number) {
-  await getWeaknessById(weaknessId, userId);
+  const weakness = await getWeaknessById(weaknessId, userId);
+  if (!weakness) {
+    throw new NotFoundError("Weakness Not Found")
+  }
   await dbDeleteWeaknessNotes(weaknessId, userId);
-  return { message: "Weakness Note Deleted Successfully" };
+  return { message: "Weakness Note Deleted Successfully" }
 }

@@ -14,6 +14,7 @@ import {
   getWeaknessById,
   getWeaknesses,
   getWeaknessNotes,
+  resolveWeakness,
   updateWeakness,
 } from "../services/weakness.service.js";
 import { NotFoundError } from "../utils/errors.js";
@@ -87,6 +88,17 @@ export async function weaknessRoutes(fastify: FastifyInstance) {
         .send({ message: "Weakness Updated Successfully", data });
     },
   );
+
+  fastify.patch<{ Params: { weaknessId: string } }>(`/api/weakness/:weaknessId/resolve`, async (request, reply) => {
+    const userId = request.userId;
+    const weaknessId = Number(request.params.weaknessId);
+    if (isNaN(weaknessId)) {
+      return reply.status(400).send({ message: "Invalid Weakness Id" })
+    }
+
+    const data = await resolveWeakness(weaknessId, userId);
+    return reply.status(200).send({ message: "Weakness Resolved Successfully", data });
+  })
 
   // Delete Weakness
   fastify.delete<{ Params: { weaknessId: string } }>(

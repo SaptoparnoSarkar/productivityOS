@@ -86,12 +86,16 @@ export default function MilestoneDetail() {
             <CounterDisplay milestoneId={milestoneId} />
           )}
         </div>
+        <hr className="border-gray-500/30 mt-5" />
+        <div className="w-full mt-2 flex items-center justify-center gap-2">
 
-        <div className="w-full mt-5 text-right">
-          <hr className="border-gray-500/30" />
-          <Link href={`/dashboard/subjects/${subjectId}/milestones/${milestoneId}/edit`} className="text-white/70 hover:text-white transition duration-200 cursor-pointer mt-4 font-bold text-sm mr-5">Edit Milestone</Link>
-          <button onClick={handleDelete} disabled={deleting} className="text-red-500/60 hover:text-red-500 transition duration-200 cursor-pointer mt-4 font-bold text-sm ">{deleting ? "Deleting..." : "Delete Milestone"}</button>
-          {deleteError && <p className="form-error">{deleteError}</p>}
+          {milestone.daily_minimum && <p className="text-sm text-white/70 font-semibold mt-3 whitespace-nowrap border border-gray-500/30 rounded-lg p-2">Daily Minimum: {milestone.daily_minimum} {milestone.daily_minimum_unit} </p>}
+          {milestone.weekly_minimum && <p className="text-sm text-white/70 font-semibold mt-3 whitespace-nowrap border border-gray-500/30 rounded-lg p-2">Weekly Minimum: {milestone.weekly_minimum} {milestone.weekly_minimum === 1 ? "day" : "days"} </p>}
+          <div className="w-full text-right">
+            <Link href={`/dashboard/subjects/${subjectId}/milestones/${milestoneId}/edit`} className="text-white/70 hover:text-white transition duration-200 cursor-pointer font-bold text-sm mr-5">Edit Milestone</Link>
+            <button onClick={handleDelete} disabled={deleting} className="text-red-500/60 hover:text-red-500 transition duration-200 cursor-pointer font-bold text-sm ">{deleting ? "Deleting..." : "Delete Milestone"}</button>
+            {deleteError && <p className="form-error">{deleteError}</p>}
+          </div>
         </div>
 
       </section>

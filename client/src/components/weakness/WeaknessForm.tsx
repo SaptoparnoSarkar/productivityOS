@@ -1,25 +1,35 @@
 "use client";
 
-import { createWeakness } from "@/lib/api/weakness";
+import { createWeakness, updateWeakness } from "@/lib/api/weakness";
 import {
   CreateWeaknessInput,
-  CreateWeaknessOutput,
   createWeaknessSchema,
+  updateWeaknessSchema,
 } from "@/schemas/weakness.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Field, FieldGroup, FieldLabel } from "../ui/field";
-import { CustomInputs } from "../ui/CustomInputs";
 import { Subject } from "@/types/subject";
 import { listSubjects } from "@/lib/api/subjects";
 import { useRouter } from "next/navigation";
 import Spinner from "../ui/spinner";
-import CustomSelect from "../ui/CustomSelect";
 import { Input } from "../ui/input";
 import { InputGroup, InputGroupAddon, InputGroupText, InputGroupTextarea } from "../ui/input-group";
+import { Weakness } from "@/types/weakness";
+import z from "zod";
 
-export default function WeaknessForm() {
+
+type Props =
+  | { mode: "create"; onSuccess: () => void }
+  | { mode: "edit"; weakness: Weakness; onSuccess: () => void };
+
+
+export default function WeaknessForm(props: Props) {
+
+  const { mode, onSuccess } = props;
+
+
   const router = useRouter();
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loadingSubjects, setLoadingSubjects] = useState(true);
@@ -45,25 +55,38 @@ export default function WeaknessForm() {
     fetchSubjects();
   }, []);
 
-  const defaultValues = {
-    title: "",
-    description: "",
-    subject_id: null,
-  };
+  const defaultValues =
+    mode === "edit" ? {
+      title: props.weakness.title,
+      description: props.weakness.description ?? undefined
+    } : {
+      title: "",
+      description: "",
+      subject_id: null
+    }
 
+  const schema = props.mode === "edit" ? updateWeaknessSchema : createWeaknessSchema;
 
-  const form = useForm<CreateWeaknessInput, unknown, CreateWeaknessOutput>({
-    resolver: zodResolver(createWeaknessSchema),
+  type FormInput = z.input<typeof schema>
+  type FormOutput = z.output<typeof schema>
+
+  const form = useForm<FormInput, unknown, FormOutput>({
+    resolver: zodResolver(schema),
     defaultValues,
   });
 
   const [formError, setFormError] = useState<string>("");
 
-  async function onSubmit(data: CreateWeaknessInput) {
+  async function onSubmit(data: FormOutput) {
     setFormError("");
     try {
-      const result = await createWeakness(data);
-      router.push(`/dashboard/weakness/${result.id}`);
+      if (mode === "create") {
+        const result = await createWeakness(data as CreateWeaknessInput);
+        router.push(`/dashboard/weakness/${result.id}`);
+      } else {
+        await updateWeakness(props.weakness.id, data)
+      }
+      onSuccess();
     } catch (error) {
       setFormError(
         error instanceof Error
@@ -79,8 +102,8 @@ export default function WeaknessForm() {
   return (
     <div className="form">
       <div className="form-header">
-        <h1 className="form-title">New Weakness</h1>
-        <p className="form-subtitle">Create a weakness to track your work</p>
+        <h1 className="form-title">{mode === "edit" ? "Edit Weakness" : "Create Weakness"}</h1>
+        <p className="form-subtitle">{mode === "edit" ? "Edit your weakness" : "Create a weakness to track your work"}</p>
       </div>
 
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -142,39 +165,43 @@ export default function WeaknessForm() {
               )}
             />
 
-            <Controller
-              name="subject_id"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>Subject<span className="text-slate-400">(optional)</span></FieldLabel>
-                  <select
-                    {...field}
-                    id={field.name}
-                    aria-invalid={fieldState.invalid}
-                    value={field.value ?? ""}
-                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
-                    className="p-2 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-white cursor-pointer"
-                  >
-                    <option className=" text-gray-500 border-purple-500" value={""} disabled hidden>
-                      Select Subject
-                    </option>
-                    {subjects.map((subject) => {
-                      if (subject.status === "pending") {
-                        return (
-                          <option key={subject.id} value={subject.id}>
-                            {subject.title}
-                          </option>
-                        )
-                      }
-                    })}
-                  </select>
-                  {fieldState.invalid && (
-                    <p className="form-error">{fieldState.error?.message}</p>
-                  )}
-                </Field>
-              )}
-            />
+            {mode === "create" && (
+              <Controller
+                name="subject_id"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Subject<span className="text-slate-400">(optional)</span></FieldLabel>
+                    <select
+                      {...field}
+                      id={field.name}
+                      aria-invalid={fieldState.invalid}
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                      className="p-2 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-white cursor-pointer"
+                    >
+                      <option className=" text-gray-500 border-purple-500" value={""} disabled hidden>
+                        Select Subject
+                      </option>
+                      {subjects.map((subject) => {
+                        if (subject.status === "pending") {
+                          return (
+                            <option key={subject.id} value={subject.id}>
+                              {subject.title}
+                            </option>
+                          )
+                        }
+                      })}
+                    </select>
+                    {fieldState.invalid && (
+                      <p className="form-error">{fieldState.error?.message}</p>
+                    )}
+                  </Field>
+                )}
+              />
+            )}
+
+
 
 
           </div>
