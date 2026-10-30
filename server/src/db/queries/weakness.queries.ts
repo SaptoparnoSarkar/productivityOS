@@ -96,13 +96,13 @@ export async function dbCreateWeaknessNote(
   input: CreateWeaknessNoteInput,
 ) {
   const result = await pool.query(
-    `INSERT INTO weakness_notes (weakness_item_id,content)
-    SELECT wi.id, $2
-    FROM weakness_items wi
-    WHERE wi.user_id = $3 AND wi.id = $1
-    RETURNING *
+    `INSERT INTO weakness_notes (weakness_item_id, content)
+      SELECT wi.id, $1            
+      FROM weakness_items wi
+      WHERE wi.id = $3 AND wi.user_id = $2
+      RETURNING *
     `,
-    [weaknessId, input, userId],
+    [input.content, userId, weaknessId]
   );
   return result.rows[0] || null;
 }
