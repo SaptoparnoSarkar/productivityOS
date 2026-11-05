@@ -18,11 +18,13 @@ type xpEventType =
   | "weekly_completion"
   | "subject_completion"
   | "pomodoro_session"
-  | "per_tick"
+  | "counter_tick"
+  | "checklist_tick"
   | "decay";
 
 const MULTIPLIER_ELIGIBLE: readonly xpEventType[] = [
-  "per_tick",
+  "counter_tick",
+  "checklist_tick",
   "daily_completion",
   "subject_completion",
 ];

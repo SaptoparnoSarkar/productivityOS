@@ -9,12 +9,17 @@ import WeaknessCard from "@/components/weakness/WeaknessCard";
 import { Subject } from "@/types/subject";
 import { listSubjects } from "@/lib/api/subjects";
 import { GhostCard } from "@/components/weakness/GhostCard";
+import { cn } from "@/lib/utils";
+
+const FILTERS = ["all", "active", "resolved"] as const;
+type Filter = (typeof FILTERS)[number];
 
 export default function WeaknessPage() {
-  const [items, setItems] = useState<Weakness[] | null>(null);
+  const [items, setItems] = useState<Weakness[]>([]);
   const [subjects, setSubjects] = useState<Subject[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
+  const [filter, setFilter] = useState<Filter>("all");
 
   const router = useRouter();
 
@@ -46,6 +51,8 @@ export default function WeaknessPage() {
   useEffect(() => {
     load();
   }, [load]);
+
+  const visible = filter === "all" ? items : items.filter((w) => w.status === filter);
 
 
   if (loading) return <div>Loading</div>;
@@ -107,42 +114,41 @@ export default function WeaknessPage() {
           </p>
         </div>
 
-        <div>
+        {/* <div>
           <button
             className="w-fit py-2 px-4  bg-black/80 text-white text-md font-semibold cursor-pointer rounded-md hover:bg-blue-500/70 transition-all duration-200 whitespace-nowrap"
             onClick={() => router.push("/dashboard/weakness/new")}
           >
             + New Weakness
           </button>
-        </div>
+        </div> */}
       </div>
 
-      <div className="flex gap-4 mt-10 ">
-        <Link href="/dashboard/weakness" className="text-slate-500">
-          All
-        </Link>
-        <Link
-          href="/dashboard/weakness?status=active"
-          className="text-slate-500"
-        >
-          Active
-        </Link>
-        <Link
-          href="/dashboard/weakness?status=resolved"
-          className="text-slate-500"
-        >
-          Resolved
-        </Link>
+      <div className="flex gap-2 mb-4 mt-10">
+        {FILTERS.map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={cn(
+              "rounded-full px-4 py-1.5 text-sm cursor-pointer transition-all",
+              filter === f
+                ? "bg-indigo-600 text-white border-none"
+                : "border border-gray-700 text-slate-400 hover:text-white",
+            )}
+          >
+            {f === "all" ? "All" : f === "active" ? "Active" : "Resolved"}
+          </button>
+        ))}
       </div>
 
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 gap-y-4 mt-10">
-        {items.map((s) => (
+        {visible.map((s) => (
           <WeaknessCard key={s.id} items={s} subjects={subjects ?? []} onChange={load} />
         ))}
-        <GhostCard />
+        {(filter === "all" || filter === "active") && <GhostCard />}
       </div>
 
     </div>
-  );
+  )
 }

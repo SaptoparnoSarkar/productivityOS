@@ -96,7 +96,7 @@ export async function updateChecklistItem(
     const xp = realDelta * 5;
     await awardXp(
       userId,
-      "per_tick",
+      "checklist_tick",
       xp,
       currentChecklist.subject_id,
       milestoneId,

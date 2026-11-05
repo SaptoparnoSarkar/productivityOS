@@ -26,17 +26,16 @@ export function Widget(props: WidgetProps) {
       ref={cardRef}
       onPointerMove={handlePointerMove}
     >
-      <div className="flex flex-col text-white gap-4">
-        <div className="bg-gray-400/20 h-2.5" />
+      <div className="flex flex-col text-white gap-3">
+        <div className="bg-gray-400/20 h-4" />
         <div className="flex items-center gap-2 pl-4">
           <div className=" text-gray-400">
             <Icon size={18} />
           </div>
           <div className="font-bold text-lg text-blue-100">{props.title}</div>
         </div>
-
-        <div className="flex flex-col px-4 pb-2">{props.children}</div>
+        <div className="flex flex-col px-3">{props.children}</div>
       </div>
     </div>
-  );
+  )
 }

@@ -31,6 +31,14 @@ export async function listWeaknesses(
   return response.data;
 }
 
+export async function recentWeaknesses(
+): Promise<Weakness[]> {
+  const response = await apiClient<Envelope<Weakness[]>>(
+    `/api/weakness/recents`
+  )
+  return response.data;
+}
+
 export async function getWeaknessById(weaknessId: number): Promise<Weakness> {
   const response = await apiClient<Envelope<Weakness>>(`/api/weakness/${weaknessId}`);
   return response.data;

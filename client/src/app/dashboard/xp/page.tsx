@@ -15,6 +15,8 @@ import {
   FlameIcon,
   ListChecks,
   LucideIcon,
+  SquareCheckBig,
+  Tally5,
   Timer,
   TrendingDown,
   Trophy,
@@ -27,11 +29,19 @@ const EVENT_CONFIG: Record<string, { icon: LucideIcon, label: string, badgeClass
   daily_completion: { icon: CalendarDaysIcon, label: "Daily_Completion", badgeClass: "border border-purple-400/30 bg-purple-400/20 p-3 rounded-md", iconClass: "text-purple-400" },
   subject_completion: { icon: Trophy, label: "Subject_Completion", badgeClass: "border border-yellow-400/30 bg-yellow-400/20 p-3 rounded-md", iconClass: "text-yellow-400" },
   decay: { icon: TrendingDown, label: "Decay", badgeClass: "border border-red-400/30 bg-red-400/20 p-3 rounded-md", iconClass: "text-red-400" },
-  pomodoro_session: { icon: Timer, label: "Pomodoro_Session", badgeClass: "border border-blue-400/30 bg-blue-400/20 p-3 rounded-md", iconClass: "text-blue-400" },
-  weekly_completion: { icon: CalendarRange, label: "Weekly_Completion", badgeClass: "border border-green-400/30 bg-green-400/20 p-3 rounded-md", iconClass: "text-green-400" },
-  per_tick: { icon: Zap, label: "Progress_Tick", badgeClass: "border border-pink-400/30 bg-pink-400/20 p-3 rounded-md", iconClass: "text-pink-400" }
-
+  pomodoro_session: { icon: Timer, label: "Pomodoro Session", badgeClass: "border border-blue-400/30 bg-blue-400/20 p-3 rounded-md", iconClass: "text-blue-400" },
+  weekly_completion: { icon: CalendarRange, label: "Weekly Completion", badgeClass: "border border-green-400/30 bg-green-400/20 p-3 rounded-md", iconClass: "text-green-400" },
+  checklist_tick: { icon: SquareCheckBig, label: "Checklist Tick", badgeClass: "border border-pink-400/30 bg-pink-400/20 p-3 rounded-md", iconClass: "text-pink-400" },
+  counter_tick: { icon: Tally5, label: "Counter Tick", badgeClass: "border border-pink-400/30 bg-pink-400/20 p-3 rounded-md", iconClass: "text-pink-400" },
+  per_tick: { icon: Zap, label: "Per Tick", badgeClass: "border border-pink-400/30 bg-pink-400/20 p-3 rounded-md", iconClass: "text-pink-400" }
 }
+
+const EVENTS_WITHOUT_MILESTONE: string[] = [
+  "subject_completion",
+  "decay",
+  "pomodoro_session",
+  "weekly_completion"
+]
 
 
 export default function XpLogPage() {
@@ -39,7 +49,6 @@ export default function XpLogPage() {
   const [streakData, setStreakData] = useState<WeekResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
-
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -140,6 +149,16 @@ export default function XpLogPage() {
           {events.map((event) => {
             const config = EVENT_CONFIG[event.type] ?? EVENT_CONFIG.per_tick;
             const Icon = config.icon;
+            const hasNoMilestone = EVENTS_WITHOUT_MILESTONE.includes(event.type);
+            //Fallback for an event whose milestone is unavailable
+            let milestoneLabel = "Milestone unavailable";
+
+            if (hasNoMilestone) {
+              milestoneLabel = "Not applicable"
+            } else if (event.milestone_title !== null) {
+              milestoneLabel = event.milestone_title
+            }
+
             return (
               <div
                 key={event.id}
@@ -155,7 +174,7 @@ export default function XpLogPage() {
                 </div>
 
                 <div className="uppercase">
-                  {event.milestone_title ?? "Milestone Deleted"}
+                  {milestoneLabel}
                 </div>
 
                 <div className={cn("flex items-center justify-center gap-2 py-1 w-18 rounded-lg border text-md font-semibold whitespace-nowrap col-start-4",
@@ -168,7 +187,6 @@ export default function XpLogPage() {
                     </span>
                   )}
                 </div>
-
 
                 <div className="">{new Date(event.created_at).toLocaleDateString("en-US", { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" })}</div>
               </div>

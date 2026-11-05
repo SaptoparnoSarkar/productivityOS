@@ -1,6 +1,5 @@
 import type { FastifyInstance } from "fastify";
 import {
-  createMilestone,
   createMilestoneWithSetup,
   deleteMilestone,
   getAllMilestones,
@@ -12,7 +11,6 @@ import {
 } from "../services/milestone.service.js";
 import { ValidationError } from "../utils/errors.js";
 import {
-  createMilestoneSchema,
   setActiveSchema,
   updateMilestoneSchema,
 } from "../schemas/milestone.schema.js";
@@ -131,6 +129,7 @@ export async function milestoneRoutes(fastify: FastifyInstance) {
     const milestones = await recentMilestones(request.userId);
     return reply.status(200).send({ milestones });
   });
+
 
   // isActive Milestone PATCH /api/milestones/:milestoneId/active
   fastify.patch<{ Params: { milestoneId: string } }>(

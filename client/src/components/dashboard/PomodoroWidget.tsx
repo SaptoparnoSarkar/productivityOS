@@ -7,8 +7,8 @@ import { formatMMSS, secondsRemaining } from "@/lib/pomodoro/pomodoro";
 import { fetchActiveSession, pauseSession, resumeSession } from "@/lib/api/pomodoro";
 import { Dot } from "lucide-react";
 import { Subject } from "@/types/subject";
-import { toast } from "sonner";
 import { listSubjects } from "@/lib/api/subjects";
+import Link from "next/link";
 
 export function PomodoroWidget() {
 
@@ -110,98 +110,43 @@ export function PomodoroWidget() {
     }
   }
 
-  async function pause() {
-    try {
-      await pauseSession();
-      await refresh();
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("Failed to pause session");
-      }
-    }
-  }
-
-  async function resume() {
-    try {
-      await resumeSession();
-      await refresh();
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("Failed to resume session");
-      }
-    }
-  }
-  const size = 120;
-
 
   if (loadingSession) return <div>Loading Session</div>;
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="flex items-center gap-2">
-      <div className="">
-        {session ? (
-          <>
+    <div>
+      <div className="flex flex-col justify-center items-center gap-4">
+        <Link href={'/dashboard/pomodoro'} className="hover:scale-102 transition-all duration-200 hover:shadow-lg hover:shadow-fuchsia-700 rounded-full">
+          {session ? (
+            <>
+              <TimerRing
+                remaining={remainingTime}
+                total={session.planned_seconds}
+                label={formatMMSS(remainingTime)}
+                verdict={null}
+              />
+            </>
+          ) : (
             <TimerRing
-              remaining={remainingTime}
-              total={session.planned_seconds}
-              label={formatMMSS(remainingTime)}
+              remaining={selectedPreset}
+              total={selectedPreset}
+              label={formatMMSS(selectedPreset)}
               verdict={null}
-              size={size}
             />
-          </>
-        ) : (
-          <TimerRing
-            remaining={selectedPreset}
-            total={selectedPreset}
-            label={formatMMSS(selectedPreset)}
-            verdict={null}
-            size={size}
-          />
-        )}
-        <p className="relative bottom-16 left-11 font-semibold text-neutral-400 text-sm">
-          {session?.status === "active" || session?.status === "paused"
-            ? "of " + formatMMSS(session?.planned_seconds ?? selectedPreset)
-            : ""}{" "}
-        </p>
+          )}
+        </Link>
+
+        <div>
+          {session?.status === "active" && (
+            <span className="font-semibold text-neutral-400 flex gap-2 truncate">
+              <p>Subject:</p>{subjects.find((s) => s.id === session.subject_id)?.title}
+            </span>
+          )}
+        </div>
       </div>
 
-      <div>
-        {session?.status === "active" && verdict === "running" && (
-          <button
-            className="mt-5 rounded-full bg-purple-500 px-8 py-3 text-white transition hover:bg-purple-400 disabled:cursor-not-allowed disabled:opacity-40"
-            onClick={pause}
-            disabled={isMutating || !canPause}
-          >
-            Pause
-          </button>
-        )}
-
-        {session?.status === "paused" && (
-          <button
-            className="mt-5 rounded-full bg-purple-500 px-8 py-3 text-white transition hover:bg-purple-400 disabled:cursor-not-allowed disabled:opacity-40"
-            onClick={resume}
-            disabled={isMutating}
-          >
-            Resume
-          </button>
-        )}
-
-      </div>
-
-      <div>
-        {subjects.map((subject) => {
-          return (
-            <div key={subject.id}>{subject.title}</div>
-          );
-        })}
-      </div>
-
-      <div className="text-white">
+      <div className="text-white absolute top-7 right-4 z-10">
         {session?.status === "active" ? (
           <div>
             <div className="flex">

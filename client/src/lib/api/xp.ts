@@ -1,7 +1,7 @@
 import { XpLogResponse, XpSummaryResponse } from "@/types/xp";
 import { apiClient } from "../apiClient";
 
-//  GET /api/xp/summary -> { message, summary: { totalXp, rank, progress } }
+// GET /api/xp/summary -> { message, summary: { totalXp, rank, progress } }
 export async function getXpSummary(): Promise<XpSummaryResponse> {
     const response = await apiClient<XpSummaryResponse>(`/api/xp/summary`)
     return response;

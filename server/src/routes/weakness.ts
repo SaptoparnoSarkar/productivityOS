@@ -11,6 +11,7 @@ import {
   createWeakness,
   deleteWeakness,
   deleteWeaknessNotes,
+  getRecentWeaknesses,
   getWeaknessById,
   getWeaknesses,
   getWeaknessNotes,
@@ -36,7 +37,6 @@ export async function weaknessRoutes(fastify: FastifyInstance) {
   });
 
   // List Weaknesses
-
   fastify.get<{ Querystring: weaknessQueryType }>(
     `/api/weakness`,
     async (request, reply) => {
@@ -52,6 +52,12 @@ export async function weaknessRoutes(fastify: FastifyInstance) {
       });
     },
   );
+
+  fastify.get(`/api/weakness/recents`, async (request, reply) => {
+    const userId = request.userId;
+    const data = await getRecentWeaknesses(userId, 5)
+    return reply.status(200).send({ message: "Fetched Successfully", data })
+  });
 
   //Get one weakness
   fastify.get<{ Params: { weaknessId: string } }>(

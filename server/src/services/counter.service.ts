@@ -98,7 +98,7 @@ export async function incrementCounter(
     const xp = realDelta * 5;
     await awardXp(
       userId,
-      "per_tick",
+      "counter_tick",
       xp,
       currentCounter.subject_id,
       milestoneId,

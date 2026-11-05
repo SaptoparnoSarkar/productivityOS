@@ -1,4 +1,4 @@
-import { listWeaknesses } from "@/lib/api/weakness";
+import { recentWeaknesses } from "@/lib/api/weakness";
 import { Weakness } from "@/types/weakness";
 import { UnlinkIcon } from "lucide-react";
 import Link from "next/link";
@@ -12,7 +12,7 @@ export default function WeaknessWidget() {
   useEffect(() => {
     async function fetchWeakness() {
       try {
-        const data = await listWeaknesses("active");
+        const data = await recentWeaknesses();
         setWeakness(data);
       } catch (error) {
         setError(
@@ -27,23 +27,25 @@ export default function WeaknessWidget() {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
-  if (weakness?.length === 0) return (
+  if (!weakness || weakness?.length === 0) return (
 
     <div className="flex flex-col items-center justify-center h-35">
       <UnlinkIcon className="text-[#642ee2]" size={30} />
-      <p className="text-white font-bold mt-4 cursor-default">No weaknesses yet</p>
+      <p className="text-white font-bold mt-4 cursor-default">No active weakness</p>
     </div>
   )
 
   return (
-    <div>
+    <ul>
       {weakness?.map((w) => (
-        <Link key={w.id} href={`/dashboard/weakness/${w.id}`}>
-          <p className="border-l-4 border-purple-500 pl-2.5 ml-2 mt-2 hover:border-purple-700/90 cursor-pointer transition-all duration-300 text-white font-bold ">
-            {w.title}
-          </p>
-        </Link>
+        <li key={w.id} className="border-l-4 border-purple-500 pl-2.5 ml-2 hover:border-purple-700/90 cursor-pointer transition-all duration-300 text-white font-bold">
+          <Link href={`/dashboard/weakness/${w.id}`}>
+            <p className="">
+              {w.title}
+            </p>
+          </Link>
+        </li>
       ))}
-    </div>
-  );
+    </ul>
+  )
 }

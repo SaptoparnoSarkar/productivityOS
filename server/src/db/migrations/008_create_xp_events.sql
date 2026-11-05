@@ -1,5 +1,5 @@
 CREATE TYPE xp_events_type_enum AS ENUM (
-     'daily_completion', 'subject_completion', 'streak_multiplier', 'decay', 'pomodoro_session' ,'weekly_completion', 'per_tick');
+     'daily_completion', 'subject_completion', 'streak_multiplier', 'decay', 'pomodoro_session' ,'weekly_completion', 'per_tick', 'checklist_tick','counter_tick');
 
 CREATE TABLE xp_events (
     id SERIAL PRIMARY KEY,
@@ -26,6 +26,6 @@ CREATE TABLE xp_events (
     
     CONSTRAINT unique_daily_completion_per_day
         UNIQUE (user_id, milestone_id, type, awarded_date) 
-);
+)
 
 

@@ -4,6 +4,7 @@ import {
   dbCreateWeaknessNote,
   dbDeleteWeakness,
   dbDeleteWeaknessNotes,
+  dbGetRecentWeaknesses,
   dbGetWeaknessById,
   dbGetWeaknesses,
   dbGetWeaknessNotes,
@@ -34,7 +35,22 @@ export async function getWeaknesses(
   userId: number,
   status?: "active" | "resolved",
 ) {
-  return await dbGetWeaknesses(userId, status, 5);
+  const weaknesses = await dbGetWeaknesses(userId, status);
+  if (!weaknesses) {
+    throw new NotFoundError("Weaknessess Not Found")
+  }
+  return weaknesses;
+}
+
+export async function getRecentWeaknesses(
+  userId: number,
+  limit: 5
+) {
+  const weaknesses = dbGetRecentWeaknesses(userId, limit);
+  if (!weaknesses) {
+    throw new NotFoundError("Weaknessess Not Found")
+  }
+  return weaknesses;
 }
 
 export async function getWeaknessById(weaknessId: number, userId: number) {

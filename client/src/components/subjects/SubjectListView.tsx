@@ -13,18 +13,18 @@ export function SubjectListView({ subjects }: { subjects: Subject[] }) {
     );
 
   return (
-    <ul className="flex flex-col gap-4 mt-2">
+    <ul className="flex flex-col gap-3 mt-2">
       {subjects.map((s) => (
-        <li key={s.id} className="subject-widget__links">
+        <li key={s.id} className="border-l-4 border-red-500 pl-2.5 ml-2 hover:border-red-700/90 cursor-pointer transition-all duration-300 text-white font-bold">
           <Link
             href={`/dashboard/subjects/${s.id}`}
-            className="flex justify-between w-full"
+            className="flex justify-between w-full min-w-0 gap-4 hover:border-purple-700/90 cursor-pointer transition-all duration-300 "
           >
-            <p>{s.title}</p>
-            <p className="whitespace-nowrap mr-8">{s.due_date?.slice(0, 10)}</p>
+            <p className="line-clamp-1">{s.title}</p>
+            <p className="whitespace-nowrap mr-8">{s.due_date?.split('T')[0] ?? "No Due Date"}{s.due_date ? "(Due)" : ""}</p>
           </Link>
         </li>
       ))}
     </ul>
-  );
+  )
 }

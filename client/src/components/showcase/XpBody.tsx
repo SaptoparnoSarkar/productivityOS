@@ -1,7 +1,5 @@
 "use client";
-import { fetchTotalSubjectHours } from "@/lib/api/pomodoro";
 import { getXpSummary } from "@/lib/api/xp";
-import { TotalSubjectHours } from "@/types/pomodoro";
 import { XpSummaryResponse } from "@/types/xp";
 import { Check, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -52,10 +50,10 @@ export default function XpBody() {
   ];
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="border border-slate-700 w-85 p-6 rounded-2xl">
+    <div className="flex flex-col gap-6 items-center">
+      <div className="border border-slate-700  bg-white/5 p-6 rounded-2xl w-full">
         <h1 className="text-slate-400 ">TOTAL XP GAINED</h1>
-        <p className="text-white text-5xl">{totalXp.toLocaleString()} XP</p>
+        <p className="text-3xl xl:text-4xl font-bold text-white">{totalXp.toLocaleString()} XP</p>
         <div className="w-full h-2 bg-gray-600 rounded-full mt-3">
           <div
             className={`h-2 rounded-full ${progress.percent === 100 ? "bg-amber-500" : "bg-purple-600"}`}
@@ -66,7 +64,7 @@ export default function XpBody() {
           {progress.text} • {progress.percent}%
         </p>
       </div>
-      <div className="border border-slate-700 w-85 p-6 rounded-2xl ">
+      <div className="border border-slate-700 flex flex-col items-center bg-white/5 w-full [@media(min-width:1921px)]:mt-8  p-6 rounded-2xl ">
         <h1 className="text-slate-400">RANK LADDER</h1>
         <div className="rank-scroll mt-3">
           {RANKS.map((r) => {
@@ -75,7 +73,7 @@ export default function XpBody() {
             return (
               <div
                 key={r.name}
-                className={`relative flex items-center gap-3 rounded-lg py-2 pl-4 pr-2 mt-2 ${isCurrent
+                className={`relative flex items-center gap-3 rounded-lg py-2 pl-4 pr-2 mt-2 select-none ${isCurrent
                   ? "bg-purple-500/10 ring-1 ring-purple-600/60 text-purple-200"
                   : isUnlocked
                     ? "text-white"

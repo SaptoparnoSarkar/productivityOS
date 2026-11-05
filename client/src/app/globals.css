@@ -576,7 +576,7 @@
   /* Hero Page */
 
   .header-text {
-    font-size: 60px;
+    font-size: clamp(2rem, 3.5vw, 3.75rem);
     font-weight: bold;
     color: white;
   }
@@ -650,16 +650,6 @@
     }
   }
 
-  .subject-widget__links {
-    border-left: 4px solid red;
-    margin-left: 8px;
-    padding-left: 10px;
-    transition: 0.3s ease-in-out;
-    color: white;
-    font-weight: 600;
-    text-decoration: none;
-  }
-
   @property --fade-b {
     syntax: "<length>";
     inherits: false;
@@ -695,8 +685,17 @@
   }
 
   .rank-scroll::-webkit-scrollbar {
-    display: none;
+    display: block;
   }
+}
+
+.trophy-scroll {
+  scrollbar-width: none;
+}
+
+.trophy-scroll::-webkit-scrollbar {
+  display: none;
+
 }
 
 /* Render Error */

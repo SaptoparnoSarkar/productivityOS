@@ -299,7 +299,7 @@ export default function NewPomodoroHero() {
         </div>
       </header>
 
-      <section className="mt-10 grid gap-5 lg:grid-cols-12 w-[1800px] mx-auto">
+      <section className="mt-10 grid gap-5 lg:grid-cols-12 w-[95%] mx-auto">
         <div className="lg:col-span-8">
           <PomodoroTimerCard
             pauseBudgetPreview={displayedPausedBudget}
@@ -329,7 +329,7 @@ export default function NewPomodoroHero() {
         </aside>
       </section>
 
-      <section className="mt-10 grid gap-5 lg:grid-cols-14 mx-auto w-[1800px]">
+      <section className="mt-10 grid gap-5 lg:grid-cols-14 mx-auto w-[95%]">
 
         <div className="lg:col-span-3 border p-6 rounded-2xl bg-white/5 flex flex-col gap-4 justify-center items-center">
           <h1 className="text-slate-300">TODAY FOCUS</h1>

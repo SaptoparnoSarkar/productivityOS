@@ -1,6 +1,6 @@
 "use client";
 
-import { listUpcomingSubjects } from "@/lib/api/subjects";
+import { listSubjects } from "@/lib/api/subjects";
 import { Subject } from "@/types/subject";
 import { useEffect, useState } from "react";
 import { SubjectListView } from "../subjects/SubjectListView";
@@ -15,7 +15,7 @@ export function SubjectWidget() {
     setLoading(true);
     async function fetchUpcomingSubjects() {
       try {
-        const data = await listUpcomingSubjects(5);
+        const data = await listSubjects();
         setSubjects(data);
       } catch (error) {
         setError(
@@ -34,6 +34,7 @@ export function SubjectWidget() {
   if (loading) return <div>Loading Subjects</div>;
 
 
-
-  return <SubjectListView subjects={subjects} />;
+  return <SubjectListView subjects={subjects} />
 }
+
+

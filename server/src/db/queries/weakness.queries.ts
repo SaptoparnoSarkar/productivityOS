@@ -21,13 +21,23 @@ export async function dbCreateWeakness(
 export async function dbGetWeaknesses(
   userId: number,
   status?: "active" | "resolved",
-  limit?: number,
 ) {
   const result = await pool.query(
-    "SELECT * FROM weakness_items WHERE user_id = $1 AND status = COALESCE($2::weakness_items_enum, status) ORDER BY created_at DESC LIMIT $3",
-    [userId, status ?? null, limit],
+    "SELECT * FROM weakness_items WHERE user_id = $1 AND status = COALESCE($2::weakness_items_enum, status) ORDER BY created_at DESC",
+    [userId, status ?? null],
   );
-  return result.rows;
+  return result.rows.length > 0 ? result.rows : null;
+}
+
+export async function dbGetRecentWeaknesses(
+  userId: number,
+  limit: number
+) {
+  const result = await pool.query(`
+      SELECT * FROM weakness_items WHERE user_id = $1 AND status = 'active' ORDER BY created_at DESC LIMIT $2
+    `, [userId, limit])
+
+  return result.rows.length > 0 ? result.rows : null;
 }
 
 // Intention: fetch one owned weakness.

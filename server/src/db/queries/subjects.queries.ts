@@ -92,13 +92,13 @@ export async function dbDeleteSubject(subjectId: number, userId: number) {
   return result.rows[0] || null;
 }
 
-//This get's all the due Subjects
-export async function dbDueSubjects(userId: number, limit: number) {
+//This to get recent Subjects
+export async function dbRecentSubjects(userId: number, limit: number) {
   const result = await pool.query(
     `SELECT * FROM subjects s
-        WHERE s.user_id = $1 AND s.due_date >= CURRENT_DATE
+        WHERE s.user_id = $1
         AND s.status = 'pending'
-        ORDER BY s.due_date ASC
+        ORDER BY created_at DES
         LIMIT $2`,
     [userId, limit],
   );

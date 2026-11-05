@@ -37,14 +37,16 @@ export default function ShowcaseWidget() {
     );
 
   return (
-    <div>
+    <ul className="flex flex-col gap-3 mt-2">
       {showcase.map((s) => (
-        <Link key={s.id} href={`/dashboard/showcase/${s.id}`}>
-          <p className="border-l-4 border-green-500 pl-2.5 ml-2 mt-2 hover:border-green-700/90 cursor-pointer transition-all duration-300 text-white font-bold">
-            {s.subject_title}
-          </p>
-        </Link>
+        <li key={s.id} className="border-l-4 border-orange-400 pl-2.5 ml-2 hover:border-orange-600/90 cursor-pointer transition-all duration-300 text-white font-bold">
+          <Link href={`/dashboard/showcase/${s.id}`}>
+            <p className="">
+              {s.subject_title}
+            </p>
+          </Link>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }

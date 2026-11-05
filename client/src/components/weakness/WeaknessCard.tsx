@@ -41,7 +41,7 @@ export default function WeaknessCard({ items, subjects, onChange }: Props) {
         <div className={cn("border border-slate-500/50 rounded-2xl p-4.5 h-90 bg-white/5 flex flex-col", items.status === "resolved" ? "bg-green-500/10" : "")}>
             <div className="flex items-center justify-between">
                 <h3 className="text-[30px] font-bold text-white truncate">{items.title}</h3>
-                <div className={cn("flex items-center gap-2 p-2 border border-slate-500/50 rounded-2xl", items.status === "active" ? "text-orange-300 font-bold bg-orange-500/40 " : "text-green-300 font-bold bg-green-500/40 ")}>
+                <div className={cn("flex items-center gap-2 p-3 border border-slate-500/50 rounded-2xl", items.status === "active" ? "text-orange-300 font-bold bg-orange-500/40 " : "text-green-300 font-bold bg-green-500/40 ")}>
                     {items.status === "active" ? (
                         <span>Active</span>
                     ) : (
@@ -59,7 +59,7 @@ export default function WeaknessCard({ items, subjects, onChange }: Props) {
 
             </div>
 
-            <div className="mt-2 text-sm text-slate-400 font-medium">
+            <div className="mt-4 ml-1 text-sm text-slate-400 font-medium">
                 {items.description}
             </div>
 

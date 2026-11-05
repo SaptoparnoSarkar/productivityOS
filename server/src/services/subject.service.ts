@@ -2,7 +2,7 @@ import {
   dbCompleteSubjectWithXp,
   dbCreateSubject,
   dbDeleteSubject,
-  dbDueSubjects,
+  dbRecentSubjects,
   dbGetMilestoneStats,
   dbUpdateSubject,
   getSubjectById,
@@ -76,7 +76,7 @@ export async function deleteSubject(subjectId: number, userId: number) {
 
 //Upcoming Subjects
 export async function upcomingSubjects(userId: number, limit = 5) {
-  const due = await dbDueSubjects(userId, limit);
+  const due = await dbRecentSubjects(userId, limit);
   return due;
 }
 

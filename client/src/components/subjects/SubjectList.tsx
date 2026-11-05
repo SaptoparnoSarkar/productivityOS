@@ -95,7 +95,7 @@ export function SubjectList() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 gap-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 gap-y-4 ">
         {visible.map((s) => (
           <SubjectCard key={s.id} subject={s} />
         ))}

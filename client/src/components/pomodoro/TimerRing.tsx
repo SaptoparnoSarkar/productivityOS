@@ -10,15 +10,17 @@ type Props = {
 export function TimerRing({
   remaining,
   total,
-  size = 380,
   stroke = 15,
   label = "00:00",
   verdict,
 }: Props) {
+  const size = 135
+
   const r = (size - stroke) / 2;
   const C = 2 * Math.PI * r;
   const pct = total > 0 ? Math.min(1, Math.max(0, remaining / total)) : 0;
   const offset = C * (1 - pct);
+
 
   return (
     <svg width={size} height={size}>
@@ -60,5 +62,7 @@ export function TimerRing({
         {label}
       </text>
     </svg>
-  );
+  )
 }
+
+
