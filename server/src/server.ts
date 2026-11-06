@@ -85,6 +85,7 @@ const start = async () => {
     fastify.log.info("weakness routes check");
     await fastify.register(showcaseRoutes);
     fastify.log.info("showcase routes check");
+
     //Start listening
     await fastify.listen({ port: 4000 });
   } catch (err) {
