@@ -1,5 +1,5 @@
 import { pool } from "../../config/db.js";
-import { NotFoundError, ValidationError } from "../../utils/errors.js";
+import { ValidationError } from "../../utils/errors.js";
 
 //Changed: changed from weekly_streak_contracts to streak_contracts
 //Changed: changed from weekly_streak_contract_items to streak_contract_items
@@ -167,3 +167,29 @@ ORDER BY progress_date ASC
 
   return result.rows;
 }
+
+// Streak Contract Automation \\
+// Check User's Missing Streak Contract
+export async function dbGetUsersMissingStreakContract() {
+  const result = await pool.query(
+    `SELECT u.id
+     FROM users u
+     WHERE NOT EXISTS (
+      SELECT 1
+      FROM streak_contracts sc
+      WHERE sc.user_id = u.id
+        AND sc.week_start_date = date_trunc('week', CURRENT_TIMESTAMP AT TIME ZONE u.timezone)::date
+     ) 
+      AND EXISTS (
+        SELECT 1
+        FROM milestones m
+        JOIN subjects s ON s.id = m.subject_id
+        WHERE s.user_id = u.id
+          AND m.is_active = true
+          AND m.daily_minimum is NOT NULL
+      )
+    `
+  );
+  return result.rows;
+}
+

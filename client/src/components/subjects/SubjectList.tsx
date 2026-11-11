@@ -6,6 +6,9 @@ import { useEffect, useState } from "react";
 import { SubjectCard } from "./SubjectCard";
 import { GhostCard } from "./GhostCard";
 import { cn } from "@/lib/utils";
+import { BookOpen } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const FILTERS = ["all", "pending", "completed"] as const;
 type Filter = (typeof FILTERS)[number];
@@ -15,6 +18,8 @@ export function SubjectList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [filter, setFilter] = useState<Filter>("all");
+
+  const router = useRouter();
 
   useEffect(() => {
     setError("");
@@ -47,8 +52,36 @@ export function SubjectList() {
 
   if (!subjects || subjects.length === 0)
     return (
-      <div className="text-white">
-        No Subjects Created Yet. Create One to start tracking your progress.
+      <div className="flex flex-col gap-1 ml-14 mt-2 mr-12 mb-12">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="header-text">Subjects</h1>
+            <p className="subheading-text">
+              Master your subjects with dedicated focus and organized progress
+              tracking.
+            </p>
+          </div>
+
+        </div>
+
+        <div className="flex items-center justify-center mt-25">
+          <div className="flex flex-col items-center justify-center border-2 border-dashed w-200 h-130 border-gray-700 bg-white/5 rounded-2xl">
+            <div className="mt-10 p-5 bg-purple-400/20 rounded-2xl shadow-[0_0_15px_rgba(147,51,234,0.8),0_0_30px_rgba(147,51,234,0.4)]"><BookOpen className="text-purple-500" size={50} /></div>
+            <div className="flex flex-col items-center mt-10 gap-3">
+              <h1 className="text-white text-3xl font-bold-">No Subjects Yet</h1>
+              <p className="text-slate-500 text-md">Create your first subject and start making progress.</p>
+            </div>
+            <div className="mt-10 flex flex-col items-center">
+              <button
+                className="w-56 p-3 bg-black text-white mb-10 text-lg font-bold cursor-pointer whitespace-nowrap rounded-2xl hover:bg-purple-600 transition-all duration-300"
+                onClick={() => router.push("/dashboard/subjects/new")}
+              >
+                + Create Subject
+              </button>
+              <p className="text-slate-500 text-sm bottom-6 relative">One subject. One step forward.</p>
+            </div>
+          </div>
+        </div>
       </div>
     );
 
@@ -86,7 +119,7 @@ export function SubjectList() {
             className={cn(
               "rounded-full px-4 py-1.5 text-sm cursor-pointer transition-all",
               filter === f
-                ? "bg-indigo-600 text-white border-none"
+                ? `bg-indigo-600 text-white border-none ${f === "completed" ? "bg-green-500" : ""}`
                 : "border border-gray-700 text-slate-400 hover:text-white",
             )}
           >

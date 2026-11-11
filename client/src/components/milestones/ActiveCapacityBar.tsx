@@ -10,9 +10,8 @@ export function ActiveCapacityBar({ active, max = 5 }: Props) {
       {maxArray.map((_, index) => (
         <div
           key={index}
-          className={`h-2 w-16 rounded-full ${
-            index < active ? "bg-purple-500" : "bg-slate-700"
-          }`}
+          className={`h-2 w-16 rounded-full ${index < active ? "bg-cyan-500" : "bg-slate-700"
+            }`}
         />
       ))}
     </div>

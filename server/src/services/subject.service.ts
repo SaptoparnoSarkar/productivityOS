@@ -30,9 +30,6 @@ export async function createSubject(userId: number, input: CreateSubjectInput) {
 //Get Subjects
 export async function getSubjects(userId: number) {
   const subjects = await getSubjectsByUserId(userId);
-  if (!subjects) {
-    throw new NotFoundError("No Subjects Created Yet!");
-  }
   return subjects;
 }
 

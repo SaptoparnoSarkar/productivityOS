@@ -71,7 +71,7 @@ export default function DashboardShell() {
         <MetricCard
           label="Dailies Completed"
           value={metricValue.metrics.completedDailies}
-          text="Create your first Milestone Daily"
+          text="Earn XP by completing dailies"
           isActive={metricValue.metrics.completedDailies > 0}
         />
 

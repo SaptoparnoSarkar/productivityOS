@@ -26,7 +26,7 @@ export async function dbGetWeaknesses(
     "SELECT * FROM weakness_items WHERE user_id = $1 AND status = COALESCE($2::weakness_items_enum, status) ORDER BY created_at DESC",
     [userId, status ?? null],
   );
-  return result.rows.length > 0 ? result.rows : null;
+  return result.rows;
 }
 
 export async function dbGetRecentWeaknesses(
@@ -37,7 +37,7 @@ export async function dbGetRecentWeaknesses(
       SELECT * FROM weakness_items WHERE user_id = $1 AND status = 'active' ORDER BY created_at DESC LIMIT $2
     `, [userId, limit])
 
-  return result.rows.length > 0 ? result.rows : null;
+  return result.rows;
 }
 
 // Intention: fetch one owned weakness.

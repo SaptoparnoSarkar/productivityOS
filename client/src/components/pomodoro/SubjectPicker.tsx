@@ -18,10 +18,11 @@ export function SubjectPicker({
       value={value ?? ""}
       onChange={(e) => onChange(Number(e.target.value))}
       disabled={disabled}
-      className="text-white border border-slate-500/20 p-2 pr-2 rounded-2xl cursor-pointer disabled:cursor-not-allowed focus:outline-none focus:ring-0 "
+      className="text-white border border-slate-500/20 p-2 pr-2 rounded-2xl cursor-pointer disabled:cursor-not-allowed focus:outline-none focus:ring-0"
+      title="Create a subject first to enable pomodoro."
     >
       <option className="bg-gray-900 text-gray-500" value={""} disabled hidden>
-        Select Subject
+        {subjects.length === 0 ? "No subjects available" : "     Select Subject"}
       </option>
       {subjects.map((s) => {
         if (s.status === "pending" && s.has_pomodoro === true) {

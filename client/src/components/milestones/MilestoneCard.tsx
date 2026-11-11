@@ -20,8 +20,8 @@ export default function MilestoneCard({
       className={cn(
         "flex flex-col h-60 p-4 rounded-xl border relative ",
         milestone.is_active
-          ? "opacity-100 shadow-lg shadow-purple-500/10 ring-1 ring-purple-400 bg-white/5"
-          : "border border-slate-600 grayscale opacity-60 hover:opacity-100 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-150 hover:grayscale-25",
+          ? "opacity-100 shadow-lg shadow-cyan-500/10 ring-1 border-cyan-500/30 bg-slate-900/40"
+          : "border border-slate-600 grayscale opacity-60 hover:opacity-100 hover:border-cyan-500 hover:shadow-lg hover:shadow-cyan-500/10 transition-all duration-150 hover:grayscale-25",
       )}
     >
       {isToggling && (
@@ -31,7 +31,7 @@ export default function MilestoneCard({
       )}
       <div className="flex justify-between mb-4">
         {milestone.is_active ? (
-          <div className="text-green-400 text-xs font-semibold">ACTIVE</div>
+          <div className="text-cyan-400 text-xs font-semibold">ACTIVE</div>
         ) : (
           <div className="text-red-400 text-xs font-semibold">INACTIVE</div>
         )}
@@ -46,12 +46,18 @@ export default function MilestoneCard({
       </div>
 
       <div>
-        <h2 className="font-semibold text-white">{milestone.title}</h2>
-        <p className="text-sm text-gray-400 mt-1">{milestone.subject_name}</p>
+        <h2 className="font-semibold text-slate-100">{milestone.title}</h2>
+        <p className="text-sm text-slate-400 mt-1">{milestone.subject_name}</p>
         {/* TODO: Progress  */}
       </div>
 
-      <div className="border border-b-red-500 border-w-2 mt-8" />
+      {milestone.is_active ? (
+        <div className="border border-b-cyan-500 border-w-2 mt-8" />
+      ) :
+        (
+          <div className="border border-b-red-500 border-w-2 mt-8" />
+        )}
+
 
       <div className="flex items-center mt-8">
         <Goal className="w-4 h-4 text-white/70" />
