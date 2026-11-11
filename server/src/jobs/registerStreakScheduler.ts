@@ -6,7 +6,16 @@ export async function registerStreakScheduler() {
         "streak-contract-scan",
         { every: 60_000 },
         {
-            name: "scan-contracts"
+            name: "scan-contracts",
+            opts: {
+                attempts: 3,
+                backoff: {
+                    type: "exponential",
+                    delay: 2000,
+                },
+                removeOnComplete: 100,
+                removeOnFail: 500,
+            }
         }
     )
 }
