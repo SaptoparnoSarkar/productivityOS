@@ -18,7 +18,7 @@ import { usePathname } from "next/navigation";
 const NavItems = [
   { label: "Home", href: "/dashboard", icon: LayoutDashboard },
   { label: "Subjects", href: "/dashboard/subjects", icon: BookOpen },
-  { label: "Milestones", href: "/dashboard/subjects/milestones", icon: Flame },
+  { label: "Milestones Config", href: "/dashboard/subjects/milestones", icon: Flame },
   { label: "XP", href: "/dashboard/xp", icon: Zap },
   { label: "Pomodoro", href: "/dashboard/pomodoro", icon: Timer },
   { label: "Weakness", href: "/dashboard/weakness", icon: TriangleAlert },

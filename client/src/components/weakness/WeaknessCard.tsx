@@ -38,7 +38,7 @@ export default function WeaknessCard({ items, subjects, onChange }: Props) {
     }
 
     return (
-        <div className={cn("border border-slate-500/50 rounded-2xl p-4.5 h-90 bg-white/5 flex flex-col", items.status === "resolved" ? "bg-green-500/10" : "")}>
+        <div className={cn("border border-slate-500/50 rounded-2xl p-4.5 h-90 bg-white/5 flex flex-col hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-300 hover:-translate-y-1 active:translate-y-0", items.status === "resolved" ? "bg-green-500/10" : "")}>
             <div className="flex items-center justify-between">
                 <h3 className="text-[30px] font-bold text-white truncate">{items.title}</h3>
                 <div className={cn("flex items-center gap-2 p-3 border border-slate-500/50 rounded-2xl", items.status === "active" ? "text-orange-300 font-bold bg-orange-500/40 " : "text-green-300 font-bold bg-green-500/40 ")}>

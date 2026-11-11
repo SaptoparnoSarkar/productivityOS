@@ -30,7 +30,7 @@ export async function getSubjectsByUserId(userId: number) {
     "SELECT * FROM subjects WHERE user_id = $1 ORDER BY created_at DESC",
     [userId],
   );
-  return result.rows.length > 0 ? result.rows : null;
+  return result.rows;
 }
 
 //Get a single Subject by UserId

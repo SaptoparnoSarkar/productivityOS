@@ -15,16 +15,16 @@ export const streakContractWorker = new Worker(
             await createStreakContract(job.data.userId)
             return
         } else {
-            throw new Error(`Unknown Job: ${job.name}`)
+            throw new Error(`Unknown Job:${job.name}`)
         }
     },
     { connection: bullmqWorkerConnection }
 )
 
-
-streakContractWorker.on("completed", (job) => console.log("Completed:", job.name, job.id));
+streakContractWorker.on("completed", (job) => console.log("Completed:", job.name, job.id, job.data));
 streakContractWorker.on("failed", (job, error) => console.error("Failed:", job?.id, error));
 streakContractWorker.on("error", (error) => console.error("Worker error:", error));
 
 await registerStreakScheduler();
 console.log("Streak scan schedule registered");
+

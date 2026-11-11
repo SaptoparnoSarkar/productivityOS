@@ -178,10 +178,11 @@ export default function WeaknessForm(props: Props) {
                       aria-invalid={fieldState.invalid}
                       value={field.value ?? ""}
                       onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
-                      className="p-2 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-white cursor-pointer"
+                      disabled={subjects.length === 0}
+                      className="p-2 border border-zinc-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/10 focus:outline-none focus:ring-offset-0 transition-colors bg-zinc-900 text-white cursor-pointer disabled:text-gray-500"
                     >
                       <option className=" text-gray-500 border-purple-500" value={""} disabled hidden>
-                        Select Subject
+                        {subjects.length === 0 ? "No subjects available" : "Select Subject"}
                       </option>
                       {subjects.map((subject) => {
                         if (subject.status === "pending") {

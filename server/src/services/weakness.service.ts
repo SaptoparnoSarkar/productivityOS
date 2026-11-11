@@ -36,9 +36,6 @@ export async function getWeaknesses(
   status?: "active" | "resolved",
 ) {
   const weaknesses = await dbGetWeaknesses(userId, status);
-  if (!weaknesses) {
-    throw new NotFoundError("Weaknessess Not Found")
-  }
   return weaknesses;
 }
 
@@ -47,9 +44,6 @@ export async function getRecentWeaknesses(
   limit: 5
 ) {
   const weaknesses = dbGetRecentWeaknesses(userId, limit);
-  if (!weaknesses) {
-    throw new NotFoundError("Weaknessess Not Found")
-  }
   return weaknesses;
 }
 

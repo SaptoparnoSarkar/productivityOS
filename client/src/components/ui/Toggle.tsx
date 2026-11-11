@@ -18,7 +18,7 @@ export function Toggle({ checked, onChange, disabled }: Props) {
       disabled={disabled}
       className={cn(
         "relative h-6 w-11 rounded-full transition-colors cursor-pointer",
-        checked ? "bg-purple-500" : "bg-slate-700",
+        checked ? "bg-cyan-500" : "bg-slate-700",
         disabled && "opacity-50 cursor-not-allowed",
       )}
     >
@@ -29,5 +29,5 @@ export function Toggle({ checked, onChange, disabled }: Props) {
         )}
       />
     </button>
-  );
+  )
 }

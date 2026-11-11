@@ -2,7 +2,6 @@
 import { useCallback, useEffect, useState } from "react";
 import type { Weakness } from "@/types/weakness";
 import { listWeaknesses } from "@/lib/api/weakness";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Shield, Target } from "lucide-react";
 import WeaknessCard from "@/components/weakness/WeaknessCard";
@@ -16,7 +15,7 @@ type Filter = (typeof FILTERS)[number];
 
 export default function WeaknessPage() {
   const [items, setItems] = useState<Weakness[]>([]);
-  const [subjects, setSubjects] = useState<Subject[] | null>(null);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [filter, setFilter] = useState<Filter>("all");
@@ -57,7 +56,7 @@ export default function WeaknessPage() {
 
   if (loading) return <div>Loading</div>;
   if (error) return <div className="text-red-500">{error}</div>;
-  if (!items || items.length === 0) return (
+  if (!items || items?.length === 0 || subjects.length === 0) return (
 
     <div className="ml-14 mt-2 mr-12 mb-10">
       <div className="flex gap-4 mb-4 justify-between w-full">
@@ -69,8 +68,8 @@ export default function WeaknessPage() {
         </div>
       </div>
 
-      <div className="flex justify-center mt-25  ">
-        <div className="flex flex-col items-center border-2 border-dashed w-200 h-100 border-gray-700 bg-white/5  ">
+      <div className="flex justify-center mt-25">
+        <div className="flex flex-col items-center border-2 border-dashed w-200 h-100 border-gray-700 bg-white/5 rounded-2xl">
           <div className="mt-16">
             <div className="relative inline-flex items-center justify-center">
               <Shield className="text-blue-500 w-20 h-20 " strokeWidth={1.5} />
@@ -132,7 +131,7 @@ export default function WeaknessPage() {
             className={cn(
               "rounded-full px-4 py-1.5 text-sm cursor-pointer transition-all",
               filter === f
-                ? "bg-indigo-600 text-white border-none"
+                ? `bg-indigo-600 text-white border-none ${f === "resolved" ? "bg-green-500" : ""}`
                 : "border border-gray-700 text-slate-400 hover:text-white",
             )}
           >

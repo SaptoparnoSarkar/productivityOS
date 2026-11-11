@@ -1,9 +1,9 @@
 import z from "zod";
 
 const weaknessStatusSchema = z.enum(["active", "resolved"]);
+
 export const weaknessQuerySchema = z.object({
   status: weaknessStatusSchema.optional(),
-  limit: z.number().optional(),
 });
 export type weaknessQueryType = z.infer<typeof weaknessQuerySchema>;
 

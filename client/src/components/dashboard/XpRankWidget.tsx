@@ -2,7 +2,7 @@
 
 import { getXpSummary } from "@/lib/api/xp";
 import { XpSummaryResponse } from "@/types/xp";
-import { Dot } from "lucide-react";
+import { ChevronRight, Dot } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -39,31 +39,34 @@ export function XpRankWidget() {
 
   return (
     <div className="w-full">
-      <div className="pt-10 flex flex-col gap-2">
+      <div className="pt-6 flex flex-col gap-2">
         <div className="flex items-center ">
           <div className="font-semibold">{rank.name}</div>
           <Dot />
-          <p className="text-stale-500">{totalXp} XP</p>
+          <p className="text-green-500 text-2xl font-bold">{totalXp} XP</p>
+          <p className="ml-auto mt-2 font-bold text-cyan-500"> {progress.percent}%</p>
         </div>
 
         {/* Track and fill Progress Bar */}
         <div className="w-full h-2 bg-gray-600 rounded-full">
           <div
-            className={`h-2 rounded-full ${progress.percent === 100 ? "bg-amber-500" : "bg-blue-500"}`}
+            className={`h-2 rounded-full ${progress.percent === 100 ? "bg-amber-500" : "bg-cyan-500"}`}
             style={{ width: `${progress.percent}%` }}
           />
         </div>
 
-        <div className="text-sm text-stale-500">{progress.text}</div>
+        <div className="text-sm font-semibold text-stale-500">{progress.text}</div>
       </div>
 
-      <Link
-        href="/dashboard/xp"
-        className="block text-purple-400 text-sm cursor-pointer duration-300 ease-in-out mt-4"
-      >
-        {" "}
-        View Log {`->`}
-      </Link>
+      <div className="flex justify-end">
+        <Link
+          href="/dashboard/xp"
+          className="text-blue-400 inline-flex items-center text-sm cursor-pointer transition-all duration-300 ease-in-out mt-10 hover:text-blue-300 hover:underline"
+        >
+          {" "}
+          View Log<ChevronRight />
+        </Link>
+      </div>
     </div>
-  );
+  )
 }

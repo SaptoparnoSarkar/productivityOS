@@ -21,7 +21,7 @@ export function SubjectCard({ subject, variant }: { subject: Subject; variant?: 
               "text-[15px] capitalize py-1 px-2 rounded-4xl shrink-0 whitespace-nowrap",
               subject.status === "completed"
                 ? "bg-green-400"
-                : "bg-purple-700/70",
+                : "bg-purple-600/90",
             )}
           >
             {subject.status === "completed" ? "Completed" : "In Progress"}

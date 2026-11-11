@@ -42,10 +42,8 @@ export async function weaknessRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       const userId = request.userId;
       const result = weaknessQuerySchema.safeParse(request.query);
-      if (!result.success) {
-        return reply.status(400).send({ message: formatZodError(result.error) });
-      }
-      const data = await getWeaknesses(userId, result.data.status);
+
+      const data = await getWeaknesses(userId, result.data?.status);
       return reply.send({
         message: "Weaknesses Fetched Successfully",
         data,
