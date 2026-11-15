@@ -273,7 +273,7 @@ export default function SubjectDetailPage() {
           {/* Left: Milestone Title + Desc */}
           <div className="flex items-center gap-3">
             <span>
-              <Target className="detail-logo" size={60} />
+              <Target className="bg-cyan-400 p-[15px] rounded-lg shadow-[0_0_20px_rgba(51, 191, 234, 0.4)] shrink-0" size={60} />
             </span>
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-1">

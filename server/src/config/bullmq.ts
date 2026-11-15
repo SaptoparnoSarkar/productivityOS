@@ -9,3 +9,5 @@ export const bullmqWorkerConnection = {
     ...bullmqConnection,
     maxRetriesPerRequest: null,
 }
+
+

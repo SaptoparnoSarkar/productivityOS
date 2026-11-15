@@ -24,9 +24,9 @@ export const streakContractWorker = new Worker(
     { connection: bullmqWorkerConnection }
 )
 
-streakContractWorker.on("completed", (job) => console.log("Completed:", { jobId: job.id, name: job.name, userId: job.data.userId ?? null }));
-streakContractWorker.on("failed", (job, error) => console.error("Failed:", { jobId: job?.id, name: job?.name, userId: job?.data?.userId, attemptsMade: job?.attemptsMade, error: error.message }));
-streakContractWorker.on("error", (error) => console.error("Worker error:", error));
+streakContractWorker.on("completed", job => console.log("Completed:", { jobId: job.id, name: job.name, userId: job.data.userId ?? null }));
+streakContractWorker.on("failed", (job, err) => console.error("Failed:", { jobId: job?.id, name: job?.name, userId: job?.data?.userId, attemptsMade: job?.attemptsMade, error: err.message }));
+streakContractWorker.on("error", err => console.error("Worker error:", err));
 
 await registerStreakScheduler();
 console.log("Streak scan schedule registered");

@@ -75,7 +75,7 @@ export default function MilestoneDetail() {
 
         <div className="my-2 flex justify-between items-center">
           <h1 className="text-white text-3xl font-bold cursor-default">{milestone.title}</h1>
-          <span className="p-1 border bg-purple-400/30 rounded-lg text-xs text-purple-400 cursor-default font-bold ">{milestone.type.toUpperCase()}</span>
+          <span className="p-1 border bg-cyan-400/30 rounded-lg text-xs text-cyan-400 cursor-default font-bold ">{milestone.type.toUpperCase()}</span>
         </div>
         <p className="text-sm text-white/60 font-semibold">{milestone.description ? milestone.description : "No Description"}</p>
 

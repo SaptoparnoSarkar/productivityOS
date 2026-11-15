@@ -60,7 +60,7 @@ export function MilestoneList({ subjectId }: Prop) {
               <Link
                 href={`/dashboard/subjects/${subjectId}/milestones/${m.id}`}
               >
-                <div className="flex justify-between border border-slate-50/20 p-4 rounded-lg mb-3 hover:border-purple-300 hover:text-purple-400 transition duration-300 cursor-pointer">
+                <div className="flex justify-between border border-slate-50/20 p-4 rounded-lg mb-3 hover:border-cyan-500/30 hover:text-cyan-400 transition duration-300 cursor-pointer">
                   <div className="flex gap-3 items-center">
                     <h3 className="text-xl">{m.title}</h3>
                     <span className={cn(
@@ -84,7 +84,7 @@ export function MilestoneList({ subjectId }: Prop) {
                           "h-2 rounded-full",
                           m.current_progress / m.target === 1
                             ? "bg-green-500"
-                            : "bg-purple-500",
+                            : "bg-cyan-400",
                         )}
                         style={{
                           width: `${(m.current_progress / m.target) * 100}%`,

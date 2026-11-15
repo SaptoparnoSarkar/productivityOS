@@ -18,10 +18,11 @@ export async function dbCreateStreakContract(userId: number) {
       SELECT $1, date_trunc('week', CURRENT_TIMESTAMP AT TIME ZONE u.timezone)::date
       FROM users u WHERE u.id = $1
       ON CONFLICT (user_id, week_start_date)
-      DO UPDATE SET week_start_date = EXCLUDED.week_start_date
+      DO UPDATE SET week_start_date = EXCLUDED.week_start_date 
       RETURNING id, week_start_date`,
       [userId],
     );
+    // DO UPDATE INSTEAD OF DO NOTHING so psql treats this row as modified and it gets passed to returning. 
 
     const contract = contractResult.rows[0]!;
 
