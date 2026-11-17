@@ -246,3 +246,21 @@ export async function dbGetAllMilestones(userId: number) {
 
   return result.rows;
 }
+
+//Create Initial MilestoneVersion
+export async function dbCreateInitialGoalVersion(
+  milestoneId: number, userId: number, input: CreateMilestoneInput, db: PoolClient | typeof pool = pool
+) {
+  const result = await db.query(
+    `INSERT INTO milestone_goal_versions
+    (milestone_id, effective_from, daily_minimum, daily_minimum_unit,weekly_minimum)
+    SELECT $1, (CURRENT_TIMESTAMP AT TIME ZONE u.timezone)::date, $2, $3, $4
+    FROM milestones m
+    JOIN subjects s ON s.id = m.subject_id
+    JOIN users u ON u.id = s.user_id
+    WHERE m.id = $1 AND u.id = $5
+    RETURNING *
+    `, [milestoneId, input.daily_minimum, input.daily_minimum_unit, input.weekly_minimum, userId]
+  )
+  return result.rows[0] || null;
+}

@@ -3,6 +3,7 @@ import { dbSetChecklistTarget } from "../db/queries/checklist.queries.js";
 import { dbCreateChecklistItem } from "../db/queries/checklistItems.queries.js";
 import { dbCreateCounter } from "../db/queries/counters.queries.js";
 import {
+  dbCreateInitialGoalVersion,
   dbCreateMilestone,
   dbDeleteMilestone,
   dbGetAllMilestones,
@@ -23,18 +24,20 @@ import {
   ValidationError,
 } from "../utils/errors.js";
 
-//Create a Milestone
-export async function createMilestone(
-  subjectId: number,
-  userId: number,
-  input: CreateMilestoneInput,
-) {
-  const milestone = await dbCreateMilestone(subjectId, userId, input);
-  if (!milestone) {
-    throw new NotFoundError("Subject Not Found");
-  }
-  return milestone;
-}
+// //Create a Milestone
+// export async function createMilestone(
+//   subjectId: number,
+//   userId: number,
+//   input: CreateMilestoneInput,
+// ) {
+//   const milestone = await dbCreateMilestone(subjectId, userId, input);
+//   if (!milestone) {
+//     throw new NotFoundError("Subject Not Found");
+//   }
+//   return milestone;
+// }
+
+// Updated it to createMilestoneWithSetup below
 
 //List Milestones from SubjectId
 export async function listMilestones(subjectId: number, userId: number) {
@@ -147,6 +150,10 @@ export async function createMilestoneWithSetup(subjectId: number, userId: number
       throw new NotFoundError("Subject not found or inaccessible");
     }
     const milestoneId = milestone.id;
+    const goalVersion = await dbCreateInitialGoalVersion(milestoneId,userId,input.milestone,client)
+    if(!goalVersion) {
+      throw new Error('Failed to create initial goal version.')
+    }
 
     const setup = input.setup;
 
@@ -163,7 +170,6 @@ export async function createMilestoneWithSetup(subjectId: number, userId: number
         throw new NotFoundError("Failed to create counter setup");
       }
     }
-
     await client.query("COMMIT");
     return milestone;
 
