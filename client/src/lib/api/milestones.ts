@@ -3,10 +3,11 @@
 import { MilestoneCreationInput } from "@/schemas/milestone.schema";
 import { apiClient } from "../apiClient";
 import {
-  CreateMilestoneInput,
   Milestone,
   MilestoneWithSubject,
   UpdateMilestoneInput,
+  UpdateMilestoneResponse,
+  GoalVersion,
 } from "@/types/milestone";
 
 export async function listMilestones(subjectId: number): Promise<Milestone[]> {
@@ -17,12 +18,12 @@ export async function listMilestones(subjectId: number): Promise<Milestone[]> {
   return response.milestones;
 }
 
-export async function getMilestone(milestoneId: number): Promise<Milestone> {
-  const response = await apiClient<{ milestone: Milestone }>(
+export async function getMilestone(milestoneId: number): Promise<{ milestone: Milestone; pendingGoals: GoalVersion | null }> {
+  const response = await apiClient<{ milestone: Milestone; pendingGoals: GoalVersion | null }>(
     `/api/milestones/${milestoneId}`,
     { method: "GET" },
   );
-  return response.milestone;
+  return response;
 }
 
 export async function createMilestone(
@@ -44,15 +45,15 @@ export async function updateMilestone(
   subjectId: number,
   milestoneId: number,
   input: UpdateMilestoneInput,
-): Promise<Milestone> {
-  const response = await apiClient<{ message: string; milestone: Milestone }>(
+): Promise<UpdateMilestoneResponse> {
+  const response = await apiClient<UpdateMilestoneResponse>(
     `/api/subjects/${subjectId}/milestones/${milestoneId}`,
     {
       method: "PATCH",
       body: JSON.stringify(input),
     },
   );
-  return response.milestone;
+  return response;
 }
 
 export async function deleteMilestone(

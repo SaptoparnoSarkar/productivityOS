@@ -6,14 +6,16 @@ import { registerStreakScheduler } from "../jobs/registerStreakScheduler.js";
 import { streakContractQueue } from "../queues/streakContract.queue.js";
 import { pool } from "../config/db.js";
 import redis from "../config/redis.js";
+import { dbApplyDueGoalVersions } from "../db/queries/milestones.queries.js";
 
 //Run the correct function for each job type
 export const streakContractWorker = new Worker(
     "streak-contracts",
     async (job) => {
         if (job.name === "scan-contracts") {
-            await runStreakContractJob()
-            return
+            const goalsApplied = await dbApplyDueGoalVersions() //Flip Goals First
+            const contractsEnqueued = await runStreakContractJob() //Then Create Contract
+            return {goalsApplied, contractsEnqueued}
         } else if (job.name === "create-contract") {
             await createStreakContract(job.data.userId)
             return
@@ -24,7 +26,17 @@ export const streakContractWorker = new Worker(
     { connection: bullmqWorkerConnection }
 )
 
-streakContractWorker.on("completed", job => console.log("Completed:", { jobId: job.id, name: job.name, userId: job.data.userId ?? null }));
+streakContractWorker.on("completed", job => {
+    if (job.name === "scan-contracts") {
+        const {goalsApplied, contractsEnqueued} = job.returnvalue;
+        if (goalsApplied === 0 && contractsEnqueued === 0) return; //Silence Nothing Happened
+        console.log("SCAN:", {
+            goalsApplied,
+            contractsEnqueued
+        })
+        console.log("Contract created:", { jobId: job.id, userId: job.data.userId });
+    }
+});
 streakContractWorker.on("failed", (job, err) => console.error("Failed:", { jobId: job?.id, name: job?.name, userId: job?.data?.userId, attemptsMade: job?.attemptsMade, error: err.message }));
 streakContractWorker.on("error", err => console.error("Worker error:", err));
 

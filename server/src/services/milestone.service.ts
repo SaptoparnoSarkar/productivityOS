@@ -3,14 +3,18 @@ import { dbSetChecklistTarget } from "../db/queries/checklist.queries.js";
 import { dbCreateChecklistItem } from "../db/queries/checklistItems.queries.js";
 import { dbCreateCounter } from "../db/queries/counters.queries.js";
 import {
+  dbCreateInitialGoalVersion,
   dbCreateMilestone,
   dbDeleteMilestone,
   dbGetAllMilestones,
+  dbGetLatestGoalVersion,
   dbGetMilestoneById,
   dbGetMilestonesWithProgress,
+  dbGetPendingGoalVersion,
   dbRecentMilestones,
   dbSetMilestoneActive,
   dbUpdateMilestone,
+  dbUpsertPendingGoalVersion,
 } from "../db/queries/milestones.queries.js";
 import type {
   CreateMilestoneInput,
@@ -23,18 +27,20 @@ import {
   ValidationError,
 } from "../utils/errors.js";
 
-//Create a Milestone
-export async function createMilestone(
-  subjectId: number,
-  userId: number,
-  input: CreateMilestoneInput,
-) {
-  const milestone = await dbCreateMilestone(subjectId, userId, input);
-  if (!milestone) {
-    throw new NotFoundError("Subject Not Found");
-  }
-  return milestone;
-}
+// //Create a Milestone
+// export async function createMilestone(
+//   subjectId: number,
+//   userId: number,
+//   input: CreateMilestoneInput,
+// ) {
+//   const milestone = await dbCreateMilestone(subjectId, userId, input);
+//   if (!milestone) {
+//     throw new NotFoundError("Subject Not Found");
+//   }
+//   return milestone;
+// }
+
+// Updated it to createMilestoneWithSetup below
 
 //List Milestones from SubjectId
 export async function listMilestones(subjectId: number, userId: number) {
@@ -47,7 +53,8 @@ export async function getMilestone(milestoneId: number, userId: number) {
   if (!milestone) {
     throw new NotFoundError("Milestone Not Found");
   }
-  return milestone;
+  const pendingGoals = await dbGetPendingGoalVersion(milestoneId, userId);
+  return { milestone, pendingGoals };
 }
 
 //Update Milestone
@@ -57,23 +64,66 @@ export async function updateMilestone(
   userId: number,
   input: UpdateMilestoneInput,
 ) {
-  //Defensive Check
-  if (Object.keys(input).length === 0) {
-    throw new ValidationError("At least one field must be provided");
+
+  const {daily_minimum, daily_minimum_unit, weekly_minimum, ...otherFields} = input;
+  
+  //Shape of complete goal set
+  type Goals = { daily_minimum: number | null, daily_minimum_unit: string | null, weekly_minimum: number | null };
+  // Same Shape with every key optional. Cuz the user might update one without the others.
+  const goalFields : Partial<Goals> = {} //The {} starts goalFields as an empty object, the ifs fill it in.
+
+  if(daily_minimum !== undefined) goalFields.daily_minimum = daily_minimum;
+  if(daily_minimum_unit !== undefined) goalFields.daily_minimum_unit = daily_minimum_unit;
+  if(weekly_minimum !== undefined) goalFields.weekly_minimum = weekly_minimum;
+
+  //object.keys(obj) returns an array of key names.
+  const hasGoals = Object.keys(goalFields).length > 0; //weekly,daily
+  const hasOther = Object.keys(otherFields).length > 0; //title,description
+  if(!hasGoals && !hasOther) throw new ValidationError("At least one field must be provided")
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN')
+    let milestone = null;
+
+    if(hasOther) {
+      milestone = await dbUpdateMilestone(milestoneId, subjectId, userId, otherFields, client);
+       if(!milestone) throw new NotFoundError("Milestone not found")
+    }
+  let pendingGoals = null;
+  if (hasGoals) {
+
+    const base = await dbGetLatestGoalVersion(milestoneId, userId, client);
+    if(!base) throw new NotFoundError("Milestone Not Found");
+    //We need this cuz upsert writes all 3 columns, Without the merge: if the user only changes the weekly_minimum, the others would be set to NULL
+    const merged: Goals = {
+      daily_minimum: base.daily_minimum,
+      daily_minimum_unit: base.daily_minimum_unit,
+      weekly_minimum: base.weekly_minimum,
+      ...goalFields //This does the overwriting(overwrite only what the user changed from the base)
+    }  
+
+    if ((merged.daily_minimum == null) !== (merged.daily_minimum_unit == null)) {
+      throw new ValidationError("Daily minimum and unit must be provided together");
+    }
+    if (merged.weekly_minimum != null && merged.daily_minimum == null){ 
+      throw new ValidationError("Weekly Minimum requires a daily minimum")
+    }
+    pendingGoals = await dbUpsertPendingGoalVersion(milestoneId,userId,merged,client)
+    if(!pendingGoals) throw new NotFoundError("Milestone Not Found")
   }
 
-  const updated = await dbUpdateMilestone(
-    milestoneId,
-    subjectId,
-    userId,
-    input,
-  );
+  if (!milestone) milestone = await dbGetMilestoneById(milestoneId,userId,client)
 
-  if (!updated) {
-    throw new NotFoundError("Milestone Not Found");
+   await client.query('COMMIT');
+   return {milestone, pendingGoals}
+
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
   }
-
-  return updated;
 }
 
 //Delete Milestone
@@ -116,7 +166,7 @@ export async function setMilestoneActive(
     }
     //Now tell the user why
     if (isActive) {
-      if (milestone.subject_status !== "pending") {
+      if (milestone.milestone.subject_status !== "pending") {
         throw new ConflictError(
           "Cannot activate a milestone in a completed subject",
         );
@@ -147,6 +197,10 @@ export async function createMilestoneWithSetup(subjectId: number, userId: number
       throw new NotFoundError("Subject not found or inaccessible");
     }
     const milestoneId = milestone.id;
+    const goalVersion = await dbCreateInitialGoalVersion(milestoneId,userId,input.milestone,client)
+    if(!goalVersion) {
+      throw new Error('Failed to create initial goal version.')
+    }
 
     const setup = input.setup;
 
@@ -163,7 +217,6 @@ export async function createMilestoneWithSetup(subjectId: number, userId: number
         throw new NotFoundError("Failed to create counter setup");
       }
     }
-
     await client.query("COMMIT");
     return milestone;
 

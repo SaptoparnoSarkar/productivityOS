@@ -56,6 +56,7 @@ export async function updateCounter(
   userId: number,
   input: UpdateCounterInput,
 ) {
+  
   const updatedCounter = await dbUpdateCounter(milestoneId, userId, input);
   if (!updatedCounter) {
     throw new NotFoundError("Counter Not Found");

@@ -1,7 +1,7 @@
 "use client";
 
 import { deleteMilestone, getMilestone } from "@/lib/api/milestones";
-import { Milestone } from "@/types/milestone";
+import { GoalVersion, Milestone } from "@/types/milestone";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ChecklistItemsList from "../checklist/ChecklistItemsList";
@@ -15,6 +15,7 @@ export default function MilestoneDetail() {
 
   //States
   const [milestone, setMilestone] = useState<Milestone | null>(null);
+  const [pendingGoals, setPendingGoals] = useState<GoalVersion | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
@@ -37,7 +38,8 @@ export default function MilestoneDetail() {
     async function fetchMilestone() {
       try {
         const data = await getMilestone(milestoneId);
-        setMilestone(data);
+        setMilestone(data.milestone);
+        setPendingGoals(data.pendingGoals);
       } catch (error) {
         setError(error instanceof Error ? error.message : "An error occurred");
       } finally {
@@ -97,6 +99,27 @@ export default function MilestoneDetail() {
             {deleteError && <p className="form-error">{deleteError}</p>}
           </div>
         </div>
+
+        {pendingGoals && (
+          <div className="mt-4 flex items-start gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3">
+            <span className="mt-0.5 text-amber-400 text-lg">→</span>
+            <div>
+              <p className="text-xs font-semibold text-amber-400 uppercase tracking-wide">Scheduled changes · will take effect next week</p>
+              <div className="mt-1 flex flex-wrap gap-3">
+                {pendingGoals.daily_minimum != null && (
+                  <span className="text-xs text-white/70 border border-gray-500/30 rounded-md px-2 py-1">
+                    Daily: {pendingGoals.daily_minimum} {pendingGoals.daily_minimum_unit}
+                  </span>
+                )}
+                {pendingGoals.weekly_minimum != null && (
+                  <span className="text-xs text-white/70 border border-gray-500/30 rounded-md px-2 py-1">
+                    Weekly: {pendingGoals.weekly_minimum} {pendingGoals.weekly_minimum === 1 ? "day" : "days"}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
       </section>
     </main>
