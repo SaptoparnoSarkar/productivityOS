@@ -69,8 +69,8 @@ export async function milestoneRoutes(fastify: FastifyInstance) {
         throw new ValidationError("Invalid Milestone ID");
       }
 
-      const milestone = await getMilestone(milestoneId, request.userId);
-      return reply.status(200).send({ milestone });
+      const { milestone, pendingGoals } = await getMilestone(milestoneId, request.userId);
+      return reply.status(200).send({ milestone, pendingGoals });
     },
   );
 
@@ -93,7 +93,7 @@ export async function milestoneRoutes(fastify: FastifyInstance) {
         return reply.status(400).send({ message: formatZodError(result.error) });
       }
 
-      const updated = await updateMilestone(
+      const {milestone, pendingGoals}  = await updateMilestone(
         milestoneId,
         subjectId,
         request.userId,
@@ -101,7 +101,7 @@ export async function milestoneRoutes(fastify: FastifyInstance) {
       );
       return reply
         .status(200)
-        .send({ message: "Updated Successfully", milestone: updated });
+        .send({ message: "Updated Successfully", milestone, pendingGoals});
     },
   );
 

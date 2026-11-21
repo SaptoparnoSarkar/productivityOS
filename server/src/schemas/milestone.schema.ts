@@ -27,17 +27,6 @@ export type CreateMilestoneInput = z.infer<typeof createMilestoneSchema>;
 export const updateMilestoneSchema = baseMilestoneFields
   .omit({ type: true })
   .partial()
-  .refine(
-    (data) => {
-      const hasMin = data.daily_minimum !== undefined;
-      const hasUnit = data.daily_minimum_unit !== undefined;
-      return hasMin === hasUnit;
-    },
-    {
-      message:
-        "Daily Minimum and Daily Minumum Unit must be provided together.",
-    },
-  )
   .refine((data) => Object.keys(data).length > 0, {
     message: "Provide at least one field to update.",
   });

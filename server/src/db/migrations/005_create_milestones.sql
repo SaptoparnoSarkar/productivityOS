@@ -35,7 +35,7 @@ CREATE TABLE milestone_goal_versions (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     UNIQUE (milestone_id, effective_from),
     CONSTRAINT chk_daily_minimum
-        CHECK (daily_minimum IS NULL OR daily_minimum >0),
+        CHECK (daily_minimum IS NULL OR daily_minimum > 0),
     
     CONSTRAINT chk_weekly_minimum
         CHECK (weekly_minimum IS NULL OR weekly_minimum BETWEEN 1 AND 7),

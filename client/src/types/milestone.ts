@@ -17,6 +17,21 @@ export type Milestone = {
   updated_at: string;
 };
 
+export type GoalVersion = {
+  id: number;
+  milestone_id: number;
+  effective_from: string;        
+  daily_minimum: number | null;
+  daily_minimum_unit: string | null;
+  weekly_minimum: number | null;
+  created_at: string;
+};
+
+export type UpdateMilestoneResponse = {
+  milestone: Milestone;
+  pendingGoals: GoalVersion | null;
+}
+
 export type CreateMilestoneInput = {
   type: MilestoneType;
   title: string;
@@ -31,3 +46,4 @@ export type UpdateMilestoneInput = Partial<Omit<CreateMilestoneInput, "type">>;
 export type MilestoneWithSubject = Milestone & {
   subject_name: string;
 };
+

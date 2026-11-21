@@ -10,7 +10,7 @@ import {
   updateMilestoneSchema,
 } from "@/schemas/milestone.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Milestone } from "@/types/milestone";
+import { GoalVersion, Milestone, UpdateMilestoneResponse } from "@/types/milestone";
 import z from "zod";
 import { updateMilestone } from "@/lib/api/milestones";
 import { useState } from "react";
@@ -22,12 +22,14 @@ import { Label } from "../ui/label";
 
 type Props =
   | { mode: "create"; subjectId: number; onNext: (data: CreateMilestoneInput) => void; }
-  | { mode: "edit"; subjectId: number, milestone: Milestone; onSuccess: (data: Milestone) => void };
+  | { mode: "edit"; subjectId: number, milestone: Milestone, pendingGoals: GoalVersion | null; onSuccess: (data: UpdateMilestoneResponse) => void };
 
 export default function MilestoneForm(props: Props) {
   const { mode } = props;
   const subjectId = props.subjectId;
   const schema = mode === "edit" ? updateMilestoneSchema : createMilestoneSchema;
+  const goals = mode === "edit" ? (props.pendingGoals ?? props.milestone) : null;
+
 
   const [formError, setFormError] = useState<string>("")
 
@@ -35,9 +37,9 @@ export default function MilestoneForm(props: Props) {
     ? {
       title: props.milestone.title,
       description: props.milestone.description ?? undefined,
-      daily_minimum: props.milestone.daily_minimum ?? undefined,
-      daily_minimum_unit: props.milestone.daily_minimum_unit ?? undefined,
-      weekly_minimum: props.milestone.weekly_minimum ?? undefined,
+      daily_minimum: goals?.daily_minimum ?? undefined,
+      daily_minimum_unit: goals?.daily_minimum_unit ?? undefined,
+      weekly_minimum: goals?.weekly_minimum ?? undefined,
     }
     : {
       type: "counter",
@@ -63,8 +65,12 @@ export default function MilestoneForm(props: Props) {
       if (mode === "create") {
         props.onNext(createMilestoneSchema.parse(data));
       } else {
-        const milestone = await updateMilestone(subjectId, props.milestone.id, data as UpdateMilestoneInput)
-        props.onSuccess(milestone);
+        const dirty = form.formState.dirtyFields
+        const changed = Object.fromEntries(
+          Object.entries(data).filter(([key]) => dirty[key as keyof typeof dirty])
+        )
+        const response = await updateMilestone(subjectId, props.milestone.id, changed as UpdateMilestoneInput)
+        props.onSuccess(response);
       }
     } catch (error) {
       setFormError(error instanceof Error ? error.message : "An error occurred. Please try again.")
@@ -160,6 +166,10 @@ export default function MilestoneForm(props: Props) {
 
                     <FieldDescription className="text-zinc-400">Recommended. Set to gain daily xp.</FieldDescription>
 
+                    {mode === "edit" && (
+                      <p className="text-xs text-amber-400 mt-1">⚠ Changes will be reflected next Monday</p>
+                    )}
+
                     {fieldState.invalid && (
                       <p className="form-error">{fieldState.error?.message}</p>
                     )}
@@ -207,6 +217,10 @@ export default function MilestoneForm(props: Props) {
                   />
 
                   <FieldDescription className="text-zinc-400">Recommended. Set to gain weekly xp.</FieldDescription>
+
+                  {mode === "edit" && (
+                    <p className="text-xs text-amber-400 mt-1">⚠ Changes will be reflected next Monday</p>
+                  )}
 
                   {fieldState.invalid && (
                     <p className="form-error">{fieldState.error?.message}</p>

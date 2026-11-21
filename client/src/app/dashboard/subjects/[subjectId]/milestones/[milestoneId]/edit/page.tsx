@@ -1,7 +1,7 @@
 "use client";
 import MilestoneForm from "@/components/milestones/MilestoneForm";
 import { getMilestone } from "@/lib/api/milestones";
-import { Milestone } from "@/types/milestone";
+import { GoalVersion, Milestone } from "@/types/milestone";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -12,6 +12,7 @@ export default function EditMilestonePage() {
   const router = useRouter();
 
   const [milestone, setMilestone] = useState<Milestone | null>(null);
+  const [pendingGoals, setPendingGoals] = useState<GoalVersion | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
@@ -25,7 +26,8 @@ export default function EditMilestonePage() {
     async function fetchMilestone() {
       try {
         const data = await getMilestone(milestoneId);
-        setMilestone(data);
+        setMilestone(data.milestone);
+        setPendingGoals(data.pendingGoals);
       } catch (error) {
         setError(
           error instanceof Error ? error.message : "Failed to load milestone",
@@ -49,6 +51,7 @@ export default function EditMilestonePage() {
         mode="edit"
         subjectId={subjectId}
         milestone={milestone}
+        pendingGoals={pendingGoals}
         onSuccess={() => router.push(`/dashboard/subjects/${subjectId}/milestones/${milestoneId}`)}
       />
     </div>
