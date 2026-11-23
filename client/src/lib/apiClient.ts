@@ -1,5 +1,4 @@
 //API Client Wrapper
-
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
 async function rawFetch(path: string, options?: RequestInit) {
@@ -13,10 +12,9 @@ async function rawFetch(path: string, options?: RequestInit) {
   });
 }
 
-// A single promise to coordinate concurrent token refresh attempts.
+// A single promise to coordinate token refresh attempts.
 let refreshPromise: Promise<boolean> | null = null;
 
-//The generic let's the caller what shape to expect.
 export async function apiClient<T>(
   path: string,
   options?: RequestInit,
@@ -24,7 +22,7 @@ export async function apiClient<T>(
 ): Promise<T> {
   //Calls fetch with http://localhost:4000 + path
 
-  let response = await rawFetch(path, options);
+  const response = await rawFetch(path, options);
 
   //Access Token Expire? Try to refresh ONCE
   //We only refresh for protected endpoints (not public auth endpoints starting with /auth/)
@@ -34,23 +32,35 @@ export async function apiClient<T>(
         method: "POST",
       })
         .then((res) => {
-          refreshPromise = null; // Clear it when finished
-          return res.ok;
+          if (res.status === 401) return false;
+          // Server failures should show an error instead of logging the user out.
+          if (!res.ok) {
+            throw new Error("Unable to refresh session. Please try again")
+          }
+          return true;
         })
-        .catch(() => {
+        .finally(() => {
+         // Always allow a future refresh attempt.
           refreshPromise = null;
-          return false;
         });
     }
-
     const isRefreshed = await refreshPromise;
-
     if (isRefreshed) {
       //New access token is now set, retry the original request
       return apiClient<T>(path, options, true);
     }
+    //If refresh also fail, leave the protected page.
+    if (typeof window !== "undefined"){
+      window.location.replace('/signin')
+    }
+    throw new Error("Session expired");
+  }
 
-    //Fail because refresh also failed
+  // Refresh succeeded, but the retried protected request is still unauthorized.
+  if (response.status === 401 && isRetry) {
+    if (typeof window !== "undefined") {
+      window.location.replace("/signin");
+    }
     throw new Error("Session expired.");
   }
 
@@ -58,6 +68,5 @@ export async function apiClient<T>(
   if (!response.ok) {
     throw new Error(data.message || "Something went wrong");
   }
-
   return data;
 }
