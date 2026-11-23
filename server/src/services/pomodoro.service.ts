@@ -113,7 +113,7 @@ export async function startSession(
     if (!milestone) {
       throw new NotFoundError("Milestone Not Found");
     }
-    if (milestone.subject_id !== input.subject_id) {
+    if (milestone.milestone.subject_id !== input.subject_id) {
       throw new ValidationError(
         "Milestone does not belong to the selected subject.",
       );
