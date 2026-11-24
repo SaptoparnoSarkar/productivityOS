@@ -8,7 +8,8 @@
     "start": "node dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx src/server.ts",
-    "worker": "tsx src/workers/streakContract.worker.ts"
+    "worker": "tsx src/workers/streakContract.worker.ts",
+    "migrate": "tsx src/db/migrate.ts"
   },
   "keywords": [],
   "author": "",

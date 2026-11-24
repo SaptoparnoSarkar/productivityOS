@@ -1,6 +1,5 @@
 CREATE TYPE milestone_type_enum AS ENUM ('counter', 'checklist');
 
-
 CREATE TABLE milestones (
     id SERIAL PRIMARY KEY,
     subject_id INT NOT NULL,
