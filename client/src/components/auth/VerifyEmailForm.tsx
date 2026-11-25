@@ -79,7 +79,6 @@ export function VerifyEmailForm() {
                 setResendMessage('')
             }, 5000)
         }
-
     }
 
     return (

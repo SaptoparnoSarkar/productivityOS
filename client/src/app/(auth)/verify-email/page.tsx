@@ -1,12 +1,13 @@
 import { VerifyEmailForm } from "@/components/auth/VerifyEmailForm";
 import { AuthShell } from "@/components/auth/AuthShell"
+import { Suspense } from "react";
 
 export default function VerifyEmailPage() {
     return (
         <AuthShell>
-            <VerifyEmailForm />
+            <Suspense fallback={null}>
+                <VerifyEmailForm />
+            </Suspense>
         </AuthShell>
-
-
     )
 }
