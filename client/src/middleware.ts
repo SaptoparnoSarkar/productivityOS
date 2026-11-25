@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
 const PUBLIC_ROUTES = ["/signin", "/signup", "/verify-email"];
-const PROTECTED_ROUTES = [""];
+const PROTECTED_ROUTES = ["/dashboard", "/dashboard/*"];
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;

@@ -39,7 +39,7 @@ const start = async () => {
 
     //Register Cors
     await fastify.register(fastifyCors, {
-      origin: "http://localhost:3000",
+      origin: ["https://productivity-os-gilt.vercel.app", "http://localhost:3000"],
       credentials: true,
       methods: ["GET", "POST", "PATCH", "DELETE"],
     });

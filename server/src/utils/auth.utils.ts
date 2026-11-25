@@ -18,18 +18,21 @@ export function hashToken(token: string): string {
   return crypto.createHash("sha256").update(token).digest("hex");
 }
 
-export const ACCESS_TOKEN_OPTIONS = {
+const isProd = process.env.NODE_ENV === "production";
+const base = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax" as const,
+  secure: isProd,
+  sameSite: (isProd ? "none" : "lax") as "none" | "lax",
+}
+
+export const ACCESS_TOKEN_OPTIONS = {
+  ...base,
   path: "/",
   maxAge: 900,
 };
 
 export const REFRESH_TOKEN_OPTIONS = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax" as const,
+  ...base,
   path: "/auth/refresh-token",
   maxAge: 60 * 60 * 24 * 30,
 };
