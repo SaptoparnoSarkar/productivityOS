@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 const FILTERS = ["all", "active", "resolved"] as const;
 type Filter = (typeof FILTERS)[number];
 
-export default function WeaknessPage() {
+export default function WeaknessHero() {
     const [items, setItems] = useState<Weakness[]>([]);
     const [subjects, setSubjects] = useState<Subject[]>([]);
     const [loading, setLoading] = useState(true);
