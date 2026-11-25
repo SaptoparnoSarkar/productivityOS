@@ -81,7 +81,7 @@ export function SignupForm() {
                 </FieldGroup>
 
                 <div className='auth-actions'>
-                    {formError && <p className="auth-error">{formError}</p>}
+                    {formError && <p className="auth-error mt-5">{formError}</p>}
                     <button
                         type='submit'
                         disabled={form.formState.isSubmitting}

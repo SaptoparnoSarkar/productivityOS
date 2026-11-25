@@ -130,7 +130,7 @@ export function VerifyEmailForm() {
                         )}
                     </button>
 
-                    <p className="auth-footer">
+                    <p className="auth-footer text-center">
                         Didn't recieve the code? {' '}
                         <button
                             className="auth-link"
@@ -138,7 +138,7 @@ export function VerifyEmailForm() {
                             onClick={handleResend}
                             disabled={resendCoolDown > 0}>{resendCoolDown > 0 ? `Resend code (${resendCoolDown}s)` : 'Resend code'}</button>
                         {resendMessage && (
-                            <span className="auth-resend-message">{resendMessage}</span>
+                            <span className={resendMessage === "Code sent successfully" ? "text-green-500 text-sm text-center mt-3 font-bold block px-4" : "text-red-500 text-sm text-center mt-3 font-bold block px-4"}>{resendMessage}</span>
                         )}
                     </p>
                 </div>

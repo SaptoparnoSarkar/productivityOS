@@ -1,6 +1,8 @@
 import { Redis } from "ioredis";
+import "dotenv/config";
 
 const redis = process.env.REDIS_URL ? new Redis(process.env.REDIS_URL, {
+  enableReadyCheck: false,
   maxRetriesPerRequest: null
 }) : new Redis({
   host: process.env.REDIS_HOST || "localhost",

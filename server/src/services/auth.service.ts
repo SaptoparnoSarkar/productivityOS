@@ -15,7 +15,6 @@ import {
   generateRefreshToken,
   hashToken,
 } from "../utils/auth.utils.js";
-import { resend } from "../config/resend.js";
 import { SignJWT } from "jose";
 import { verifyPassword } from "../utils/auth.utils.js";
 import {
@@ -25,6 +24,7 @@ import {
   ForbiddenError,
   NotFoundError,
 } from "../utils/errors.js";
+import { sendVerificationEmail } from "./email.service.js";
 
 export async function signupUser(email: string, password: string) {
   const existingUser = await findUserByEmail(email);
@@ -40,15 +40,12 @@ export async function signupUser(email: string, password: string) {
   const expiredAt = new Date(Date.now() + FIFTEEN_MINUTES);
   await insertVerificationCode(user.id, String(verificationCode), expiredAt);
 
-  await resend.emails.send({
-    from: "<support@productivityOS.com>",
-    to: email,
-    subject: "Verify Your Email",
-    html: `<p>Your Verification Code is: <strong>${verificationCode}</strong></p>`,
-  });
+  await sendVerificationEmail(email, verificationCode)
 
   return { message: "User Created Successfully" };
 }
+
+
 // TODO: Make this a transaction
 export async function verifyEmail(email: string, code: string) {
   //Find the verification code in db
@@ -94,6 +91,10 @@ export async function verifyEmail(email: string, code: string) {
   return { token: jwt, refreshToken: rawToken };
 }
 
+
+
+
+
 export async function loginUser(email: string, password: string) {
   //Find user by email
   const user = await findUserByEmail(email);
@@ -109,7 +110,7 @@ export async function loginUser(email: string, password: string) {
   }
 
   //Verify The Passoword - by the bcrypt method
-  const isPasswordValid = verifyPassword(password, user.password_hash);
+  const isPasswordValid = await verifyPassword(password, user.password_hash);
 
   if (!isPasswordValid) {
     throw new UnauthorizedError("Invalid Credentials");
@@ -138,6 +139,10 @@ export async function loginUser(email: string, password: string) {
   return { token: jwt, refreshToken: rawToken };
 }
 
+
+
+
+
 export async function resendVerificationCode(email: string) {
   //Find user & What if they don't exist?
   let user = await findUserByEmail(email);
@@ -159,6 +164,8 @@ export async function resendVerificationCode(email: string) {
     }
   }
 
+
+
   //Generate new Code + Expiry
   const verificationCode = generateVerificationCode();
   const FIFTEEN_MINUTES = 1000 * 60 * 15;
@@ -168,15 +175,13 @@ export async function resendVerificationCode(email: string) {
   await insertVerificationCode(user.id, String(verificationCode), expiredAt);
 
   //Send email
-  await resend.emails.send({
-    from: "<support@productivityOS.com>",
-    to: email,
-    subject: "Verification Code",
-    html: `<p>Your Verification Code is: <strong>${verificationCode}</strong></p>`,
-  });
+  await sendVerificationEmail(email, verificationCode);
   //Return response
   return { message: "Verification Code Resent Successfully" };
 }
+
+
+
 
 export async function refreshToken(refreshToken: string) {
   //Hash Token & Look it up in DB
@@ -212,6 +217,9 @@ export async function refreshToken(refreshToken: string) {
   //return both tokens
   return { token: jwt, refreshToken: rawToken };
 }
+
+
+
 
 export async function signOut(refreshToken: string) {
   //Hash it -> Remove it in DB

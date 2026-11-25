@@ -1,15 +1,18 @@
 import { Pool } from "pg";
-import dotenv from "dotenv";
-import path from "path";
+import "dotenv/config";
 
-dotenv.config({ path: path.resolve("../.env") });
 
-export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL?.includes("localhost")
-    ? false
-    : { rejectUnauthorized: false },
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000,
-});
+//Configured for supabase or local postgres(docker image)
+export const pool = new Pool(
+  process.env.DATABASE_URL ? {
+    connectionString: process.env.DATABASE_URL, ssl: process.env.DATABASE_URL?.includes("localhost") ? false : {
+      rejectUnauthorized: false
+    }
+  } : {
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT),
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DB,
+  });
+

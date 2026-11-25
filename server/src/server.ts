@@ -24,6 +24,9 @@ import { subjectRoutes } from "./routes/subject.js";
 //Fastify Instance
 const fastify = Fastify({ logger: true });
 
+const port = Number(process.env.PORT) || 4000;
+const host = '0.0.0.0';
+
 const start = async () => {
   try {
     //Verify DB first
@@ -87,7 +90,7 @@ const start = async () => {
     fastify.log.info("showcase routes check");
 
     //Start listening
-    await fastify.listen({ port: 4000 });
+    await fastify.listen({ port, host });
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

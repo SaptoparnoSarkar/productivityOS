@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev:client": "npm run dev --prefix client",
     "dev:server": "npm run dev --prefix server",
-    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\""
+    "dev:worker": "npm run worker --prefix server",
+    "dev": "concurrently -n client,server,worker -c cyan,green,yellow \"npm:dev:client\" \"npm:dev:server\" \"npm:dev:worker\""
   },
   "repository": {
     "type": "git",
