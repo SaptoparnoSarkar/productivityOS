@@ -10,7 +10,7 @@ export function Topbar() {
   async function handleSignout() {
     try {
       await signout();
-      router.push("/auth/signin");
+      router.push("/signin");
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Something went wrong",

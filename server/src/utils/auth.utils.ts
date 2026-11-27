@@ -25,14 +25,16 @@ const base = {
   sameSite: (isProd ? "none" : "lax") as "none" | "lax",
 }
 
+//Cookie Settings
 export const ACCESS_TOKEN_OPTIONS = {
   ...base,
   path: "/",
-  maxAge: 900,
+  maxAge: 60 * 60 * 24 * 30, //How long the browser keeps the cookies. 
 };
 
 export const REFRESH_TOKEN_OPTIONS = {
   ...base,
-  path: "/auth/refresh-token",
+  path: "/auth",
   maxAge: 60 * 60 * 24 * 30,
 };
+

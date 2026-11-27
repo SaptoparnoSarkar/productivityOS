@@ -1,5 +1,5 @@
 //API Client Wrapper
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+const BASE_URL = "";
 
 async function rawFetch(path: string, options?: RequestInit) {
   return fetch(`${BASE_URL}${path}`, {
@@ -40,7 +40,7 @@ export async function apiClient<T>(
           return true;
         })
         .finally(() => {
-         // Always allow a future refresh attempt.
+          // Always allow a future refresh attempt.
           refreshPromise = null;
         });
     }
@@ -50,7 +50,7 @@ export async function apiClient<T>(
       return apiClient<T>(path, options, true);
     }
     //If refresh also fail, leave the protected page.
-    if (typeof window !== "undefined"){
+    if (typeof window !== "undefined") {
       window.location.replace('/signin')
     }
     throw new Error("Session expired");

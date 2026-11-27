@@ -119,7 +119,7 @@ export async function loginUser(email: string, password: string) {
   }
 
   //Generate JWT (same pattern as verifyEmail)
-  if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET is not defined");
+  if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET is not defined"); //Guard
   const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
   const jwt = await new SignJWT({})

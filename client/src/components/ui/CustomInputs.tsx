@@ -54,7 +54,7 @@ export function CustomInputs<T extends FieldValues>({
                 type="button"
                 onClick={() => setShowPassword(p => !p)}
                 aria-label={showPassword ? "Hide Password" : "Show Password"}
-                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
