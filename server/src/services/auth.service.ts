@@ -26,7 +26,9 @@ import {
 } from "../utils/errors.js";
 import { sendVerificationEmail } from "./email.service.js";
 
+// TODO: Make this a transaction (If insertUser fails, or insertVerification code fails revert the transaction.)
 export async function signupUser(email: string, password: string) {
+  //Guard
   const existingUser = await findUserByEmail(email);
   if (existingUser) {
     throw new ConflictError("Email Already Taken");
